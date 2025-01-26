@@ -1,0 +1,42 @@
+/* About Us Section Styles */
+#about {
+    padding: 60px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .about-box {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+  }
+  
+  .about-box:hover {
+    transform: translateY(-10px);
+  }
+  
+  .about-details {
+    width: 50%;
+    color: white;
+  }
+  
+  .about-image img {
+    width: 50%;
+    border-radius: 10px;
+  }
+  
+  .about-details h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .about-details p {
+    font-size: 1.1rem;
+  }
+  
