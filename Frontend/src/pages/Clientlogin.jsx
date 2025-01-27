@@ -10,15 +10,10 @@ import axios from "axios";
 import "../css/Clientlogin.css";
 
 
-function ClientCreateAcc() {
+function Clientlogin() {
 
   const navigate = useNavigate();
- 
-  
-
-
-
-  const {backendUrl, setIsLoggedIn} = useContext(AppContext);
+  const {backendUrl, setIsLoggedIn, getUserData} = useContext(AppContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +31,7 @@ function ClientCreateAcc() {
 
     if (userData.status === 200) {
       setIsLoggedIn(true);
+      getUserData();
       navigate("/");
     }else{
         toast.error(userData.data.msg);
@@ -115,4 +111,4 @@ function ClientCreateAcc() {
   );
 }
 
-export default ClientCreateAcc;
+export default Clientlogin;

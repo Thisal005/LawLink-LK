@@ -4,17 +4,17 @@ import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 import {  toast } from "react-toastify";
 
-import "../css/ClientCreatAcc.css";
+import "../css/CreateAcc.css";
 
 function ClientCreateAcc() {
 
   const navigate = useNavigate();
 
-  const { backendUrl } = useContext(AppContext); 
+  const { backendUrl, setEmail } = useContext(AppContext); 
 
 
   const [fullName, setFullname] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmailLocal] = useState("");
   const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,10 +26,10 @@ function ClientCreateAcc() {
   const isPasswordStrong = (password) => {
     return (
       password.length >= 8 &&
-      /[A-Z]/.test(password) && // At least one uppercase letter
-      /[a-z]/.test(password) && // At least one lowercase letter
-      /\d/.test(password) && // At least one number
-      /[!@#$%^&*(),.?":{}|<>]/.test(password) // At least one special character
+      /[A-Z]/.test(password) && 
+      /[a-z]/.test(password) &&
+      /\d/.test(password) && 
+      /[!@#$%^&*(),.?":{}|<>]/.test(password) 
     );
   };
   
@@ -61,19 +61,20 @@ function ClientCreateAcc() {
       // API call to signup
       const response = await axios.post(`${backendUrl}/api/auth/signup`, {
         fullName,
-        email,
+        email: email,
         contact,
         password,
         confirmPassword,
       });
   
       if (response.status === 201) {
-        // Success: Navigate and show toast
         toast.success("Account created successfully! Please check your email for the OTP.");
+        setEmail(email);
+        navigate("/verify-email");
         
       } else {
         toast.error(response.data.msg || "An error occurred. Please try again.");
-        navigate("/verify-email");
+       
       }
     } catch (err) {
       console.error("Error during signup:", err);
@@ -112,7 +113,7 @@ function ClientCreateAcc() {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmailLocal(e.target.value)}
               placeholder="Enter your email address"
               required
             />

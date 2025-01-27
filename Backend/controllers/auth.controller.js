@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import genarateToken from "../utills/generateToken.js";
 import transporter from "../config/nodemailer.js";
 import dotenv from "dotenv";
+import e from "express";
 
 dotenv.config();
 
@@ -11,25 +12,20 @@ export const signup = async (req, res) => {
     try {
         const { fullName, password, confirmPassword, email, contact } = req.body;
 
-        // Check if passwords match
         if (password !== confirmPassword) {
             return res.status(400).json({ msg: "Passwords do not match" });
         }
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ msg: "User already exists" });
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-        const username = fullName.toLowerCase().replace(/\s+/g, ""); // Create a username
+        const username = fullName.toLowerCase().replace(/\s+/g, ""); 
 
-        // Generate OTP
         const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-        // Create a new user with the OTP and its expiration time
         const newUser = new User({
             fullName,
             username,
@@ -37,12 +33,11 @@ export const signup = async (req, res) => {
             email,
             contact,
             verifyotp: otp,
-            verifyOtpExpires: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes
+            verifyOtpExpires: Date.now() + 15 * 60 * 1000, 
         });
 
-        await newUser.save(); // Save the user to the database
+        await newUser.save(); 
 
-        // Send the OTP via email
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: email,
@@ -98,7 +93,6 @@ export const signup = async (req, res) => {
 
         await transporter.sendMail(mailOptions);
 
-        // Respond to the client with one final response
         res.status(201).json({
             _id: newUser._id,
             fullName: newUser.fullName,
@@ -125,7 +119,12 @@ export const login = async(req, res) => {
         if(!isMatch){
             return res.status(400).json({ msg: "Invalid credentials" });
         }
+
         genarateToken(user._id, res);   
+
+        if(!user.isVerified){
+            return res.status(400).json({ msg: "User does not verified" });
+        }
 
         res.status(200).json({
             _id: user._id,
@@ -164,7 +163,7 @@ export const sendVerifyOtp = async (req, res) => {
         const otp = String(Math.floor(100000 + Math.random() * 900000));
 
         user.verifyotp = otp;
-        user.verifyOtpExpires = Date.now() + 5 * 60 * 1000;
+        user.verifyOtpExpires = Date.now() + 15 * 60 * 1000;
 
         await user.save();
 
@@ -235,14 +234,15 @@ export const sendVerifyOtp = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-    const { userId, otp } = req.body;
+    const { email, otp } = req.body;
 
-    if (!userId || !otp) {
+    if (!email || !otp) {
         return res.status(400).json({ msg: "Missing userId or otp" });
     }
 
     try {
-        const user = await User.findById(userId);
+        
+        const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(400).json({ msg: "User does not exist" });
@@ -262,7 +262,7 @@ export const verifyEmail = async (req, res) => {
 
         await user.save();
 
-        res.status(200).json({ msg: "Email verified successfully" });
+      
 
         try{
             res.status(200).json({msg: "User is authenticated"});
@@ -277,14 +277,6 @@ export const verifyEmail = async (req, res) => {
         }
 };
 
-export const isAuthenticated = async (req, res) => {
-    try{
-        res.status(200).json({msg: "User is authenticated"});
-    }catch(error){
-        console.error("Error in isAuthenticated controller:", error.message);
-        res.status(500).json({msg: "Something went wrong"});
-    }
-};
 
 export const sendRestPasswordOtp = async (req, res) => {
     const { email } = req.body;
@@ -371,7 +363,7 @@ export const sendRestPasswordOtp = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-    const { email, otp, newPassword } = req.body;
+    const { email, otp } = req.body;
 
     if (!email || !otp || !newPassword) {
         return res.status(400).json({ msg: "Missing fields" });
@@ -392,6 +384,23 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ msg: "Otp has expired" });
         }
 
+      
+
+    } catch (err) {
+        console.error("Error in resetPassword controller:", err.message);
+        res.status(500).json({ msg: "Something went wrong" });
+        }
+        
+    }
+
+    export const newPassword = async (req, res) => {
+        const { email} = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ msg: "User does not found" });
+        }
+
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         user.password = hashedPassword;
@@ -402,9 +411,4 @@ export const resetPassword = async (req, res) => {
 
         res.status(200).json({ msg: "Password reset successfully" });
 
-    } catch (err) {
-        console.error("Error in resetPassword controller:", err.message);
-        res.status(500).json({ msg: "Something went wrong" });
-        }
-        
     }
