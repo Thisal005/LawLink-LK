@@ -4,7 +4,7 @@
     top: 20px;
     left: 20px;
     right: 20px;
-    padding: 20px 20px;
+    padding: 10px 10px;
     background-color: rgba(168, 178, 246, 0.177); /* Slight transparency */
     border-radius: 25px;
     display: flex;
@@ -15,7 +15,7 @@
   }
   
   .navbar.scrolled {
-    padding: 8px 8px;
+    padding: 4px 4px;
     padding-left: 20px;
     background-color: rgba(173, 179, 255, 0.251); /* Less transparency when scrolled */
   }
