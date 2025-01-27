@@ -48,7 +48,7 @@ export const signup = async (req, res) => {
             to: email,
             subject: "Welcome to LawLink LK - Verify your email",
             html: `
-             <div style="text-align: center; margin: 10px 0;">
+                <            <div style="text-align: center; margin: 10px 0;">
                 <img src="https://i.postimg.cc/3NTwxRWq/img1.png" 
                     alt="LawLink LK Header Image" 
                     style="max-width: 100%; max-width: 640px; height: auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
@@ -97,9 +97,8 @@ export const signup = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        res.status(200).json({msg: "Otp sent successfully"}); // Send the email
 
-        // Respond to the client
+        // Respond to the client with one final response
         res.status(201).json({
             _id: newUser._id,
             fullName: newUser.fullName,
@@ -111,6 +110,7 @@ export const signup = async (req, res) => {
         res.status(500).json({ msg: "Something went wrong" });
     }
 };
+
 
 
 

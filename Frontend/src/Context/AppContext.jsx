@@ -16,6 +16,7 @@ export const AppContentProvider = (props) => {
         setUser,
     };
 
+    
     return (
         <AppContext.Provider value={value}>
             {props.children}
