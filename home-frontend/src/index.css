@@ -1,68 +1,60 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: sans-serif;
+  background-size: cover;
+  background-position: center;
+  background-image: url('./assets/homefull.png');
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.greeting {
+  text-align: center;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.greeting h1 {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: bold;
+  margin-bottom: 1rem; /* mb-4 */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.greeting p {
+  font-size: 1.125rem; /* text-lg */
+  margin-bottom: 1.5rem; /* mb-6 */
+}
+
+.greeting .btn {
+  background-color: #2563eb; /* bg-blue-600 */
+  color: white;
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  border-radius: 0.5rem; /* rounded-lg */
+  transition: background-color 0.3s;
+}
+
+.greeting .btn:hover {
+  background-color: #1e40af; /* hover:bg-blue-800 */
+}
+
+/* Transition Layer for Home.jpg */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('./assets/home.jpg') no-repeat center center / cover;
+  z-index: -1;
+  opacity: 1;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+}
+
+body.scrolled::after {
+  opacity: 0;
+  filter: blur(10px);
 }
