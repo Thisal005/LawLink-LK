@@ -10,7 +10,7 @@ function ClientCreateAcc() {
 
   const navigate = useNavigate();
 
-  const { backendUrl, setEmail } = useContext(AppContext); 
+  const { backendUrl, setEmail, } = useContext(AppContext); 
 
 
   const [fullName, setFullname] = useState("");

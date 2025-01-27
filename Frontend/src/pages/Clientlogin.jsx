@@ -13,8 +13,8 @@ import "../css/Clientlogin.css";
 function Clientlogin() {
 
   const navigate = useNavigate();
-  const {backendUrl, setIsLoggedIn, getUserData} = useContext(AppContext);
-  const [email, setEmail] = useState("");
+  const {backendUrl, setIsLoggedIn, setEmail} = useContext(AppContext);
+  const [email, setEmailLocal] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
  
@@ -31,17 +31,13 @@ function Clientlogin() {
 
     if (userData.status === 200) {
       setIsLoggedIn(true);
-      getUserData();
+      setEmail(email);
       navigate("/");
     }else{
         toast.error(userData.data.msg);
      
     }
   }
-
-
-   
-
     catch(err){
       console.log(err);
     }
@@ -73,7 +69,7 @@ function Clientlogin() {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmailLocal(e.target.value)}
               placeholder="Enter your email address"
               required
             />

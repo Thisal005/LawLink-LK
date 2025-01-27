@@ -3,13 +3,13 @@ import { createContext, useState } from "react";
 import { toast } from "react-toastify";
 
 
-export const AppContext = createContext(); // Create a context object
+export const AppContext = createContext(); 
 
 export const AppContentProvider = (props) => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL; // Access environment variable
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Fixed variable name
-    const [userData, setUserData] = useState(null);
-    const [email, setEmail] = useState(""); // Use `null` for the initial value
+    const backendUrl = import.meta.env.VITE_BACKEND_URL; 
+    const [isLoggedIn, setIsLoggedIn] = useState(false); 
+    const [email, setEmail] = useState(""); 
+    const [fullName, setFullname] = useState("");
 
     const getUserDate = async () => {
         try{
@@ -27,11 +27,11 @@ export const AppContentProvider = (props) => {
         backendUrl,
         isLoggedIn,
         setIsLoggedIn,
-        userData,
-        setUserData,
         getUserDate,
         email,
-        setEmail
+        setEmail,
+        fullName,
+        setFullname
     };
 
 
