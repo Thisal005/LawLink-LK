@@ -264,6 +264,13 @@ export const verifyEmail = async (req, res) => {
 
         res.status(200).json({ msg: "Email verified successfully" });
 
+        try{
+            res.status(200).json({msg: "User is authenticated"});
+        }catch(error){
+            console.error("Error in isAuthenticated controller:", error.message);
+            res.status(500).json({msg: "Something went wrong"});
+        }
+
     } catch (err) {
         console.error("Error in verifyEmail controller:", err.message);
         res.status(500).json({ msg: "Something went wrong" });
