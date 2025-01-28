@@ -4,16 +4,13 @@ import {  toast } from "react-toastify";
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 
-
-
-
 import "../css/Clientlogin.css";
 
 
 function Clientlogin() {
 
   const navigate = useNavigate();
-  const {backendUrl, setIsLoggedIn, setEmail} = useContext(AppContext);
+  const {backendUrl, setIsLoggedIn, getUserData} = useContext(AppContext);
   const [email, setEmailLocal] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,8 +28,12 @@ function Clientlogin() {
 
     if (userData.status === 200) {
       setIsLoggedIn(true);
-      setEmail(email);
-      navigate("/");
+    
+      setTimeout(() => {
+        getUserData();
+        navigate("/");
+      }, 500);
+
     }else{
         toast.error(userData.data.msg);
      
@@ -92,7 +93,7 @@ function Clientlogin() {
                 {showPassword ? <img src="images/close.png"/> : <img src="images/open.png"/>}
               </button>
             </div>
-            <p className="forgot-password" onClick={() => navigate("/password-rest")}><a href="#">Forgot Password ? </a></p>
+            <p className="forgot-password" onClick={() => navigate("/email-for-password-reset")}><a href="#">Forgot Password ? </a></p>
           </div>
 
           <button  type="submit" className="submit-btn">

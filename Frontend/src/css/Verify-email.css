@@ -94,6 +94,7 @@ body {
     cursor: pointer;
     font-size: 0.9rem;
     text-decoration: underline;
+    cursor: pointer;
   }
   
   p.otp:hover {
@@ -131,6 +132,29 @@ body {
     100% {
       transform: translateY(0);
     }
+
+    
+  }
+
+  .resend-button {
+    background: none;
+    border: none;
+    color: #1e90ff;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  .resend-button.disabled {
+    color: #999;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+  
+  .resend-button:hover:not(.disabled) {
+    color: #0066cc;
   }
   
   @media (max-width: 768px) {

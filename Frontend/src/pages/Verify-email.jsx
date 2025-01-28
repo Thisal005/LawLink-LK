@@ -10,19 +10,22 @@ function VerifyEmail() {
   const { email, backendUrl } = useContext(AppContext); 
 
   const [otp, setOtp] = useState(new Array(6).fill("")); 
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
 
   const handleChange = (e, index) => {
-    const value = e.target.value.replace(/\D/g, ""); 
-    if (value.length <= 1) {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
-
-      if (value && index < otp.length - 1) {
-        e.target.nextSibling?.focus(); 
-      }
+    const value = e.target.value.replace(/\D/g, "");
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+  
+    if (value && index < otp.length - 1) {
+      e.target.nextSibling?.focus(); // Move to next input
+    } else if (!value && index > 0) {
+      e.target.previousSibling?.focus(); // Move to previous input
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,11 +35,12 @@ function VerifyEmail() {
     console.log("OTP:", otp.join(""));
   
     try {
+      console.log("Before Axios call...");
       const response = await axios.post(`${backendUrl}/api/auth/verify-email`, {
-        email,
-        otp: otp.join(""),
+        email: email,
+        otp:otp.join(""), 
       });
-  
+      console.log("After Axios call...", response);
   
       if (response.status === 200 || response.status === 201) {
         toast.success("Account verified successfully!");
@@ -49,6 +53,43 @@ function VerifyEmail() {
      
       console.error("Verification error:", err);
       toast.error("Failed to verify your account. Please try again.");
+    }
+  };
+
+  const startResendTimer = () => {
+    setIsResendDisabled(true);
+    setResendTimer(120); 
+    
+    const timer = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsResendDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleResend = async () => {
+    if (isResendDisabled) return;
+    
+    try {
+      const response = await axios.post(`${backendUrl}/api/auth/verify-otp`, {
+        email: email,
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success("New OTP sent! Please check your email.");
+        setOtp(new Array(6).fill("")); 
+        startResendTimer();
+      } else {
+        toast.error(response.data.msg || "Failed to send OTP. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error resending OTP:", err);
+      toast.error("Failed to send OTP. Please try again.");
     }
   };
   
@@ -73,6 +114,17 @@ function VerifyEmail() {
             />
           ))}
         </div>
+        <button 
+          type="button" 
+          onClick={handleResend} 
+          className={`resend-button ${isResendDisabled ? 'disabled' : ''}`}
+          disabled={isResendDisabled}
+        >
+          {isResendDisabled 
+            ? `Resend OTP in ${resendTimer}s` 
+            : 'Resend OTP'}
+        </button>
+
         <button type="submit" className="otp">
           Submit
         </button>

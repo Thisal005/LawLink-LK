@@ -7,29 +7,32 @@ import axios from "axios";
 import "../css/CreateAcc.css";
 
 function EmailForResetPass() {
-    const [email, setEmail] = useState("");
+    const [email, setlocalEmail] = useState("");
 
     const navigate = useNavigate();
-    const { backendUrl } = useContext(AppContext); 
+    const { backendUrl, setEmail } = useContext(AppContext); 
     
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        axios.defaults.withCredentials = true;
+      e.preventDefault();
+     
+      axios.defaults.withCredentials = true;
       
         try {
           const response = await axios.post(`${backendUrl}/api/auth/send-reset-otp`, {
-            email,
+            email: email,
           });
-      
-          if (response.status === 201) {
-           
+        
+
+          if (response.status === 201 || response.status === 200) {
+            setEmail(email);
             toast.success("Please check your email for the OTP.");
-            
-          } else {
-            toast.error(response.data.msg || "An error occurred. Please try again.");
             navigate("/password-rest");
+          } else {
+            console.log("Response status is not 201:", response.status);
+             toast.error(response.data.msg || "An error occurred. Please try again.");
           }
+          
         } catch (err) {
           console.error("Error during reset password:", err);
           toast.error("An error occurred while sending otp. Please try again.");
@@ -49,7 +52,7 @@ function EmailForResetPass() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setlocalEmail(e.target.value)}
                   placeholder="Enter your email address"
                   required
                 />

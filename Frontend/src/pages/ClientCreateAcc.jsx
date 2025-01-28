@@ -10,7 +10,7 @@ function ClientCreateAcc() {
 
   const navigate = useNavigate();
 
-  const { backendUrl, setEmail, } = useContext(AppContext); 
+  const { backendUrl,  setEmail } = useContext(AppContext); 
 
 
   const [fullName, setFullname] = useState("");
@@ -41,7 +41,6 @@ function ClientCreateAcc() {
     try {
       let hasError = false;
   
-      // Password validations
       if (!isPasswordStrong(password)) {
         setPasswordError("Password must be at least 8 characters long, including uppercase, lowercase, numbers, and symbols.");
         hasError = true;
@@ -57,8 +56,7 @@ function ClientCreateAcc() {
       }
   
       if (hasError) return;
-  
-      // API call to signup
+
       const response = await axios.post(`${backendUrl}/api/auth/signup`, {
         fullName,
         email: email,
@@ -68,11 +66,12 @@ function ClientCreateAcc() {
       });
   
       if (response.status === 201) {
+        setEmail(email); 
         toast.success("Account created successfully! Please check your email for the OTP.");
-        setEmail(email);
         navigate("/verify-email");
-        
-      } else {
+      }
+      
+      else {
         toast.error(response.data.msg || "An error occurred. Please try again.");
        
       }

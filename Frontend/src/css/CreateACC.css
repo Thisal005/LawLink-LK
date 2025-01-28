@@ -223,6 +223,25 @@ body {
     font-size: 14px;
     margin-top: 5px;
   }
+
+
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear,
+  input[type="password"]::-webkit-contacts-auto-fill-button,
+  input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none !important;
+  }
+
+  input[type="password"]::-webkit-inner-spin-button,
+  input[type="password"]::-webkit-outer-spin-button,
+  input[type="password"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="password"] {
+    -webkit-text-security: disc !important;
+  }
   
   @media (max-width: 768px) {
     .main-container {
