@@ -47,9 +47,9 @@ function Clientlogin() {
 
   return (
     
-    <div className="main-container">
+    <div className="login-main-container">
 
-      <div className="animation-container">
+      <div className="login-animation-container">
         <video
           src="images/login.mp4"
           autoPlay
@@ -60,14 +60,15 @@ function Clientlogin() {
       </div>
 
     
-      <div className="form-container">
+      <div className="login-form-container">
         <h1>Log in to your account</h1>
-        <div className="line"></div>
+        <div className="login-line"></div>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
            
             <label>Email</label>
             <input
+              className="login-input"
               type="email"
               value={email}
               onChange={(e) => setEmailLocal(e.target.value)}
@@ -77,8 +78,9 @@ function Clientlogin() {
 
 
             <label>Password</label>
-            <div className="password-container">
+            <div className="login-password-container">
               <input
+                className="password-container-input"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

@@ -83,8 +83,8 @@ function ClientCreateAcc() {
   
 
   return (
-    <div className="main-container">
-      <div className="animation-container">
+    <div className="createacc-main-container">
+      <div className="createacc-animation-container">
         <video
           src="images/createacc.mp4"
           autoPlay
@@ -94,13 +94,14 @@ function ClientCreateAcc() {
         ></video>
       </div>
 
-      <div className="form-container">
+      <div className="createacc-form-container">
         <h1>Create Account</h1>
-        <div className="line"></div>
+        <div className="createacc-line"></div>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Full Name</label>
             <input
+            className="createacc-input"
               type="text"
               value={fullName}
               onChange={(e) => setFullname(e.target.value)}
@@ -110,6 +111,7 @@ function ClientCreateAcc() {
 
             <label>Email</label>
             <input
+             className="createacc-input"
               type="email"
               value={email}
               onChange={(e) => setEmailLocal(e.target.value)}
@@ -119,6 +121,7 @@ function ClientCreateAcc() {
 
             <label>Contact Number</label>
             <input
+             className="createacc-input"
               type="tel"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
@@ -127,7 +130,7 @@ function ClientCreateAcc() {
             />
 
             <label>Password</label>
-            <div className="password-container">
+            <div className="createacc-password-container">
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
@@ -146,8 +149,9 @@ function ClientCreateAcc() {
             {passwordError && <p className="error">{passwordError}</p>}
 
             <label>Confirm Password</label>
-            <div className="password-container">
+            <div className="createacc-password-container">
               <input
+                className="password-container-input"
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -168,12 +172,13 @@ function ClientCreateAcc() {
           <button type="submit" className="submit-btn" >
             Submit
           </button>
+          <div className="below-line"></div>
+          <button type="submit" className="login-btn" >
+            Login
+          </button>
         </form>
-        <div className="or">OR</div>
-        <button className="google-btn">
-          <img src="images/icons8-google-48.png" alt="Google Logo" />
-          Continue with Google
-        </button>
+
+       
       </div>
     </div>
   );

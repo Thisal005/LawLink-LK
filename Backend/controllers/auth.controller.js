@@ -33,7 +33,7 @@ export const signup = async (req, res) => {
             email,
             contact,
             verifyotp: otp,
-            verifyOtpExpires: Date.now() + 15 * 60 * 1000, 
+            verifyOtpExpires: Date.now() + 2 * 60 * 1000, 
         });
 
         await newUser.save(); 
@@ -62,7 +62,7 @@ export const signup = async (req, res) => {
                         ${otp}
                     </div>
                     <p style="font-size: 14px; color: #777;">
-                        This OTP will expire in <strong>5 minutes</strong> After that, it will expire, and you will need to request a new one.
+                        This OTP will expire in <strong>2 minutes</strong> After that, it will expire, and you will need to request a new one.
                     </p>
         
                     <p style="font-size: 14px; color: #777; margin-top: 20px; ">

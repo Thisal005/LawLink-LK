@@ -41,15 +41,16 @@ function EmailForResetPass() {
     
 
     return (
-        <div className="main-container">
-          <div className="form-container">
+        <div className="emailforreset-main-container">
+          <div className="emailforreset-form-container">
             <h1>Enter Your Email For Password Reset</h1>
-            <div className="line"></div>
+            <div className="emailforreset-line"></div>
             <form onSubmit={handleSubmit}>
               <div className="input-group">
     
                 <label>Email</label>
                 <input
+                  className="emailforreset-input"
                   type="email"
                   value={email}
                   onChange={(e) => setlocalEmail(e.target.value)}
