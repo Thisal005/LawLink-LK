@@ -1,0 +1,167 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('images/login%20bg.png') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.lawyer-createacc-main-container {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(212, 39, 39, 0.1);
+    overflow: hidden;
+    animation: float 100s ease-in-out infinite;
+    transition: all 0.3s ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.lawyer-createacc-animation-container {
+    flex: 1;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.lawyer-animation-video {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.lawyer-createacc-form-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.lawyer-createacc-input {
+    border: 2px solid #eaeaec;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.lawyer-createacc-password-container {
+    position: relative;
+    display: flex;
+    flex-direction: row; /* Change to column to stack inputs vertically */
+    width: 100%;
+  }
+  
+  .password-container-input {
+    padding: 12px;
+    width: 100%;
+    font-size: 14px;
+    padding-right: 40px; /* Ensure there's space for the eye icon */
+    box-sizing: border-box;
+    margin-bottom: 10px; /* Add some space between the inputs */
+  }
+  
+  .toggle-password-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%; /* Center the button vertically */
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .toggle-password-btn img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .error {
+    color: rgb(0, 94, 255);
+    font-size: 14px;
+  }
+
+@media (max-width: 800px) {
+    .lawyer-createacc-main-container {
+        flex-direction: column;
+        max-width: 90%;
+        height: auto;
+    }
+
+    .lawyer-createacc-animation-container {
+        height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .lawyer-createacc-main-container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .lawyer-createacc-animation-container {
+        height: 150px;
+    }
+
+    .lawyer-createacc-form-container {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lawyer-createacc-animation-container {
+        display: none;
+    }
+
+    .lawyer-createacc-form-container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    input, .submit-btn, .login-btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 300px) {
+    .lawyer-createacc-form-container {
+        padding: 8px;
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    input, .submit-btn, .login-btn {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
