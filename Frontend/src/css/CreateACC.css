@@ -60,7 +60,7 @@ body {
 
 .createacc-form-container {
   flex: 1;
-  padding: 40px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -172,7 +172,7 @@ input:focus {
   position: relative;
   display: flex;
   align-items: center;
-  
+
 }
 
 .password-container-input {

@@ -35,7 +35,7 @@ function App() {
         <Route path="/lawyer-login" element={<Lawyerlogin />} />
         <Route path="/lawyer-email-for-password-reset" element={<LawyerEmailForResetPass />} />
         <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
-        <Route path="/lawyer-send-reset-otp" element={<LawyerRestPasswordOtp />} />   
+        <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />   
         
       </Routes>
       </div>   

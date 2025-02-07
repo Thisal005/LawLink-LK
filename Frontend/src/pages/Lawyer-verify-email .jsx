@@ -20,9 +20,9 @@ function LawyerVerifyEmail() {
     setOtp(newOtp);
   
     if (value && index < otp.length - 1) {
-      e.target.nextSibling?.focus(); // Move to next input
+      e.target.nextSibling?.focus(); 
     } else if (!value && index > 0) {
-      e.target.previousSibling?.focus(); // Move to previous input
+      e.target.previousSibling?.focus(); 
     }
   };
   

@@ -16,16 +16,28 @@ function Newpassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const isPasswordStrong = (password) => {
-    return (
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /\d/.test(password) &&
-      /[!@#$%^&*(),.?":{}|<>]/.test(password)
-    );
+  const calculatePasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/\d/.test(password)) strength += 1;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
+
+    return strength;
   };
+
+  // Add missing isPasswordStrong function
+  const isPasswordStrong = (password) => {
+    return calculatePasswordStrength(password) >= 4;
+  };
+
+  // Update password strength when password changes
+  React.useEffect(() => {
+    setPasswordStrength(calculatePasswordStrength(password));
+  }, [password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,8 +78,6 @@ function Newpassword() {
       if (response.status === 200) {
         toast.success("Password reset successfully!");
         navigate("/login");
-      } else {
-        toast.error(response.data.msg || "An error occurred. Please try again.");
       }
     } catch (err) {
       console.error("Error during password reset:", err);
@@ -75,12 +85,34 @@ function Newpassword() {
     }
   };
 
+  const getPasswordStrengthColor = () => {
+    switch (passwordStrength) {
+      case 0:
+      case 1:
+        return "red";
+      case 2:
+      case 3:
+        return "orange";
+      case 4:
+      case 5:
+        return "green";
+      default:
+        return "red";
+    }
+  };
+
+  const getPasswordStrengthText = () => {
+    if (passwordStrength === 0) return "";
+    const strengthTexts = ["Weak", "Fair", "Good", "Strong", "Very Strong"];
+    return strengthTexts[passwordStrength - 1];
+  };
+
   return (
     <div className="new-password-main-container">
-      <div className="form-container">
-        <h1>Create New Password</h1>
-        <div className="line"></div>
-        <form onSubmit={handleSubmit}>
+    <div className="new-password-form-container"> 
+      <h1>Create New Password</h1>
+      <div className="new-password-underline"></div>  
+      <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Password</label>
             <div className="password-container">
@@ -128,6 +160,24 @@ function Newpassword() {
             </div>
             {confirmPasswordError && <p className="error">{confirmPasswordError}</p>}
           </div>
+
+          {password && (
+            <>
+              <div className="password-strength-text">
+                Password Strength: {getPasswordStrengthText()}
+              </div>
+              <div className="password-strength-container">
+                <div
+                  className="password-strength-bar"
+                  style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getPasswordStrengthColor() }}
+                ></div>
+              </div>
+            </>
+          )}
+
+          {password !== confirmPassword && confirmPassword && (
+            <p className="error">Passwords do not match.</p>
+          )}
 
           <button type="submit" className="submit-btn">
             Submit

@@ -3,192 +3,289 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-
 import "../css/lawyerCreateAcc.css";
 
 function LawyerCreateAcc() {
   const navigate = useNavigate();
   const { backendUrl, setEmail } = useContext(AppContext);
 
-  const [fullName, setFullname] = useState("");
-  const [email, setEmailLocal] = useState("");
-  const [contact, setContact] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    contact: "",
+    password: "",
+    confirmPassword: "",
+    document: null,
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState(null);
-  const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-  const [document, setDocument] = useState("");
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
-  const isPasswordStrong = (password) => {
-    return (
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /\d/.test(password) &&
-      /[!@#$%^&*(),.?":{}|<>]/.test(password)
-    );
+  const calculatePasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/\d/.test(password)) strength += 1;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
+
+    return strength;
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  axios.defaults.withCredentials = true;
+  const validateForm = () => {
+    const newErrors = {};
 
-  try {
-    let hasError = false;
+    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required.";
+    if (!formData.email.trim()) newErrors.email = "Email is required.";
+    if (!formData.contact.trim()) newErrors.contact = "Contact number is required.";
+    if (!formData.password) newErrors.password = "Password is required.";
+    if (!formData.confirmPassword) newErrors.confirmPassword = "Confirm password is required.";
+    if (!formData.document) newErrors.document = "Document is required.";
 
-    if (!isPasswordStrong(password)) {
-      setPasswordError(
-        "Password must be at least 8 characters long, including uppercase, lowercase, numbers, and symbols."
-      );
-      hasError = true;
-    } else {
-      setPasswordError(null);
+    if (formData.password && !calculatePasswordStrength(formData.password)) {
+      newErrors.password = "Password must be at least 8 characters long, including uppercase, lowercase, numbers, and symbols.";
     }
 
-    if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match. Please try again.");
-      hasError = true;
-    } else {
-      setConfirmPasswordError(null);
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
     }
 
-    if (hasError) return;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    const formData = new FormData();
-    formData.append("fullName", fullName);
-    formData.append("email", email);
-    formData.append("contact", contact);
-    formData.append("password", password);
-    formData.append("confirmPassword", confirmPassword);
-    formData.append("documentForVerification", document);
-
-    const response = await axios.post(`${backendUrl}/api/lawyer/signup`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    if (response.status === 201) {
-      setEmail(email);
-      toast.success("Account created successfully! Please check your email for the OTP.");
-      navigate("/lawyer-verify-email");
-    } else {
-      toast.error(response.data.msg || "An error occurred. Please try again.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+  
+    setIsSubmitting(true);
+    axios.defaults.withCredentials = true;
+  
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("fullName", formData.fullName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("contact", formData.contact);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("confirmPassword", formData.confirmPassword);
+      formDataToSend.append("documentForVerification", formData.document);
+  
+      const response = await axios.post(`${backendUrl}/api/lawyer/signup`, formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  
+      if (response.status === 201) {
+        setEmail(formData.email);
+        toast.success("Account created successfully! Please check your email for the OTP.");
+        navigate("/lawyer-verify-email");
+      } else {
+        toast.error(response.data.msg || "An error occurred. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error during signup:", err);
+      toast.error("An error occurred while creating your account. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-  } catch (err) {
-    console.error("Error during signup:", err);
-    toast.error("An error occurred while creating your account. Please try again.");
-  }
-};
+  };
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (name === "password") {
+      const strength = calculatePasswordStrength(value);
+      setPasswordStrength(strength);
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
+  };
+
+  const getPasswordStrengthColor = () => {
+    switch (passwordStrength) {
+      case 0:
+      case 1:
+        return "red";
+      case 2:
+      case 3:
+        return "orange";
+      case 4:
+      case 5:
+        return "green";
+      default:
+        return "red";
+    }
+  };
+
   return (
-    <div className="lawyer-createacc-main-container">
-      <div className="lawyer-createacc-animation-container">
-        <video
-          src="images/createacc.mp4"
-          autoPlay
-          loop
-          muted
-          className="lawyer-animation-video"
-        ></video>
+    <div className="main-container">
+      <div className="animation-container">
+        <div className="text-white text-center">
+          <h2>Welcome to LawLink LK</h2>
+          <p>Join our network of legal professionals</p>
+        </div>
+        <div className="video-container">
+          <video src="images/gtrfe.mp4" autoPlay loop muted className="animation-video"></video>
+        </div>
+        <div className="logo-container">
+          <img src="images/logo.png" alt="Logo" className="logo" />
+        </div>
       </div>
 
-      <div className="lawyer-createacc-form-container">
+      <div className="form-container">
         <h1>Create Account</h1>
-        <div className="createacc-line"></div>
+        <div className="line"></div>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Full Name</label>
             <input
-              className="lawyer-createacc-input"
+              className="normal-input"
               type="text"
-              value={fullName}
-              onChange={(e) => setFullname(e.target.value)}
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
               placeholder="Enter your full name"
               required
             />
+            {errors.fullName && <p className="error">{errors.fullName}</p>}
 
-            <label>Email</label>
-            <input
-              className="lawyer-createacc-input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmailLocal(e.target.value)}
-              placeholder="Enter your email address"
-              required
-            />
-
-            <label>Contact Number</label>
-            <input
-              className="lawyer-createacc-input"
-              type="tel"
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
-              placeholder="Enter your contact number"
-              required
-            />
-
-            <label>Document For Verification</label>
-            <input
-              className="lawyer-createacc-input"
-              type="file"
-              accept=".pdf, .jpg, .jpeg, .png"
-              onChange={(e) => setDocument(e.target.files[0])}
-              required
-            />
-
-            <label>Password & Confirm Password</label>
-            <div className="lawyer-createacc-password-container">
-              <div style={{ position: 'relative', width: '100%', marginBottom: '0px' }}>
+            <div className="contacts">
+              <div>
+                <label>Email</label>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
+                  className="contacts-input"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email address"
                   required
-                  className="password-container-input"
                 />
-                <button
-                  type="button"
-                  className="toggle-password-btn"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                >
-                  {showPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
-                </button>
+                {errors.email && <p className="error">{errors.email}</p>}
               </div>
 
-              <div style={{ position: 'relative', width: '100%' }}>
+              <div>
+                <label>Contact Number</label>
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm password"
+                  className="contacts-input"
+                  type="tel"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  placeholder="Enter your contact number"
                   required
-                  className="password-container-input"
                 />
-                <button
-                  type="button"
-                  className="toggle-password-btn"
-                  onClick={() => setShowConfirmPassword((prev) => !prev)}
-                >
-                  {showConfirmPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
-                </button>
+                {errors.contact && <p className="error">{errors.contact}</p>}
               </div>
             </div>
 
-            {passwordError && <p className="error">{passwordError}</p>}
-            {confirmPasswordError && <p className="error">{confirmPasswordError}</p>}
+            <div className="file-input-wrapper">
+              <label>Document For Verification</label>
+              <div className="file-upload-container">
+                <input
+                  type="file"
+                  name="document"
+                  id="document"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  onChange={handleChange}
+                  className="file-input"
+                  required
+                />
+                <label htmlFor="document" className="file-upload-label">
+                  <span className="file-upload-text">
+                    {formData.document ? formData.document.name : "Upload your document (PDF, JPG, PNG)"}
+                  </span>
+                  <span className="file-upload-button">Choose File</span>
+                </label>
+              </div>
+              {errors.document && <p className="error">{errors.document}</p>}
+            </div>
+
+            <div className="passwords">
+              <div className="password-input-wrapper">
+                <label>Password</label>
+                <div className="password-input-container">
+                  <input
+                    className="input"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    onFocus={() => setIsPasswordFocused(true)}
+                    onBlur={() => setIsPasswordFocused(false)}
+                    placeholder="Enter password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="password-input-wrapper">
+                <label>Confirm Password</label>
+                <div className="password-input-container">
+                  <input
+                    className="input"
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {(isPasswordFocused || formData.password) && (
+              <>
+                <div className="password-strength-text">
+                  Password Strength: {["Weak", "Fair", "Good", "Strong", "Very Strong"][passwordStrength - 1]}
+                </div>
+                <div className="password-strength-container">
+                  <div
+                    className="password-strength-bar"
+                    style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getPasswordStrengthColor() }}
+                  ></div>
+                </div>
+              </>
+            )}
+
+            {formData.password !== formData.confirmPassword && formData.confirmPassword && (
+              <p className="error" style={{ alignItems: "center" }}>Passwords do not match.</p>
+            )}
           </div>
 
-          <button type="submit" className="submit-btn">
-            Submit
-          </button>
-          <div className="below-line"></div>
-          <button type="button" className="login-btn" onClick={() => navigate("/login")}>
-            Login
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
+
+        <div className="login">
+          <p onClick={() => navigate("/lawyer-login")}>
+            Already have an account? <u><a href="#"><b>Login</b></a></u>
+          </p>
+        </div>
       </div>
     </div>
   );

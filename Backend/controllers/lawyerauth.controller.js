@@ -59,7 +59,7 @@ export const signup = async (req, res) => {
                 contact,
                 documentForVerification,
                 verifyotp: otp,
-                verifyOtpExpires: Date.now() + 2 * 60 * 1000,
+                verifyOtpExpires: Date.now() + 5 * 60 * 1000,
             });
 
             await newLawyer.save();
@@ -188,14 +188,14 @@ export const sendVerifyOtp = async (req, res) => {
 
         const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-        user.resetOtp = otp;
-        user.resetOtpExpires = Date.now() + 2 * 60 * 1000;
+        lawyer.verifyotp = otp;
+        lawyer.verifyOtpExpires = Date.now() + 2 * 60 * 1000;
 
-        await user.save();
+        await lawyer.save();
 
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
-            to: user.email,
+            to: lawyer.email,
             subject: "Welcome to LawLink LK - Verify your email - New OTP",
             html: `
              <            <div style="text-align: center; margin: 10px 0;">
