@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -34,6 +35,14 @@ export default tseslint.config(
 // import reactRefresh from 'eslint-plugin-react-refresh';
 // import tseslint from 'typescript-eslint';
 
+=======
+// import js from '@eslint/js';
+// import globals from 'globals';
+// import reactHooks from 'eslint-plugin-react-hooks';
+// import reactRefresh from 'eslint-plugin-react-refresh';
+// import tseslint from 'typescript-eslint';
+
+>>>>>>> Stashed changes
 // export default tseslint.config(
 //   { ignores: ['dist'] },
 //   {
@@ -56,4 +65,7 @@ export default tseslint.config(
 //     },
 //   }
 // );
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
