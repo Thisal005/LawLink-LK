@@ -125,7 +125,7 @@ function Newpassword() {
               />
               <button
                 type="button"
-                className="toggle-password-btn"
+                className="new-toggle-password-btn"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? (
@@ -148,7 +148,7 @@ function Newpassword() {
               />
               <button
                 type="button"
-                className="toggle-password-btn"
+                className="new-toggle-password-btn"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
               >
                 {showConfirmPassword ? (

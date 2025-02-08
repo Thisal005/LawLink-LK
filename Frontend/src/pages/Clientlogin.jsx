@@ -51,11 +51,11 @@ function Clientlogin() {
 
       <div className="login-animation-container">
         <video
-          src="images/login.mp4"
+          src="images/gtrfe-1.mp4"
           autoPlay
           loop
           muted
-          className="animation-video"
+          className="login-animation-video"
         ></video>
       </div>
 
@@ -81,6 +81,7 @@ function Clientlogin() {
             <div className="login-password-container">
               <input
                 className="password-container-input"
+               
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -89,7 +90,7 @@ function Clientlogin() {
               />
               <button
                 type="button"
-                className="toggle-password-btn"
+                className="login-toggle-password-btn"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? <img src="images/close.png"/> : <img src="images/open.png"/>}

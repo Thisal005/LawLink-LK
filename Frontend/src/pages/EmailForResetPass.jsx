@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {  toast } from "react-toastify";
 import axios from "axios";
 
-import "../css/CreateAcc.css";
+import "../css/Clientlogin.css";
 
 function EmailForResetPass() {
     const [email, setlocalEmail] = useState("");
@@ -51,6 +51,7 @@ function EmailForResetPass() {
                 <label>Email</label>
                 <input
                   className="emailforreset-input"
+             
                   type="email"
                   value={email}
                   onChange={(e) => setlocalEmail(e.target.value)}

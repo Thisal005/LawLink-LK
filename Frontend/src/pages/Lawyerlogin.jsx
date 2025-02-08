@@ -51,7 +51,7 @@ function Lawyerlogin() {
 
       <div className="login-animation-container">
         <video
-          src="images/login.mp4"
+          src="images/gtrfe-1.mp4"
           autoPlay
           loop
           muted

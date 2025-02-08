@@ -183,21 +183,22 @@ p.otp:hover {
 @media (max-width: 480px) {
   .verify-email-main-container {
       padding: 1rem;
+      width: 300px;
   }
 
   .otp-box {
-      width: 2rem;
-      height: 2rem;
+      width: 1.5rem;
+      height: 1.5rem;
       font-size: 1rem;
   }
 
   button.otp {
-      font-size: 0.8rem;
+      font-size: 0.5rem;
       padding: 0.5rem;
   }
 
   h1 {
-      font-size: 1.2rem;
+      font-size: 1rem;
   }
 
   label.otp {

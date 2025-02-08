@@ -215,6 +215,19 @@ input {
     align-items: center;
     width: 260px;
   }
+
+  
+
+  .client-contacts-input{
+    width: 510px;
+}
+
+  .client-contacts-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 260px;
+  }
   
   .password-input-container input {
     flex-grow: 1;
@@ -377,7 +390,7 @@ input {
 
   .normal-input {
       width: 100%;
-      max-width: 410px;
+      max-width: 460px;
   }
 
   .contacts, .passwords {
@@ -393,7 +406,7 @@ input {
 
   .password-strength-container {
       width: 100%;
-      max-width: 400px;
+      max-width: 300px;
   }
 
   .file-upload-container {
@@ -435,26 +448,22 @@ input {
   }
 
   .normal-input {
-      width: 100%;
-      max-width: 90%;
+      width: 95%;
+     
   }
-
-  
   .password-input-container {
       width: 100%;
   }
 
   .contacts{
-      width: 95%;
+      width: 100%;
   }
 
   .contacts-input{
     width: 95%;
   }
 
-  .password-strength-container {
-      width: 100%;
-  }
+ 
 
   .file-upload-container {
       width: 90%;
@@ -491,7 +500,29 @@ input {
 
   .main-container {
       border-radius: 16px;
+      width: 350px;
   }
+
+  .form-container {
+    padding: 1rem;
+}
+
+.form-container h1 {
+    font-size: 1.25rem;
+}
+
+
+.password-input-container {
+    width: 320px;
+   
+}
+
+
+
+
+
+
+
 }
 
 /* Height-based media query for shorter screens */

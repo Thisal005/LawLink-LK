@@ -65,39 +65,38 @@ function LawyerCreateAcc() {
     try {
       let hasError = false;
   
-      if (!calculatePasswordStrength(password)) {
-        setPasswordError("Password must be at least 8 characters long, including uppercase, lowercase, numbers, and symbols.");
+      if (!calculatePasswordStrength(formData.password)) {
+        setErrors(prev => ({
+          ...prev,
+          password: "Password must be at least 8 characters long, including uppercase, lowercase, numbers, and symbols."
+        }));
         hasError = true;
-      } else {
-        setPasswordError(null);
       }
   
-      if (password !== confirmPassword) {
-        setShowConfirmPassword("Passwords do not match. Please try again.");
+      if (formData.password !== formData.confirmPassword) {
+        setErrors(prev => ({
+          ...prev,
+          confirmPassword: "Passwords do not match. Please try again."
+        }));
         hasError = true;
-      } else {
-        setConfirmPasswordError(null);
       }
   
       if (hasError) return;
-
+  
       const response = await axios.post(`${backendUrl}/api/auth/signup`, {
-        fullName,
-        email: email,
-        contact,
-        password,
-        confirmPassword,
+        fullName: formData.fullName,
+        email: formData.email,
+        contact: formData.contact,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
       });
   
       if (response.status === 201) {
-        setEmail(email); 
+        setEmail(formData.email);
         toast.success("Account created successfully! Please check your email for the OTP.");
         navigate("/verify-email");
-      }
-      
-      else {
+      } else {
         toast.error(response.data.msg || "An error occurred. Please try again.");
-       
       }
     } catch (err) {
       console.error("Error during signup:", err);
@@ -164,16 +163,14 @@ function LawyerCreateAcc() {
               onChange={handleChange}
               placeholder="Enter your full name"
               required
-              style={{ width: "96%" }}
             />
             {errors.fullName && <p className="error">{errors.fullName}</p>}
 
-            {/* Two-Column Layout for Email and Contact */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <div className="client-contacts">
               <div>
                 <label>Email</label>
                 <input
-                  className="w-full px-4 py-2 border rounded-md"
+                  className="normal-input"
                   type="email"
                   name="email"
                   value={formData.email}
@@ -187,7 +184,7 @@ function LawyerCreateAcc() {
               <div>
                 <label>Contact Number</label>
                 <input
-                  className="w-full px-3 py- border rounded-md"
+                  className="normal-input"
                   type="tel"
                   name="contact"
                   value={formData.contact}
@@ -200,9 +197,9 @@ function LawyerCreateAcc() {
             </div>
 
             <div className="passwords">
-              <div className="password-input-wrapper" >
+              <div className="password-input-wrapper">
                 <label>Password</label>
-                <div className="password-input-container" style={{ width: "102%" }}>
+                <div className="password-input-container">
                   <input
                     className="input"
                     type={showPassword ? "text" : "password"}
@@ -213,7 +210,6 @@ function LawyerCreateAcc() {
                     onBlur={() => setIsPasswordFocused(false)}
                     placeholder="Enter password"
                     required
-                    style={{ width: "95%" }}
                   />
                   <button
                     type="button"
@@ -228,7 +224,7 @@ function LawyerCreateAcc() {
 
               <div className="password-input-wrapper">
                 <label>Confirm Password</label>
-                <div className="password-input-container" style={{ width: "102%" }}>
+                <div className="password-input-container">
                   <input
                     className="input"
                     type={showConfirmPassword ? "text" : "password"}
@@ -275,7 +271,7 @@ function LawyerCreateAcc() {
         </form>
 
         <div className="login">
-          <p onClick={() => navigate("/lawyer-login")}>
+          <p onClick={() => navigate("/login")}>
             Already have an account? <u><a href="#"><b>Login</b></a></u>
           </p>
         </div>
