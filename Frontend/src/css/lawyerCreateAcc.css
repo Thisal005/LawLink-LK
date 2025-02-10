@@ -159,6 +159,22 @@ label {
     gap: 0.375rem;
 }
 
+.disclaimer {
+    font-size: 0.875rem;
+    color: #81a8e8;
+    margin-top: 2rem;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 0;
+
+}
+
+.disclaimer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 400;
+}
+
 .normal-input {
     width: 510px;
 }
@@ -461,6 +477,11 @@ input {
 
   .contacts-input{
     width: 95%;
+  }
+
+  .disclaimer{
+    font-size: 12px;
+    line-height: 15px;
   }
 
  

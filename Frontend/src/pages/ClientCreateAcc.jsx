@@ -139,7 +139,7 @@ function LawyerCreateAcc() {
       <div className="animation-container">
         <div className="text-white text-center">
           <h2>Welcome to LawLink LK</h2>
-          <p>Join our network of legal professionals</p>
+          <p>Your One-Stop Solution for Legal Services</p>
         </div>
         <div className="video-container">
           <video src="images/gtrfe.mp4" autoPlay loop muted className="animation-video"></video>
@@ -275,6 +275,7 @@ function LawyerCreateAcc() {
             Already have an account? <u><a href="#"><b>Login</b></a></u>
           </p>
         </div>
+        <p className="disclaimer"> By creating an account, you agree to our <u><a href="#"><b>Terms of Use</b></a></u> and <u><a href="#"><b>Privacy Policy</b></a></u>.</p>
       </div>
     </div>
   );

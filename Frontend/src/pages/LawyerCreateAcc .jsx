@@ -205,7 +205,11 @@ function LawyerCreateAcc() {
                   <span className="file-upload-button">Choose File</span>
                 </label>
               </div>
+<<<<<<< Updated upstream
               <p style={{ color: " rgb(0, 21, 255)", fontSize: "10px", marginTop: "4px" }}>Please Upload Your Lawyer ID or Bar Association Certificate</p>
+=======
+              <p style={{ color: "blue", fontSize: "10px" }}>Please upload your lawyer Id or Bar association certificate</p>
+>>>>>>> Stashed changes
               {errors.document && <p className="error">{errors.document}</p>}
             </div>
 
