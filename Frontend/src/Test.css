@@ -1,0 +1,122 @@
+/* CSS (App.css) */
+.app {
+    display: flex;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background: #002366;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .lk {
+    color: #4CAF50;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu li {
+    margin: 15px 0;
+    cursor: pointer;
+  }
+  
+  .cases {
+    margin-top: auto;
+  }
+  
+  .cases h4 {
+    margin-bottom: 10px;
+  }
+  
+  .cases ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .cases li {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .cases li.active {
+    background: #0047AB;
+  }
+  
+  .chatbox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #F5F5F5;
+    border-left: 1px solid #CCC;
+  }
+  
+  .chat-header {
+    padding: 15px;
+    background: #002366;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .chat-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .message {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .message.assistant {
+    background: #E0E0E0;
+    align-self: flex-start;
+  }
+  
+  .message.user {
+    background: #4CAF50;
+    color: white;
+    align-self: flex-end;
+  }
+  
+  .chat-footer {
+    padding: 10px;
+    background: white;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #CCC;
+  }
+  
+  .input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #CCC;
+    border-radius: 5px;
+  }
+  
+  .upload-button {
+    padding: 10px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }

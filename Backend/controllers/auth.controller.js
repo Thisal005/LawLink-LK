@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
-import genarateToken from "../utills/generateToken.js";
+import generateToken from "../utills/generateToken.js";
 import transporter from "../config/nodemailer.js";
 import dotenv from "dotenv";
+import e from "express";
 
 dotenv.config();
 
@@ -11,25 +12,20 @@ export const signup = async (req, res) => {
     try {
         const { fullName, password, confirmPassword, email, contact } = req.body;
 
-        // Check if passwords match
         if (password !== confirmPassword) {
             return res.status(400).json({ msg: "Passwords do not match" });
         }
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ msg: "User already exists" });
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-        const username = fullName.toLowerCase().replace(/\s+/g, ""); // Create a username
+        const username = fullName.toLowerCase().replace(/\s+/g, ""); 
 
-        // Generate OTP
         const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-        // Create a new user with the OTP and its expiration time
         const newUser = new User({
             fullName,
             username,
@@ -37,19 +33,19 @@ export const signup = async (req, res) => {
             email,
             contact,
             verifyotp: otp,
-            verifyOtpExpires: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes
+            verifyOtpExpires: Date.now() + 2 * 60 * 1000, 
         });
 
-        await newUser.save(); // Save the user to the database
+        await newUser.save(); 
+        const savedUser = await User.findById(newUser._id);
 
-        // Send the OTP via email
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: email,
             subject: "Welcome to LawLink LK - Verify your email",
             html: `
-             <div style="text-align: center; margin: 10px 0;">
-                <img src="https://i.postimg.cc/3NTwxRWq/img1.png" 
+                <            <div style="text-align: center; margin: 10px 0;">
+                <img src="https://i.ibb.co/Tq6mb2M/img1.png" 
                     alt="LawLink LK Header Image" 
                     style="max-width: 100%; max-width: 640px; height: auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
             </div>
@@ -66,7 +62,7 @@ export const signup = async (req, res) => {
                         ${otp}
                     </div>
                     <p style="font-size: 14px; color: #777;">
-                        This OTP will expire in <strong>5 minutes</strong> After that, it will expire, and you will need to request a new one.
+                        This OTP will expire in <strong>2 minutes</strong> After that, it will expire, and you will need to request a new one.
                     </p>
         
                     <p style="font-size: 14px; color: #777; margin-top: 20px; ">
@@ -90,20 +86,18 @@ export const signup = async (req, res) => {
                         </p>
                     </div>
         
-                    <img src="https://i.postimg.cc/15RKWL61/lawlink-hori.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
+                    <img src="https://i.ibb.co/sHkgFsX/lawlink-hori-copy.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
                 </div>
             </div>
             `,
         };
 
         await transporter.sendMail(mailOptions);
-        res.status(200).json({msg: "Otp sent successfully"}); // Send the email
 
-        // Respond to the client
         res.status(201).json({
-            _id: newUser._id,
-            fullName: newUser.fullName,
-            username: newUser.username,
+            _id: savedUser._id,
+            fullName: savedUser.fullName,
+            username: savedUser.username,
             msg: "User created successfully. Please check your email for the OTP.",
         });
     } catch (err) {
@@ -111,6 +105,7 @@ export const signup = async (req, res) => {
         res.status(500).json({ msg: "Something went wrong" });
     }
 };
+
 
 
 
@@ -125,7 +120,12 @@ export const login = async(req, res) => {
         if(!isMatch){
             return res.status(400).json({ msg: "Invalid credentials" });
         }
-        genarateToken(user._id, res);   
+
+        generateToken(user._id, res);   
+
+        if(!user.isVerified){
+            return res.status(400).json({ msg: "User does not verified" });
+        }
 
         res.status(200).json({
             _id: user._id,
@@ -152,29 +152,33 @@ export const logout = (req, res) => {
 };
 
 export const sendVerifyOtp = async (req, res) => {
-    try{
-        const{userId} = req.body;
+    const { email } = req.body;
 
-        const user = await User.findById(userId);
+    if (!email) {
+        return res.status(400).json({ msg: "Missing email" });
+    }
 
-        if(!user){
-            return res.status(400).json({msg: "User does not exist"});
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ msg: "User does not exist" });
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-        user.verifyotp = otp;
-        user.verifyOtpExpires = Date.now() + 5 * 60 * 1000;
+        user.resetOtp = otp;
+        user.resetOtpExpires = Date.now() + 2 * 60 * 1000;
 
         await user.save();
 
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: user.email,
-            subject: "Welcome to LawLink LK - Verify your email",
+            subject: "Welcome to LawLink LK - Verify your email - New OTP",
             html: `
-            <div style="text-align: center; margin: 10px 0;">
-                <img src="https://i.postimg.cc/3NTwxRWq/img1.png" 
+             <            <div style="text-align: center; margin: 10px 0;">
+                <img src="https://i.ibb.co/Tq6mb2M/img1.png" 
                     alt="LawLink LK Header Image" 
                     style="max-width: 100%; max-width: 640px; height: auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
             </div>
@@ -185,7 +189,7 @@ export const sendVerifyOtp = async (req, res) => {
                     <h2 style="color: #1e90ff; font-size: 28px;">Hi ${user.fullName},</h2>
                     <p style="font-size: 16px; color: #555;">
                         Welcome to <b>LawLink LK!</b><br>
-                        Thank you for registering with us. To complete the account creation process, please use the OTP below:
+                        Here is your new one-time password (OTP) for account creation process:
                     </p>
                     <div style="font-size: 32px; font-weight: bold; color:rgb(81, 0, 255); background-color: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
                         ${otp}
@@ -215,7 +219,7 @@ export const sendVerifyOtp = async (req, res) => {
                         </p>
                     </div>
         
-                    <img src="https://i.postimg.cc/15RKWL61/lawlink-hori.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
+                    <img src="https://i.ibb.co/sHkgFsX/lawlink-hori-copy.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
                 </div>
             </div>
             `,
@@ -224,25 +228,25 @@ export const sendVerifyOtp = async (req, res) => {
         await transporter.sendMail(mailOptions);
         
 
-        res.status(200).json({msg: "Otp sent successfully"});
-
+        res.status(200).json({ msg: "Otp sent successfully" });
+       
 
     }catch(error){
-        console.error("Error in sendVerifyOtp controller:", error.message);
+        console.error("Error in sendRestPasswordOtp controller:", error.message);
         res.status(500).json({msg: "Something went wrong"});
-
     }
 };
 
 export const verifyEmail = async (req, res) => {
-    const { userId, otp } = req.body;
+    const { email, otp } = req.body;
 
-    if (!userId || !otp) {
+    if (!email || !otp) {
         return res.status(400).json({ msg: "Missing userId or otp" });
     }
 
     try {
-        const user = await User.findById(userId);
+        
+        const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(400).json({ msg: "User does not exist" });
@@ -262,7 +266,14 @@ export const verifyEmail = async (req, res) => {
 
         await user.save();
 
-        res.status(200).json({ msg: "Email verified successfully" });
+      
+
+        try{
+            res.status(200).json({msg: "User is authenticated"});
+        }catch(error){
+            console.error("Error in isAuthenticated controller:", error.message);
+            res.status(500).json({msg: "Something went wrong"});
+        }
 
     } catch (err) {
         console.error("Error in verifyEmail controller:", err.message);
@@ -270,14 +281,6 @@ export const verifyEmail = async (req, res) => {
         }
 };
 
-export const isAuthenticated = async (req, res) => {
-    try{
-        res.status(200).json({msg: "User is authenticated"});
-    }catch(error){
-        console.error("Error in isAuthenticated controller:", error.message);
-        res.status(500).json({msg: "Something went wrong"});
-    }
-};
 
 export const sendRestPasswordOtp = async (req, res) => {
     const { email } = req.body;
@@ -306,7 +309,7 @@ export const sendRestPasswordOtp = async (req, res) => {
             subject: "Reset your password",
             html: `
              <div style="text-align: center; margin: 10px 0;">
-                <img src="https://i.postimg.cc/3NTwxRWq/img1.png" 
+                <img src="https://i.ibb.co/Tq6mb2M/img1.png" 
                     alt="LawLink LK Header Image" 
                     style="max-width: 100%; max-width: 640px; height: auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
             </div>
@@ -345,7 +348,7 @@ export const sendRestPasswordOtp = async (req, res) => {
                         </p>
                     </div>
         
-                    <img src="https://i.postimg.cc/15RKWL61/lawlink-hori.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
+                    <img src="https://i.ibb.co/sHkgFsX/lawlink-hori-copy.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
                 </div>
             </div>
             `,
@@ -364,11 +367,13 @@ export const sendRestPasswordOtp = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-    const { email, otp, newPassword } = req.body;
+    const { email, otp } = req.body;
 
-    if (!email || !otp || !newPassword) {
+    if (!email || !otp ) {
         return res.status(400).json({ msg: "Missing fields" });
     }
+
+    
 
     try {
         const user = await User.findOne({ email });
@@ -385,15 +390,7 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ msg: "Otp has expired" });
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        user.password = hashedPassword;
-        user.resetOtp = '';
-        user.resetOtpExpires = 0;
-
-        await user.save();
-
-        res.status(200).json({ msg: "Password reset successfully" });
+      
 
     } catch (err) {
         console.error("Error in resetPassword controller:", err.message);
@@ -401,3 +398,32 @@ export const resetPassword = async (req, res) => {
         }
         
     }
+
+export const newPassword = async (req, res) => {
+        try {
+            const { email, newPassword } = req.body;
+            
+            if (!email || !newPassword) {
+                return res.status(400).json({ msg: "Missing required fields" });
+            }
+    
+            const user = await User.findOne({ email });
+    
+            if (!user) {
+                return res.status(400).json({ msg: "User not found" });
+            }
+    
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+            user.password = hashedPassword;
+            user.resetOtp = '';
+            user.resetOtpExpires = 0;
+    
+            await user.save();
+    
+            res.status(200).json({ msg: "Password reset successfully" });
+        } catch (error) {
+            console.error("Error in newPassword controller:", error);
+            res.status(500).json({ msg: "Something went wrong" });
+        }
+    };

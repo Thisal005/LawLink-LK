@@ -1,28 +1,36 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import cors from "cors"; // Import cors
+import cors from "cors"; 
 import authRoute from "./routes/auth.route.js";
 import messageRoute from "./routes/message.route.js";
 import connectTomongoDB from "./db/connectTomongoDB.js";
+import userRouter from "./routes/user.route.js";
+import lawyerAuthRouter from "./routes/lawyerAuth.route.js";
+import lawyerRouter from "./routes/lawyer.route.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json()); // For parsing application/json
+app.use(express.json()); 
 app.use(cookieParser());
 
-// Configure allowed origins for CORS
-const allowedOrigins = ['http://localhost:5173'];
-app.use(cors({ origin: allowedOrigins, credentials: true })); // Use cors middleware
 
-// Routes
+const allowedOrigins = ['http://localhost:5173'];
+app.use(cors({ origin: allowedOrigins, credentials: true })); 
+
+
 app.use("/api/auth/", authRoute);
 app.use("/api/messages/", messageRoute);
+app.use("/api/user/", userRouter)
+app.use("/api/lawyer/", lawyerAuthRouter)
+app.use("/api/lawyer-data/", lawyerRouter)
+app.use("/uploads", express.static("uploads"));
 
-// Start the server
+
+
 app.listen(PORT, () => {
     connectTomongoDB();
     console.log(`Server running on port ${PORT}`);
