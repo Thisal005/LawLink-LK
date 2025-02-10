@@ -30,3 +30,20 @@ export const getUserData = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// controllers/user.controller.js
+export const getPublicKey = async (req, res) => {
+  try {
+      const { userId } = req.params;
+      const user = await userModel.findById(userId).select("publicKey");
+
+      if (!user) {
+          return res.status(404).json({ msg: "User not found" });
+      }
+
+      res.status(200).json({ publicKey: user.publicKey });
+  } catch (err) {
+      console.error("Error in getPublicKey controller:", err.message);
+      res.status(500).json({ msg: "Something went wrong" });
+  }
+};

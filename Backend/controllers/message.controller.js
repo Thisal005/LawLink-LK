@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
+import sodium from "libsodium-wrappers";
 import Conversation from "../models/conversation.model.js";
+import User from "../models/user.model.js"; // Adjust the path as needed
 import Message from "../models/message.model.js";
 
 export const sendMessage = async (req, res) => {
@@ -8,13 +10,22 @@ export const sendMessage = async (req, res) => {
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
-        const senderObjectId = new mongoose.Types.ObjectId(senderId);
-        const receiverObjectId = new mongoose.Types.ObjectId(receiverId);
+        // Validate input
+        if (!message || !receiverId || !senderId) {
+            return res.status(400).json({ error: "Incomplete input data" });
+        }
+
+        const sender = await User.findById(senderId);
+        const receiver = await User.findById(receiverId);
+
+        if (!sender || !receiver) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
         let conversation = await Conversation.findOneAndUpdate(
             {
                 participants: {
-                    $all: [senderObjectId, receiverObjectId],
+                    $all: [sender, receiver],
                 },
             },
             {},
@@ -23,16 +34,35 @@ export const sendMessage = async (req, res) => {
 
         if (!conversation) {
             conversation = await Conversation.create({
-                participants: [senderObjectId, receiverObjectId],
+                participants: [sender, receiver],
             });
         }
 
-        
+        // Ensure libsodium is ready
+        await sodium.ready;
 
+        // Generate a nonce
+        const nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
+
+        // Replace this with your actual encryption key (must be 32 bytes)
+        const key = sodium.from_hex(sender.privateKey);
+
+        let encryptedMessage; // Declare encryptedMessage in the outer scope
+
+        // Encrypt the message
+        try {
+            encryptedMessage = sodium.crypto_secretbox_easy(message, nonce, key);
+        } catch (err) {
+            console.error("Encryption error:", err.message);
+            throw err;
+        }
+
+        // Create a new message
         const newMessage = new Message({
-            senderId: senderObjectId,
-            receiverId: receiverObjectId,
-            message,
+            senderId,
+            receiverId,
+            message: sodium.to_hex(encryptedMessage), // Store encrypted message as hex
+            nonce: sodium.to_hex(nonce), // Store nonce as hex
         });
 
         if (newMessage) {
@@ -48,21 +78,47 @@ export const sendMessage = async (req, res) => {
     }
 };
 
+
+// controllers/message.controller.js
 export const getMessages = async (req, res) => {
     try {
-        const { id } = req.params; 
+        const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
+        // Fetch sender and receiver
+        const sender = await User.findById(senderId);
+        const receiver = await User.findById(receiverId);
+
+        if (!sender || !receiver) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Fetch conversation
         const conversation = await Conversation.findOne({
-            participants: {
-                $all: [senderId, id],
-            },
-        }).populate("messages"); 
+            participants: { $all: [senderId, receiverId] },
+        }).populate("messages");
+
         if (!conversation) {
             return res.status(404).json({ error: "Conversation not found" });
         }
 
-        res.status(200).json(conversation.messages);
+        // Decrypt messages
+        await sodium.ready;
+        const decryptedMessages = conversation.messages.map((msg) => {
+            const decryptedMessage = sodium.crypto_box_open_easy(
+                sodium.from_hex(msg.message),
+                sodium.from_hex(msg.nonce),
+                sodium.from_hex(receiver.publicKey),
+                sodium.from_hex(sender.privateKey)
+            );
+
+            return {
+                ...msg.toObject(),
+                message: sodium.to_string(decryptedMessage),
+            };
+        });
+
+        res.status(200).json(decryptedMessages);
     } catch (err) {
         console.error("Error in getMessages controller:", err.message);
         res.status(500).json({ error: err.message });

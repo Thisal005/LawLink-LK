@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import generateToken from "../utills/generateToken.js";
 import transporter from "../config/nodemailer.js";
 import dotenv from "dotenv";
+import sodium from "libsodium-wrappers";
 import e from "express";
 
 dotenv.config();
@@ -26,6 +27,11 @@ export const signup = async (req, res) => {
 
         const otp = String(Math.floor(100000 + Math.random() * 900000));
 
+        await sodium.ready;
+        const keyPair = sodium.crypto_box_keypair();
+        const publicKey = sodium.to_hex(keyPair.publicKey);
+        const privateKey = sodium.to_hex(keyPair.privateKey);
+
         const newUser = new User({
             fullName,
             username,
@@ -34,6 +40,8 @@ export const signup = async (req, res) => {
             contact,
             verifyotp: otp,
             verifyOtpExpires: Date.now() + 2 * 60 * 1000, 
+            publicKey,
+            privateKey,
         });
 
         await newUser.save(); 
