@@ -1,0 +1,29 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('../assets/homefull.png');
+    background-size: 100% 130%; /* Shrinks the height by 10% while keeping the width at 100% */
+    background-position: top center; /* Aligns the image to the top */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-attachment: scroll; /* Ensures the image scrolls with the page */
+    color: #333;
+    line-height: 1.6;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
