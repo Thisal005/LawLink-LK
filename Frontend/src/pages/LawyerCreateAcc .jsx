@@ -136,6 +136,7 @@ function LawyerCreateAcc() {
         <div className="logo-container">
           <img src="images/logo.png" alt="Logo" className="logo" />
         </div>
+        
       </div>
 
       <div className="form-container">
@@ -204,6 +205,7 @@ function LawyerCreateAcc() {
                   <span className="file-upload-button">Choose File</span>
                 </label>
               </div>
+              <p style={{ color: " rgb(0, 21, 255)", fontSize: "10px", marginTop: "4px" }}>Please Upload Your Lawyer ID or Bar Association Certificate</p>
               {errors.document && <p className="error">{errors.document}</p>}
             </div>
 
@@ -286,6 +288,7 @@ function LawyerCreateAcc() {
             Already have an account? <u><a href="#"><b>Login</b></a></u>
           </p>
         </div>
+        
       </div>
     </div>
   );

@@ -106,6 +106,7 @@ function Clientlogin() {
         <div className="create-account">
             <p className="create-account" onClick={() => navigate("/create-account")}>Don't have an account ? <u><a href="#"><b>Sign up now</b></a></u></p>
         </div>
+      
       </div>
     </div>
   );
