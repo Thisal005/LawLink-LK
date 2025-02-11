@@ -102,20 +102,33 @@ export const getMessages = async (req, res) => {
             return res.status(404).json({ error: "Conversation not found" });
         }
 
-        // Decrypt messages
+        // Ensure libsodium is ready
         await sodium.ready;
-        const decryptedMessages = conversation.messages.map((msg) => {
-            const decryptedMessage = sodium.crypto_box_open_easy(
-                sodium.from_hex(msg.message),
-                sodium.from_hex(msg.nonce),
-                sodium.from_hex(receiver.publicKey),
-                sodium.from_hex(sender.privateKey)
-            );
 
-            return {
-                ...msg.toObject(),
-                message: sodium.to_string(decryptedMessage),
-            };
+        // Decrypt messages
+        const decryptedMessages = conversation.messages.map((msg) => {
+            try {
+                // Use the same key used for encryption (sender's private key)
+                const key = sodium.from_hex(sender.privateKey);
+
+                // Decrypt the message
+                const decryptedMessage = sodium.crypto_secretbox_open_easy(
+                    sodium.from_hex(msg.message), // Encrypted message
+                    sodium.from_hex(msg.nonce),  // Nonce
+                    key                         // Encryption key
+                );
+
+                return {
+                    ...msg.toObject(),
+                    message: sodium.to_string(decryptedMessage), // Convert decrypted message to string
+                };
+            } catch (decryptErr) {
+                console.error("Decryption error for message:", msg._id, decryptErr.message);
+                return {
+                    ...msg.toObject(),
+                    message: "[Decryption failed]", // Handle decryption errors gracefully
+                };
+            }
         });
 
         res.status(200).json(decryptedMessages);
