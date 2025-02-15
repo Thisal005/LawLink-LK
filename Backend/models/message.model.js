@@ -13,12 +13,21 @@ const messageSchema = new mongoose.Schema({
     },
     message: {
         type: String,
-        required: true,
+        required: false,
     },
     nonce: {
         type: String,
-        required: true,
+        required: false,
     },
+    file: {
+        type: {
+            fileName: String,
+            mimeType: String,
+            path: String,
+            size: Number,
+        },
+        required: false,
+    }
     },
     {timestamps: true}
 );
