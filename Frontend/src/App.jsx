@@ -11,6 +11,7 @@ import Lawyerlogin from "./pages/Lawyerlogin";
 import LawyerEmailForResetPass from "./pages/LawyerEmailForResetPass";
 import LawyerNewpassword from "./pages/LawyerNewpassword";
 import LawyerRestPasswordOtp from "./pages/LawyerPassword-Rest ";
+import Chat from "./pages/Chat";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/lawyer-email-for-password-reset" element={<LawyerEmailForResetPass />} />
         <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
         <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />   
+        <Route path="/chat" element={<Chat />} />
         
       </Routes>
       </div>   
