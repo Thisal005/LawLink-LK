@@ -1,10 +1,12 @@
 import React, { useContext } from "react";
 import { AppContext } from "../Context/AppContext";
+import {useNavigate} from 'react-router-dom';
 import Sidebar from "../Components/sideBar";
 import Header from "../Components/Header";
 
 function Home() {
   const { userData, lawyerData } = useContext(AppContext);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen w-380 bg-gray-100 font-sans flex">
@@ -32,6 +34,16 @@ function Home() {
                 <span className="font-medium">Contact:</span>{" "}
                 {userData?.contact || lawyerData?.contact || "No contact"}
               </p>
+              <div>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mt-4" onClick={
+                  () => {
+                    navigate('/chat');
+                  }
+                }>
+                  
+                  chat
+                </button>
+              </div>
             </div>
           </div>
         </div>

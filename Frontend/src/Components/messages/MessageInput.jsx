@@ -1,33 +1,52 @@
 import React, { useState } from 'react';
 import { Paperclip, Send } from 'lucide-react';
+import useSendMessage from '../../hooks/useSendMessage';
+import { toast } from 'react-toastify'; // For error/success messages
 
-const MessageInput = () => {
+const MessageInput = ({ receiverId }) => {
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState([]);
+  const { sendMessage, uploadFile, loading, error, success } = useSendMessage();
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
-    setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle message submission here
-    console.log('Message:', message);
-    console.log('Files:', files);
-    setMessage('');
-    setFiles([]);
+
+    try {
+      // Send text message if it exists
+      if (message.trim()) {
+        await sendMessage(receiverId, message);
+        setMessage(''); // Clear the message input
+      }
+
+      // Upload files if they exist
+      if (files.length > 0) {
+        for (const file of files) {
+          await uploadFile(receiverId, file);
+        }
+        setFiles([]); // Clear the files input
+      }
+
+      // Show success message
+      toast.success('Message sent successfully!');
+    } catch (err) {
+      console.error('Error sending message or uploading file:', err);
+      toast.error('Failed to send message. Please try again.');
+    }
   };
 
   const removeFile = (index) => {
-    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
+
   return (
-    <div className="max-w-3xl  mx-auto">
+    <div className="max-w-3xl mx-auto">
       <form onSubmit={handleSubmit} className="relative">
         {/* File Preview Area */}
-      
-
         {files.length > 0 && (
           <div className="mb-0.5 p-2 bg-gray-50/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             {files.map((file, index) => (
@@ -60,7 +79,7 @@ const MessageInput = () => {
             ))}
           </div>
         )}
-  
+
         {/* Input Area */}
         <div className="flex items-center gap-3 w-full border border-gray-200 rounded-3xl bg-white p-2 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
           {/* File Upload Button */}
@@ -74,24 +93,28 @@ const MessageInput = () => {
             />
             <Paperclip className="w-5 h-7 text-gray-400 group-hover:text-gray-600 transition-colors" />
           </label>
-  
+
           {/* Message Input */}
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type a message..."
-            style={{height: '30px'}}
+            style={{ height: '30px' }}
             className="flex-1 outline-none text-gray-800 placeholder-gray-400 text-sm py-3 bg-transparent"
           />
-  
+
           {/* Send Button */}
           <button
             type="submit"
-            disabled={!message && files.length === 0}
-            className="p-3 rounded-xl  hover:bg-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            disabled={(!message && files.length === 0) || loading}
+            className="p-3 rounded-xl hover:bg-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
-            <Send className="w-5 h-5 text-blue-500 group-hover:text-blue-600 transition-colors" />
+            {loading ? (
+              <span className="text-blue-500">Sending...</span>
+            ) : (
+              <Send className="w-5 h-5 text-blue-500 group-hover:text-blue-600 transition-colors" />
+            )}
           </button>
         </div>
       </form>
