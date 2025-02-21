@@ -11,6 +11,11 @@ const messageSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    caseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Case",
+        required: false,
+    },
     message: {
         type: String,
         required: false,

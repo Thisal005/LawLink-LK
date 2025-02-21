@@ -26,5 +26,4 @@ const protectRoute = async (req, res, next) => {
     }
 };
 
-
 export { protectRoute };

@@ -8,6 +8,11 @@ const conversationSchema = new mongoose.Schema({
             ref: "User",
         },
     ],
+    caseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Case",
+        required: false,
+    },
     messages: [
         {
             type: mongoose.Schema.Types.ObjectId,
