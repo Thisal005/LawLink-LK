@@ -53,19 +53,18 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  // Listen for messages from the client
   socket.on("sendMessage", (message) => {
     console.log("Message received:", message);
 
-    // Broadcast the message to all clients
-    io.emit("receiveMessage", message);
+    // Broadcast the message to the receiver
+    io.to(message.receiverId).emit("receiveMessage", message);
   });
 
-  // Handle disconnection
   socket.on("disconnect", () => {
     console.log("A user disconnected:", socket.id);
   });
 });
+
 
 // Connect to MongoDB and start the server
 connectTomongoDB().then(() => {
