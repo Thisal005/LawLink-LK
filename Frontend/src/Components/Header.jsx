@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Calendar, HelpCircle, Bell } from 'lucide-react';
+import { AppContext } from '../Context/AppContext';
 
-const Header = ({ displayName = "John Doe", practiceAreas = "Corporate Law" }) => {
+const Header = ({ displayName: propDisplayName, practiceAreas = "Corporate Law" }) => {
   const [notificationsVisible, setNotificationsVisible] = useState(false);
+  const { userData, lawyerData } = useContext(AppContext);
+
+  // Compute displayName with a fallback
+  const displayName = propDisplayName || userData?.fullName || lawyerData?.fullName || "Guest";
 
   // Sample notifications data
   const notifications = [
