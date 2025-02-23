@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Paperclip, Send } from 'lucide-react';
 import socket from '../../utills/socket';
-import encryptMessage from '../../utills/encryption';
+import {encryptMessage} from '../../utills/encryption';
 import { toast } from 'react-toastify';
 
 const MessageInput = ({ receiverId }) => {

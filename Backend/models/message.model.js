@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const messageSchema = new mongoose.Schema({
     senderId: {
@@ -32,8 +33,15 @@ const messageSchema = new mongoose.Schema({
             size: Number,
         },
         required: false,
-    }
     },
+    isRead: {
+        type : Date,
+    },
+    status:{
+        type: String,
+        enum : ["sent", "delivered", "read"],
+        default: "sent",}
+},
     {timestamps: true}
 );
 

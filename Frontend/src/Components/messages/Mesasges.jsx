@@ -1,5 +1,5 @@
 import React from "react";
-import decryptMessage from '../../utills/encryption';
+import {decryptMessage} from '../../utills/encryption';
 
 const Messages = ({ messages }) => {
     const decryptMessages = async (messages) => {

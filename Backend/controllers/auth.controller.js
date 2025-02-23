@@ -9,7 +9,9 @@ import e from "express";
 dotenv.config();
 
 
+
 export const signup = async (req, res) => {
+
     try {
         const { fullName, password, confirmPassword, email, contact } = req.body;
 

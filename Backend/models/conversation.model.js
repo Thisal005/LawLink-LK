@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-// models/conversation.model.js
 const conversationSchema = new mongoose.Schema({
-    participants: [
+    participants: [ 
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+            
         },
     ],
     caseId: {
@@ -20,6 +20,8 @@ const conversationSchema = new mongoose.Schema({
             default: [],
         },
     ],
-});
+    },
+    {timestamps: true}
+);
 
 export default mongoose.model("Conversation", conversationSchema);
