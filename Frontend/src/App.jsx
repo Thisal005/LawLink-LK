@@ -1,3 +1,5 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "./Context/ProtectRoute";
 import ClientCreateAcc from "./pages/ClientCreateAcc"
 import Clientlogin from "./pages/Clientlogin";
 import Home from "./pages/Home";
@@ -12,36 +14,47 @@ import LawyerEmailForResetPass from "./pages/LawyerEmailForResetPass";
 import LawyerNewpassword from "./pages/LawyerNewpassword";
 import LawyerRestPasswordOtp from "./pages/LawyerPassword-Rest ";
 import Chat from "./pages/Chat";
+import NotFound from "./pages/NotFound";
 import { ToastContainer } from "react-toastify";
+import { AppContentProvider } from "./Context/AppContext";
+import { AuthContextProvider,useAuthContext } from "./Context/AuthContext";
+import { SocketProvider } from "./Context/SocketContext";
 import "react-toastify/dist/ReactToastify.css";
 
-import {Routes, Route} from "react-router-dom";
+
+
 
 function App() {
-
-
   return (
-     <div>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/create-account" element={<ClientCreateAcc />} />
-        <Route path="/login" element={<Clientlogin />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/password-rest" element={<PasswordRest />} />
-        <Route path="/email-for-password-reset" element={<EmailForResetPass />} />
-        <Route path="/create-new-password" element={<Newpassword/>} />
-        <Route path="/lawyer-create-account" element={<LawyerCreateAcc />} />
-        <Route path="/lawyer-verify-email" element={<LawyerVerifyEmail />} />
-        <Route path="/lawyer-login" element={<Lawyerlogin />} />
-        <Route path="/lawyer-email-for-password-reset" element={<LawyerEmailForResetPass />} />
-        <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
-        <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />   
-        <Route path="/chat" element={<Chat />} />
-        
-      </Routes>
-      </div>   
-  )
+
+    <AuthContextProvider>
+      <AppContentProvider>
+      <SocketProvider>
+        <div>
+          <ToastContainer />
+          <Routes>
+            <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>} />
+            <Route path="/create-account" element={<ClientCreateAcc />} />
+            <Route path="/login" element={<Clientlogin />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/password-rest" element={<PasswordRest />} />
+            <Route path="/email-for-password-reset" element={<EmailForResetPass />} />
+            <Route path="/create-new-password" element={<Newpassword />} />
+            <Route path="/lawyer-create-account" element={<LawyerCreateAcc />} />
+            <Route path="/lawyer-verify-email" element={<LawyerVerifyEmail />} />
+            <Route path="/lawyer-login" element={<Lawyerlogin />} />
+            <Route path="/lawyer-email-for-password-reset" element={<LawyerEmailForResetPass />} />
+            <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
+            <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />
+            <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+    </SocketProvider>
+
+      </AppContentProvider>
+    </AuthContextProvider>
+  );
 }
 
 export default App

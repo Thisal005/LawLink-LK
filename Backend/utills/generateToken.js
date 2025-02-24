@@ -9,6 +9,7 @@ const generateToken  = (userId, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',
         sameSite: 'strict',
+        path: '/'
        
     });
 

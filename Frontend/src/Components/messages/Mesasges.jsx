@@ -1,58 +1,36 @@
-import React from "react";
-import {decryptMessage} from '../../utills/encryption';
+import React, { useState, useEffect, useRef } from "react";
+import useGetMessages from "../../hooks/useGetMessages";
+import MessageSkeleton from "../skeletons/MessageSkeleton";
+import Message from "./Message";
+import useListenMessages from "../../hooks/useListenMessages";
 
-const Messages = ({ messages }) => {
-    const decryptMessages = async (messages) => {
-        const key = sodium.from_hex("your-encryption-key"); // Replace with actual key
-        const decryptedMessages = await Promise.all(messages.map(async (msg) => {
-            const decryptedMessage = await decryptMessage(msg.message, msg.nonce, key);
-            return { ...msg, message: decryptedMessage };
-        }));
-        return decryptedMessages;
-    };
 
-    const [decryptedMessages, setDecryptedMessages] = React.useState([]);
+const Messages = () => {
+	const { messages, loading } = useGetMessages();
+	useListenMessages();
+	const lastMessageRef = useRef();
 
-    React.useEffect(() => {
-        decryptMessages(messages).then(setDecryptedMessages);
-    }, [messages]);
+	useEffect(() => {
+		setTimeout(() => {
+			lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+		}, 100);
+	}, [messages]);
 
-    return (
-        <div>
-            {decryptedMessages.map((msg) => (
-                <div key={msg._id} className="space-y-2 p-2">
-                    {/* Display sender's message */}
-                    {msg.senderId === "currentUserId" ? (
-                        <div className="flex items-start justify-end group">
-                            <div className="max-w-[80%]">
-                                <div className="bg-blue-500 rounded-2xl rounded-tr-none px-4 py-2 text-white">
-                                    <p>{msg.message}</p>
-                                </div>
-                                <div className="flex items-center justify-end mt-1 space-x-2">
-                                    <span className="text-xs text-gray-500">
-                                        {new Date(msg.createdAt).toLocaleTimeString()}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex items-start group">
-                            <div className="max-w-[80%]">
-                                <div className="bg-gray-100 rounded-2xl rounded-tl-none px-4 py-2 text-gray-800">
-                                    <p>{msg.message}</p>
-                                </div>
-                                <div className="flex items-center mt-1 space-x-2">
-                                    <span className="text-xs text-gray-500">
-                                        {new Date(msg.createdAt).toLocaleTimeString()}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            ))}
-        </div>
-    );
+	return (
+		<div className='px-4 flex-1 overflow-auto'>
+			{!loading &&
+				messages.length > 0 &&
+				messages.map((message) => (
+					<div key={message._id} ref={lastMessageRef}>
+						<Message message={message} />
+					</div>
+				))}
+
+			{loading && [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
+			{!loading && messages.length === 0 && (
+				<p className='text-center'>Send a message to start the conversation</p>
+			)}
+		</div>
+	);
 };
-
 export default Messages;

@@ -1,8 +1,10 @@
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { getCookie } from "../utills/cookies";
 
 export const AppContext = createContext(); 
+
 
 export const AppContentProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL; 
@@ -11,10 +13,34 @@ export const AppContentProvider = (props) => {
     const [lawyerData, setLawyerData] = useState(null);
     const [email, setEmail] = useState("");
 
+
+    useEffect(() => {
+      const checkLoginStatus = async () => {
+        try {
+          const { data } = await axios.get(backendUrl + '/api/user/data', {
+            withCredentials: true
+          });
+          
+          if (data.success) {
+            setIsLoggedIn(true);
+            setUserData(data.userData);
+          }
+        } catch (error) {
+          console.error('Auth check failed:', error);
+          setIsLoggedIn(false);
+        }
+      };
+      
+      checkLoginStatus();
+    }, [backendUrl]);
+
     const getUserData = async () => {
         try {
             const { data } = await axios.get(backendUrl + '/api/user/data', {
                 withCredentials: true, 
+                headers: {
+                    Authorization: `Bearer ${getCookie('jwt')}`,
+                },
             });
         
             if (data.success) {
