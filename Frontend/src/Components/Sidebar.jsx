@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, FileText, Settings, Menu, X } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -64,7 +66,7 @@ const Sidebar = () => {
               className="flex items-center gap-3 text-white/90 hover:text-white hover:bg-blue-500/50 px-4 py-2 rounded-lg transition-colors"
             >
               <Grid className="w-5 h-5" />
-              <span className={`font-medium ${isOpen ? 'block' : 'hidden'}`}>Dashboard</span>
+              <span className={`font-medium ${isOpen ? 'block' : 'hidden'}`} onClick={() => navigate("/")}>Dashboard</span>
             </a>
             <a
               href="#"
