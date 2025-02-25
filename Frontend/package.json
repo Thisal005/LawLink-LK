@@ -16,6 +16,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "axios": "^1.7.9",
     "crypto-browserify": "^3.12.1",
+    "date-fns": "^4.1.0",
     "libsodium-wrappers": "^0.7.15",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
