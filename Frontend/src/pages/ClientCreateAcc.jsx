@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "../css/lawyerCreateAcc.css";
 
 function LawyerCreateAcc() {
   const navigate = useNavigate();
@@ -135,28 +134,47 @@ function LawyerCreateAcc() {
   };
 
   return (
-    <div className="main-container">
-      <div className="animation-container">
+    <div className="grid grid-cols-1 md:grid-cols-[42%_58%] w-full max-w-[1100px] h-auto md:h-[660px] bg-white rounded-[28px] shadow-[0px_0px_1px_rgba(0,0,0,0.04),_0px_2px_6px_rgba(0,0,0,0.04),_0px_16px_24px_rgba(0,0,0,0.06)] overflow-hidden relative hover:shadow-[0px_0px_1px_rgba(0,0,0,0.08),_0px_8px_16px_rgba(0,0,0,0.08),_0px_24px_32px_rgba(0,0,0,0.12)] transition-shadow duration-300">
+      {/* Left Section - Animation Container (Hidden on Mobile) */}
+      <div className="hidden md:block bg-gradient-to-br from-[#0022fc] to-[#001cd8] p-8 flex flex-col items-center justify-between relative overflow-hidden">
         <div className="text-white text-center">
-          <h2>Welcome to LawLink LK</h2>
-          <p>Your One-Stop Solution for Legal Services</p>
+          <h2 className="text-2xl font-bold text-white mb-2 relative">Welcome to LawLink LK</h2>
+          <p className="text-base text-white/90 mt-2 relative">Your One-Stop Solution for Legal Services</p>
         </div>
-        <div className="video-container">
-          <video src="images/gtrfe.mp4" autoPlay loop muted className="animation-video"></video>
+  
+        <div className="w-full max-w-[380px] my-10 mx-auto relative z-10 group">
+          <video
+            src="images/gtrfe.mp4"
+            autoPlay
+            loop
+            muted
+            className="w-full h-auto rounded-[16px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-[0_25px_50px_rgba(0,0,0,0.25)] cursor-pointer"
+          ></video>
+          <div className="absolute inset-0 bg-[#0022fc]/10 opacity-0 group-hover:opacity-100 rounded-[16px] transition-opacity duration-300 pointer-events-none"></div>
         </div>
-        <div className="logo-container">
-          <img src="images/logo.png" alt="Logo" className="logo" />
+  
+        <div className="logo-container flex justify-center w-full">
+          <a href="https://www.lawlinklk.com/" target="_blank" rel="noopener noreferrer" className="transition-transform duration-300 hover:scale-110 inline-block">
+            <img
+              className="w-[130px] h-auto mt-2 mb-8 filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity duration-300"
+              src="images/logo.png"
+              alt="Logo"
+            />
+          </a>
         </div>
       </div>
-
-      <div className="form-container">
-        <h1>Create Account</h1>
-        <div className="line"></div>
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Full Name</label>
+  
+      {/* Right Section - Form Container */}
+      <div className="form-container p-4 md:p-8 md:px-14 bg-white">
+        <h1 className="text-lg md:text-[1.875rem] font-bold text-[#0022fc] mt-px tracking-tighter">Create Account</h1>
+        <div className="h-[3px] bg-[#0022fc] w-20 rounded-full my-4 transition-all duration-300 hover:w-32 hover:bg-[#0015d1]"></div>
+  
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          {/* Full Name Input */}
+          <div className="input-group flex flex-col gap-2">
+            <label className="text-sm font-semibold text-[#81a8e8]">Full Name</label>
             <input
-              className="normal-input"
+              className="w-full px-4 py-3 border-[2px] border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#0022fc] focus:outline-none focus:ring-2 focus:ring-[#0022fc]/50 transition-all duration-200 hover:border-[#0022fc]/30"
               type="text"
               name="fullName"
               value={formData.fullName}
@@ -164,118 +182,158 @@ function LawyerCreateAcc() {
               placeholder="Enter your full name"
               required
             />
-            {errors.fullName && <p className="error">{errors.fullName}</p>}
-
-            <div className="client-contacts">
-              <div>
-                <label>Email</label>
-                <input
-                  className="normal-input"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter your email address"
-                  required
-                />
-                {errors.email && <p className="error">{errors.email}</p>}
-              </div>
-
-              <div>
-                <label>Contact Number</label>
-                <input
-                  className="normal-input"
-                  type="tel"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleChange}
-                  placeholder="Enter your contact number"
-                  required
-                />
-                {errors.contact && <p className="error">{errors.contact}</p>}
-              </div>
-            </div>
-
-            <div className="passwords">
-              <div className="password-input-wrapper">
-                <label>Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="input"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    onFocus={() => setIsPasswordFocused(true)}
-                    onBlur={() => setIsPasswordFocused(false)}
-                    placeholder="Enter password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="password-input-wrapper">
-                <label>Confirm Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="input"
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="Confirm password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                  >
-                    {showConfirmPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {(isPasswordFocused || formData.password) && (
-              <>
-                <div className="password-strength-text">
-                  Password Strength: {["Weak", "Fair", "Good", "Strong", "Very Strong"][passwordStrength - 1]}
-                </div>
-                <div className="password-strength-container">
-                  <div
-                    className="password-strength-bar"
-                    style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getPasswordStrengthColor() }}
-                  ></div>
-                </div>
-              </>
-            )}
-
-            {formData.password !== formData.confirmPassword && formData.confirmPassword && (
-              <p className="error" style={{ alignItems: "center" }}>Passwords do not match.</p>
-            )}
+            {errors.fullName && <p className="text-sm text-red-500 mt-1">{errors.fullName}</p>}
           </div>
-
-          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+  
+          {/* Email and Contact Number Inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div className="input-group flex flex-col gap-2">
+              <label className="text-sm font-semibold text-[#81a8e8]">Email</label>
+              <input
+                className="w-full px-4 py-3 border-[2px] border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#0022fc] focus:outline-none focus:ring-2 focus:ring-[#0022fc]/50 transition-all duration-200 hover:border-[#0022fc]/30"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email address"
+                required
+              />
+              {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
+            </div>
+  
+            <div className="input-group flex flex-col gap-2">
+              <label className="text-sm font-semibold text-[#81a8e8]">Contact Number</label>
+              <input
+                className="w-full px-4 py-3 border-[2px] border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#0022fc] focus:outline-none focus:ring-2 focus:ring-[#0022fc]/50 transition-all duration-200 hover:border-[#0022fc]/30"
+                type="tel"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+                placeholder="Enter your contact number"
+                required
+              />
+              {errors.contact && <p className="text-sm text-red-500 mt-1">{errors.contact}</p>}
+            </div>
+          </div>
+  
+          {/* Password and Confirm Password Inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div className="input-group flex flex-col gap-2">
+              <label className="text-sm font-semibold text-[#81a8e8]">Password</label>
+              <div className="relative">
+                <input
+                  className="w-full px-4 py-3 border-[2px] border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#0022fc] focus:outline-none focus:ring-2 focus:ring-[#0022fc]/50 transition-all duration-200 pr-12 hover:border-[#0022fc]/30"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={() => setIsPasswordFocused(false)}
+                  placeholder="Enter password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer transition-transform duration-200 hover:scale-110"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <img src="images/close.png" alt="Hide" className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity duration-200" />
+                  ) : (
+                    <img src="images/open.png" alt="Show" className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity duration-200" />
+                  )}
+                </button>
+              </div>
+            </div>
+  
+            <div className="input-group flex flex-col gap-2">
+              <label className="text-sm font-semibold text-[#81a8e8]">Confirm Password</label>
+              <div className="relative">
+                <input
+                  className="w-full px-4 py-3 border-[2px] border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#0022fc] focus:outline-none focus:ring-2 focus:ring-[#0022fc]/50 transition-all duration-200 pr-12 hover:border-[#0022fc]/30"
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer transition-transform duration-200 hover:scale-110"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                >
+                  {showConfirmPassword ? (
+                    <img src="images/close.png" alt="Hide" className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity duration-200" />
+                  ) : (
+                    <img src="images/open.png" alt="Show" className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity duration-200" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+  
+          {/* Password Strength Indicator */}
+          {(isPasswordFocused || formData.password) && (
+            <div className="mt-3">
+              <div className="text-xs text-[#005eff] font-medium text-center">
+                Password Strength: {["Weak", "Fair", "Good", "Strong", "Very Strong"][passwordStrength - 1]}
+              </div>
+              <div className="w-full h-[10px] bg-[#e0e0e0] rounded-[3px] mt-1 overflow-hidden">
+                <div
+                  className="h-full transition-all duration-300 ease-in-out"
+                  style={{ 
+                    width: `${(passwordStrength / 5) * 100}%`, 
+                    backgroundColor: getPasswordStrengthColor() 
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
+  
+          {/* Password Match Error */}
+          {formData.password !== formData.confirmPassword && formData.confirmPassword && (
+            <p className="text-xs text-red-500 mt-2 text-center">Passwords do not match.</p>
+          )}
+  
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full py-3 px-6 bg-[#0022fc] text-white font-semibold rounded-[12px] hover:bg-[#001cd8] hover:-translate-y-[1px] hover:shadow-lg active:scale-95 transition-all duration-300 mt-4"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
-
-        <div className="login">
-          <p onClick={() => navigate("/login")}>
-            Already have an account? <u><a href="#"><b>Login</b></a></u>
+  
+        {/* Login Link */}
+        <div className="mt-6 text-sm text-[#02189c] text-center">
+          <p>
+            Already have an account?{" "}
+            <a
+              href="#"
+              onClick={() => navigate("/login")}
+              className="text-[#007bff] font-semibold hover:underline hover:text-[#0022fc] transition-colors duration-200"
+            >
+              Login
+            </a>
           </p>
         </div>
-        <p className="disclaimer"> By creating an account, you agree to our <u><a href="#"><b>Terms of Use</b></a></u> and <u><a href="#"><b>Privacy Policy</b></a></u>.</p>
+  
+        {/* Disclaimer */}
+        <p className="text-sm text-[#81a8e8] mt-6 text-center">
+          By creating an account, you agree to our{" "}
+          <a href="#" className="text-[#0022fc] font-semibold hover:underline hover:text-[#001cd8] transition-colors duration-200">
+            Terms of Use
+          </a>{" "}
+          and{" "}
+          <a href="#" className="text-[#0022fc] font-semibold hover:underline hover:text-[#001cd8] transition-colors duration-200">
+            Privacy Policy
+          </a>
+          .
+        </p>
       </div>
     </div>
   );

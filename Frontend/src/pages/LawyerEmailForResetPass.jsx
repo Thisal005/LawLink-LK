@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import {  toast } from "react-toastify";
 import axios from "axios";
 
-import "../css/CreateAcc.css";
 
 function LawyerEmailForResetPass() {
     const [email, setlocalEmail] = useState("");
@@ -40,32 +39,33 @@ function LawyerEmailForResetPass() {
       };
     
 
-    return (
-        <div className="emailforreset-main-container">
-          <div className="emailforreset-form-container">
-            <h1>Enter Your Email For Password Reset</h1>
-            <div className="emailforreset-line"></div>
-            <form onSubmit={handleSubmit}>
-              <div className="input-group">
-    
-                <label>Email</label>
-                <input
-                  className="emailforreset-input"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setlocalEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  required
-                />
-    
-              </div>
-              <button type="submit" className="submit-btn" >
-               Request Otp
-              </button>
-            </form>
-          </div>
+      return (
+        <div className="w-full max-w-md bg-white rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-[#0022fc] text-center mb-4">
+            Enter Your Email For Password Reset
+          </h1>
+          <div className="h-[3px] bg-[#0022fc] w-35 mx-auto mb-6"></div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-[#0022fc]">Email</label>
+              <input
+                className="w-full px-4 py-3 border-[2px] border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#0022fc] focus:outline-none focus:ring-2 focus:ring-[#0022fc]/50 transition-all duration-200"
+                type="email"
+                value={email}
+                onChange={(e) => setlocalEmail(e.target.value)}
+                placeholder="Enter your email address"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 px-6 bg-[#0022fc] text-white font-semibold rounded-[12px] hover:bg-[#001cd8] transition-colors duration-300"
+            >
+              Request OTP
+            </button>
+          </form>
         </div>
-      );
+    );
 }
 
 export default LawyerEmailForResetPass

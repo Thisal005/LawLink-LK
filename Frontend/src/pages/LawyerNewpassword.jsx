@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-import "../css/newPassword.css";
 
 function Newpassword() {
   const navigate = useNavigate();
@@ -46,7 +45,7 @@ function Newpassword() {
     try {
       if (!email) {
         toast.error("Email is not available. Please start the reset process again.");
-        navigate('/email-reset-password');
+        navigate('/lawyer-email-reset-password');
         return;
       }
 
@@ -77,7 +76,7 @@ function Newpassword() {
 
       if (response.status === 200) {
         toast.success("Password reset successfully!");
-        navigate("/login");
+        navigate("/lawyer-login");
       }
     } catch (err) {
       console.error("Error during password reset:", err);
@@ -108,84 +107,91 @@ function Newpassword() {
   };
 
   return (
-    <div className="new-password-main-container">
-    <div className="new-password-form-container"> 
-      <h1>Create New Password</h1>
-      <div className="new-password-underline"></div>  
-      <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Password</label>
-            <div className="password-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                required
-              />
-              <button
-                type="button"
-                className="new-toggle-password-btn"
-                onClick={() => setShowPassword((prev) => !prev)}
-              >
-                {showPassword ? (
-                  <img src="images/close.png" alt="Hide password" />
-                ) : (
-                  <img src="images/open.png" alt="Show password" />
-                )}
-              </button>
-            </div>
-            {passwordError && <p className="error">{passwordError}</p>}
+    <div className="w-full max-w-[500px] bg-white rounded-[20px] shadow-[0_8px_25px_rgba(0,0,0,0.1)] p-8 animate-float">
+      <h1 className="text-2xl font-bold text-[#0026ff] text-center mb-4">Create New Password</h1>
+      <div className="h-[3px] bg-[#3652fc] w-40 mx-auto rounded-full mb-6"></div>
 
-            <label>Confirm Password</label>
-            <div className="password-container">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm password"
-                required
-              />
-              <button
-                type="button"
-                className="new-toggle-password-btn"
-                onClick={() => setShowConfirmPassword((prev) => !prev)}
-              >
-                {showConfirmPassword ? (
-                  <img src="images/close.png" alt="Hide password" />
-                ) : (
-                  <img src="images/open.png" alt="Show password" />
-                )}
-              </button>
-            </div>
-            {confirmPasswordError && <p className="error">{confirmPasswordError}</p>}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Password Input */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-semibold text-[#02189c]">Password</label>
+          <div className="relative">
+            <input
+              className="w-full px-4 py-3 border-2 border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#3652fc] focus:outline-none focus:ring-2 focus:ring-[#3652fc]/50 transition-all duration-200"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              required
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? (
+                <img src="images/close.png" alt="Hide password" className="w-5 h-5" />
+              ) : (
+                <img src="images/open.png" alt="Show password" className="w-5 h-5" />
+              )}
+            </button>
           </div>
+          {passwordError && <p className="text-sm text-red-500 mt-1">{passwordError}</p>}
+        </div>
 
-          {password && (
-            <>
-              <div className="password-strength-text">
-                Password Strength: {getPasswordStrengthText()}
-              </div>
-              <div className="password-strength-container">
-                <div
-                  className="password-strength-bar"
-                  style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getPasswordStrengthColor() }}
-                ></div>
-              </div>
-            </>
-          )}
+        {/* Confirm Password Input */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-semibold text-[#02189c]">Confirm Password</label>
+          <div className="relative">
+            <input
+              className="w-full px-4 py-3 border-2 border-[#e5e7eb] rounded-[12px] text-sm focus:border-[#3652fc] focus:outline-none focus:ring-2 focus:ring-[#3652fc]/50 transition-all duration-200"
+              type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm password"
+              required
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? (
+                <img src="images/close.png" alt="Hide password" className="w-5 h-5" />
+              ) : (
+                <img src="images/open.png" alt="Show password" className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+          {confirmPasswordError && <p className="text-sm text-red-500 mt-1">{confirmPasswordError}</p>}
+        </div>
 
-          {password !== confirmPassword && confirmPassword && (
-            <p className="error">Passwords do not match.</p>
-          )}
+        {/* Password Strength Indicator */}
+        {password && (
+          <div className="space-y-2">
+            <div className="text-sm text-[#005eff] font-medium text-center">
+              Password Strength: {getPasswordStrengthText()}
+            </div>
+            <div className="w-full h-[10px] bg-[#e0e0e0] rounded-[3px] overflow-hidden">
+              <div
+                className="h-full transition-all duration-300 ease-in-out"
+                style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getPasswordStrengthColor() }}
+              ></div>
+            </div>
+          </div>
+        )}
 
-          <button type="submit" className="submit-btn">
-            Submit
-          </button>
-        </form>
-      </div>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full py-3 px-6 bg-[#0026ff] text-white font-semibold rounded-[12px] hover:bg-[#3452fe] hover:-translate-y-[1px] active:scale-95 transition-all duration-300"
+        >
+          Submit
+        </button>
+      </form>
     </div>
-  );
+);
 }
+
 
 export default Newpassword;

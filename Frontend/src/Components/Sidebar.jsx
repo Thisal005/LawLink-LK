@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, FileText, Settings, Menu, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
@@ -49,24 +50,24 @@ const Sidebar = () => {
           {/* Logo Section */}
           <div className="flex items-center gap-2 mb-12">
             <div className="text-2xl font-bold tracking-tight">
-              <a href="#">
                 <img
+                  onClick={() => navigate("/")}
+                  style={{ cursor: 'pointer' }}
                   src={`./images/${isOpen ? 'hori.png' : 'title_logo.png'}`}
                   alt={isOpen ? 'Sidebar Open Logo' : 'Sidebar Closed Logo'}
                   className="block"
                 />
-              </a>
             </div>
           </div>
 
           {/* Navigation Menu */}
           <nav className="space-y-4">
             <a
-              href="#"
+              onClick={() => navigate("/")}
               className="flex items-center gap-3 text-white/90 hover:text-white hover:bg-blue-500/50 px-4 py-2 rounded-lg transition-colors"
             >
               <Grid className="w-5 h-5" />
-              <span className={`font-medium ${isOpen ? 'block' : 'hidden'}`} onClick={() => navigate("/")}>Dashboard</span>
+              <span className={`font-medium ${isOpen ? 'block' : 'hidden'}`}>Dashboard</span>
             </a>
             <a
               href="#"

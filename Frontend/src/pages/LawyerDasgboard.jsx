@@ -8,8 +8,8 @@ import { toast } from "react-toastify";
 
 function Home() {
   const { 
-    userData, 
-    setUserData, 
+    lawyerData, 
+    setLawyerData, 
     backendUrl, // Add this from context
     setIsLoggedIn // Add this from context
   } = useContext(AppContext);
@@ -18,16 +18,16 @@ function Home() {
   const handleLogout = async () => {
     try {
       // Call backend logout endpoint to clear the cookie
-      await axios.post(backendUrl + '/api/auth/logout', {}, {
+      await axios.post(backendUrl + '/api/lawyer/logout', {}, {
         withCredentials: true
       });
       
       // Update state
       setIsLoggedIn(false);
-      setUserData(null);
+      setLawyerData(null); 
       
       // Redirect to login
-      navigate('/login');
+      navigate('/lawyer-login');
       
       toast.success('Logged out successfully');
     } catch (error) {
@@ -50,15 +50,15 @@ function Home() {
             <h1 className="text-3xl font-bold text-gray-900 mb-6">Home Page</h1>
             <div className="bg-white p-8 rounded-lg shadow-lg">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Hello, {userData?.fullName ||  "Guest"}!
+                Hello, {lawyerData?.fullName || "Guest"}!
               </h2>
               <p className="text-gray-600 mb-3">
                 <span className="font-medium">Email:</span>{" "}
-                {userData?.email || "No email"}
+                {lawyerData?.email || "No email"}
               </p>
               <p className="text-gray-600">
                 <span className="font-medium">Contact:</span>{" "}
-                {userData?.contact || "No contact"}
+                {lawyerData?.contact || "No contact"}
               </p>
               <div className="flex space-x-4 mt-4">
                 <button 
@@ -72,6 +72,12 @@ function Home() {
                   onClick={handleLogout} // Connect the logout button to the handleLogout function
                 >
                   Logout
+                </button>
+                <button 
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                  onClick={handleLogout} // Connect the logout button to the handleLogout function
+                >
+                  Pakaya
                 </button>
               </div>
             </div>

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "../css/lawyerCreateAcc.css";
 
 function LawyerCreateAcc() {
   const navigate = useNavigate();
@@ -124,29 +123,46 @@ function LawyerCreateAcc() {
   };
 
   return (
-    <div className="main-container">
-      <div className="animation-container">
-        <div className="text-white text-center">
-          <h2>Welcome to LawLink LK</h2>
-          <p>Join our network of legal professionals</p>
-        </div>
-        <div className="video-container">
-          <video src="images/gtrfe.mp4" autoPlay loop muted className="animation-video"></video>
-        </div>
-        <div className="logo-container">
-          <img src="images/logo.png" alt="Logo" className="logo" />
-        </div>
-        
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-[42%_58%] w-full max-w-[1100px] h-auto md:h-[660px] bg-white rounded-[28px] shadow-[0px_0px_1px_rgba(0,0,0,0.04),_0px_2px_6px_rgba(0,0,0,0.04),_0px_16px_24px_rgba(0,0,0,0.06)] overflow-hidden relative">
+      {/* Left Section - Animation Container (Hidden on Mobile) */}
+<div className="hidden md:block bg-gradient-to-br from-[#0022fc] to-[#001cd8] p-8 flex flex-col items-center justify-between relative overflow-hidden">
+  <div className="text-white text-center">
+    <h2 className="text-2xl font-bold text-white mb-2 relative">Welcome to LawLink LK</h2>
+    <p className="text-base text-white/90 mt-2 relative">Your One-Stop Solution for Legal Services</p>
+  </div>
 
-      <div className="form-container">
-        <h1>Create Account</h1>
-        <div className="line"></div>
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
+  <div className="w-full max-w-[380px] my-10 mx-auto relative z-10 group">
+    <video
+      src="images/gtrfe.mp4"
+      autoPlay
+      loop
+      muted
+      className="w-full h-auto rounded-[16px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-[0_25px_50px_rgba(0,0,0,0.25)] cursor-pointer"
+    ></video>
+    <div className="absolute inset-0 bg-[#0022fc]/10 opacity-0 group-hover:opacity-100 rounded-[16px] transition-opacity duration-300 pointer-events-none"></div>
+  </div>
+
+  {/* Centered Logo */}
+  <div className="logo-container flex justify-center w-full">
+    <a href="https://www.lawlinklk.com/" target="_blank" rel="noopener noreferrer" className="transition-transform duration-300 hover:scale-110 inline-block">
+      <img
+        className="w-[130px] h-auto mt-2 mb-8 filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity duration-300"
+        src="images/logo.png"
+        alt="Logo"
+      />
+    </a>
+  </div>
+</div>
+  
+      {/* Right Section - Form Container */}
+      <div className="form-container p-4 md:p-8 md:px-14 bg-white">
+        <h1 className="text-[1.5rem] md:text-[1.875rem] font-bold text-[#0022fc] mt-px tracking-tighter">Create Account</h1>
+        <div className="line flex h-[3px] rounded-[10px] mb-[20px] md:mb-[30px]"></div>
+        <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4">
+          <div className="input-group flex flex-col gap-1 w-full">
             <label>Full Name</label>
             <input
-              className="normal-input"
+              className="input w-full md:w-[510px] h-10 md:h-5 border-[1.5px] border-[#e5e7eb] rounded-[12px] px-5 text-[0.9375rem] bg-white transition-all duration-200 ease-in-out hover:border-[#d1d5db] focus:outline-none focus:border-[#0022fc] focus:ring-4 focus:ring-[rgba(0,34,252,0.08)]"
               type="text"
               name="fullName"
               value={formData.fullName}
@@ -155,12 +171,12 @@ function LawyerCreateAcc() {
               required
             />
             {errors.fullName && <p className="error">{errors.fullName}</p>}
-
-            <div className="contacts">
+  
+            <div className="contacts grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
               <div>
                 <label>Email</label>
                 <input
-                  className="contacts-input"
+                  className="contacts-input w-full"
                   type="email"
                   name="email"
                   value={formData.email}
@@ -170,11 +186,11 @@ function LawyerCreateAcc() {
                 />
                 {errors.email && <p className="error">{errors.email}</p>}
               </div>
-
+  
               <div>
                 <label>Contact Number</label>
                 <input
-                  className="contacts-input"
+                  className="contacts-input w-full"
                   type="tel"
                   name="contact"
                   value={formData.contact}
@@ -185,36 +201,35 @@ function LawyerCreateAcc() {
                 {errors.contact && <p className="error">{errors.contact}</p>}
               </div>
             </div>
-
-            <div className="file-input-wrapper">
-              <label>Document For Verification</label>
-              <div className="file-upload-container">
+  
+            <div className="file-input-wrapper w-full">
+              <label className="file-upload-label flex flex-col items-center gap-2 cursor-pointer">Document For Verification</label>
+              <div className="file-upload-container border-2 border-dashed border-[#e5e7eb] rounded-[12px] p-4 md:p-6 w-full text-center bg-[#f9fafb] transition-colors duration-300 ease-in-out hover:border-[#0022fc]">
                 <input
                   type="file"
                   name="document"
                   id="document"
                   accept=".pdf, .jpg, .jpeg, .png"
                   onChange={handleChange}
-                  className="file-input"
+                  className="file-input hidden"
                   required
                 />
                 <label htmlFor="document" className="file-upload-label">
-                  <span className="file-upload-text">
+                  <span className="file-upload-text text-[0.875rem] text-[#0080ff]">
                     {formData.document ? formData.document.name : "Upload your document (PDF, JPG, PNG)"}
                   </span>
-                  <span className="file-upload-button">Choose File</span>
                 </label>
               </div>
-              <p style={{ color: " rgb(0, 21, 255)", fontSize: "10px", marginTop: "4px" }}>Please Upload Your Lawyer ID or Bar Association Certificate</p>
+              <p style={{ color: "rgb(0, 21, 255)", fontSize: "10px", marginTop: "4px" }}>Please Upload Your Lawyer ID or Bar Association Certificate</p>
               {errors.document && <p className="error">{errors.document}</p>}
             </div>
-
-            <div className="passwords">
-              <div className="password-input-wrapper">
+  
+            <div className="passwords grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+              <div className="password-input-wrapper w-full">
                 <label>Password</label>
-                <div className="password-input-container">
+                <div className="password-input-container relative flex items-center w-full">
                   <input
-                    className="input"
+                    className="flex-grow pr-[70px] w-full"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
@@ -226,20 +241,20 @@ function LawyerCreateAcc() {
                   />
                   <button
                     type="button"
-                    className="password-toggle-btn"
+                    className="password-toggle-btn absolute right-[10px] bg-transparent border-none text-[#888] cursor-pointer flex items-center justify-center hover:text-[#333]"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
+                    {showPassword ? <img src="images/close.png" alt="Hide" className="w-5 h-5"/> : <img src="images/open.png" alt="Show" className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
-
-              <div className="password-input-wrapper">
+  
+              <div className="password-input-wrapper w-full">
                 <label>Confirm Password</label>
-                <div className="password-input-container">
+                <div className="password-input-container relative flex items-center w-full">
                   <input
-                    className="input"
+                    className="flex-grow pr-[70px] w-full"
                     type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
                     value={formData.confirmPassword}
@@ -249,46 +264,54 @@ function LawyerCreateAcc() {
                   />
                   <button
                     type="button"
-                    className="password-toggle-btn"
+                    className="password-toggle-btn absolute right-[10px] bg-transparent border-none text-[#888] cursor-pointer flex items-center justify-center hover:text-[#333]"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
-                    {showConfirmPassword ? <img src="images/close.png" alt="Hide" /> : <img src="images/open.png" alt="Show" />}
+                    {showConfirmPassword ? <img src="images/close.png" alt="Hide" className="w-5 h-5"/> : <img src="images/open.png" alt="Show" className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
             </div>
-
+  
             {(isPasswordFocused || formData.password) && (
               <>
-                <div className="password-strength-text">
+                <div className="password-strength-text text-[0.75rem] mt-1 text-[#005eff] font-medium text-center">
                   Password Strength: {["Weak", "Fair", "Good", "Strong", "Very Strong"][passwordStrength - 1]}
                 </div>
-                <div className="password-strength-container">
+                <div className="password-strength-container w-full md:w-[400px] h-[10px] bg-[#e0e0e0] rounded-[3px] mt-2 overflow-hidden self-center">
                   <div
-                    className="password-strength-bar"
+                    className="password-strength-bar h-full w-[50px] transition-all duration-300 ease-in-out"
                     style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getPasswordStrengthColor() }}
                   ></div>
                 </div>
               </>
             )}
-
+  
             {formData.password !== formData.confirmPassword && formData.confirmPassword && (
-              <p className="error" style={{ alignItems: "center" }}>Passwords do not match.</p>
+              <p className="error text-[0.75rem] text-[#0015ff] mt-0.5 mb-0 text-center">Passwords do not match.</p>
             )}
           </div>
-
-          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+  
+          <button type="submit" className="h-[38px] bg-[#0022fc] text-white border-none rounded-[17px] text-[0.9375rem] self-center w-full md:w-[500px] font-semibold cursor-pointer transition-all duration-200 ease-in-out mt-4 relative overflow-hidden hover:bg-[#001cd8] hover:-translate-y-[1px] hover:shadow-[0_4px_12px_rgba(0,34,252,0.2)]" disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Submit"}
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full transition-transform duration-600 ease-in-out hover:translate-x-full"></span>
           </button>
         </form>
-
-        <div className="login">
-          <p onClick={() => navigate("/lawyer-login")}>
-            Already have an account? <u><a href="#"><b>Login</b></a></u>
+  
+        {/* Login Link */}
+        <div className="mt-6 text-sm text-[#02189c] text-center">
+          <p>
+            Already have an account?{" "}
+            <a
+              href="#"
+              onClick={() => navigate("/lawyer-login")}
+              className="text-[#007bff] font-semibold hover:underline"
+            >
+              Login
+            </a>
           </p>
         </div>
-        
       </div>
     </div>
   );

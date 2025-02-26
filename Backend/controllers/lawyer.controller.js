@@ -20,10 +20,10 @@ export const getLawyerData = async (req, res) => {
     res.status(200).json({
       success: true,
       UserData: {
-        fullName: lawyer.fullName,
-        email: lawyer.email,
-        contact: lawyer.contact,
-        isVerified: lawyer.isVerified,
+        fullName: req.lawyer.fullName,
+        email: req.lawyer.email,
+        contact: req.lawyer.contact,
+        isVerified: req.lawyer.isVerified,
       },
     });
   } catch (error) {

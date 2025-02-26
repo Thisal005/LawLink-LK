@@ -1,1 +1,67 @@
 @import "tailwindcss";
+
+
+:root {
+    --primary: #0022fc;
+    --primary-dark: #001cd8;
+    --bg-gradient: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+    --card-shadow: 
+        0px 0px 1px rgba(0, 0, 0, 0.04),
+        0px 2px 6px rgba(0, 0, 0, 0.04),
+        0px 16px 24px rgba(0, 0, 0, 0.06);
+  }
+  
+  body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #008bff;
+      background-size: cover;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      box-sizing: border-box;
+  }
+  
+
+label {
+    font-size: 14px;
+    color: #827ee3;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input {
+    width: 100%;
+    height: 40px;
+    padding: 12px;
+    border: 2px solid #eaeaec;
+    border-radius: 8px;
+    color: #2c06ac;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease-out;
+  }
+
+  .submit-btn {
+    background: #0022fc;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 25px;
+    cursor: pointer;
+    transition: background 0.3s ease-out;
+    display: block;
+    margin-top: 20px;
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .submit-btn:hover {
+    background: #6277fe;
+    transform: translateY(-1px);
+  }
