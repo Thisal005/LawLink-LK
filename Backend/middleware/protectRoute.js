@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import Lawyers from "../models/lawyer.model.js";
 
 const protectRoute = async (req, res, next) => {
     try {
@@ -14,16 +15,25 @@ const protectRoute = async (req, res, next) => {
         }
 
         const user = await User.findById(decoded.userId).select("-password");
-        if (!user) {
-            return res.status(401).json({ msg: "User not found" });
+        const lawyer = await Lawyers.findById(decoded.userId).select("-password");
+
+        if (!user && !lawyer) {
+            return res.status(401).json({ msg: "Unauthorized" });
         }
 
-        req.user = user;
+        if (user && !user.isVerified) {
+            return res.status(401).json({ msg: "User not verified" });
+        }
+
+        if (lawyer && !lawyer.isVerified) {
+            return res.status(401).json({ msg: "Lawyer not verified" });
+        }
+
+        req.user = user || lawyer;
         next();
     } catch (err) {
         console.log("Error in protectRoute middleware:", err.message);
         res.status(401).json({ msg: "Unauthorized" });
     }
 };
-
 export { protectRoute };

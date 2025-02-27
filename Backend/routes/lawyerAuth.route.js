@@ -7,8 +7,8 @@ const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
-router.post("/verify-otp", lawyerAuth, sendVerifyOtp);
-router.post("/verify-email", lawyerAuth, verifyEmail);
+router.post("/verify-otp", sendVerifyOtp);
+router.post("/verify-email",verifyEmail);
 
 router.post("/send-reset-otp", sendRestPasswordOtp);
 router.post("/reset-password", resetPassword);

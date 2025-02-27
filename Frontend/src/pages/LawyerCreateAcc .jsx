@@ -292,10 +292,13 @@ function LawyerCreateAcc() {
               <p className="error text-[0.75rem] text-[#0015ff] mt-0.5 mb-0 text-center">Passwords do not match.</p>
             )}
           </div>
-  
-          <button type="submit" className="h-[38px] bg-[#0022fc] text-white border-none rounded-[17px] text-[0.9375rem] self-center w-full md:w-[500px] font-semibold cursor-pointer transition-all duration-200 ease-in-out mt-4 relative overflow-hidden hover:bg-[#001cd8] hover:-translate-y-[1px] hover:shadow-[0_4px_12px_rgba(0,34,252,0.2)]" disabled={isSubmitting}>
+    {/* Submit Button */}
+    <button
+            type="submit"
+            className="w-full py-3 px-6 bg-[#0022fc] text-white font-semibold rounded-[12px] hover:bg-[#001cd8] hover:-translate-y-[1px] hover:shadow-lg active:scale-95 transition-all duration-300 mt-4"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Submitting..." : "Submit"}
-            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full transition-transform duration-600 ease-in-out hover:translate-x-full"></span>
           </button>
         </form>
   

@@ -2,6 +2,7 @@ import multer from "multer";
 import path from "path";
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js"; 
+import Lawyer from "../models/lawyer.model.js";
 import Message from "../models/message.model.js";
 import { promises } from "dns";
 
@@ -30,8 +31,8 @@ export const sendMessage = async (req, res) => {
             return res.status(400).json({ error: "Incomplete input data" });
         }
 
-        const sender = await User.findById(senderId);
-        const receiver = await User.findById(receiverId);
+        const sender = await User.findById(senderId) || await Lawyer.findById(senderId);
+        const receiver = await User.findById(receiverId) || await Lawyer.findById(receiverId);
 
         if (!sender || !receiver) {
             return res.status(404).json({ error: "User not found" });
@@ -80,8 +81,8 @@ export const getMessages = async (req, res) => {
         const senderId = req.user._id;
 
         // Fetch sender and receiver
-        const sender = await User.findById(senderId);
-        const receiver = await User.findById(receiverId);
+        const sender = await User.findById(senderId) || await Lawyer.findById(senderId);
+        const receiver = await User.findById(receiverId) || await Lawyer.findById(receiverId);
 
         if (!sender || !receiver) {
             return res.status(404).json({ error: "User not found" });

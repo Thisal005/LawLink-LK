@@ -26,6 +26,11 @@ function VerifyEmail() {
     }
   };
   
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      e.target.previousSibling?.focus();
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +43,7 @@ function VerifyEmail() {
       console.log("Before Axios call...");
       const response = await axios.post(`${backendUrl}/api/auth/verify-email`, {
         email: email,
-        otp:otp.join(""), 
+        otp: otp.join(""), 
       });
       console.log("After Axios call...", response);
   
@@ -50,7 +55,6 @@ function VerifyEmail() {
         toast.error(response.data.msg || "An error occurred. Please try again.");
       }
     } catch (err) {
-     
       console.error("Verification error:", err);
       toast.error("Failed to verify your account. Please try again.");
     }
@@ -95,14 +99,24 @@ function VerifyEmail() {
   
 
   return (
-    <div className="verify-email-main-container">
-      <form onSubmit={handleSubmit} className="otp">
-        <h1>Verify Email</h1>
-        <div className="otp-line"></div>
-        <label htmlFor="otp" className="otp">
-          Enter the One Time Password sent to your email: <b>{email}</b>
+    <div className="w-full max-w-md bg-white rounded-[20px] shadow-[0_8px_25px_rgba(0,0,0,0.1)] p-8 animate-float text-center">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Heading */}
+        <h1 className="text-2xl md:text-3xl font-bold text-[#0026ff] mb-4">
+          Verify Your Email Address
+        </h1>
+
+        {/* Divider Line */}
+        <div className="h-[3px] bg-[#0026ff] w-60 mx-auto rounded-full"></div>
+
+        {/* OTP Instructions */}
+        <label htmlFor="otp" className="block text-sm text-[#02189c] font-medium ">
+          Enter the One Time Password sent to your email:{" "}
+          <span className="font-semibold text-[#0026ff]">{email}</span>
         </label>
-        <div className="otp-container">
+
+        {/* OTP Input Boxes */}
+        <div className="otp-container flex justify-center gap-3">
           {otp.map((_, index) => (
             <input
               key={index}
@@ -110,27 +124,38 @@ function VerifyEmail() {
               maxLength="1"
               value={otp[index]}
               onChange={(e) => handleChange(e, index)}
-              className="otp-box"
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              className="w-10 h-10 text-[1.5rem] text-center border border-[#cccccc] rounded-[6px] focus:outline-none focus:border-[#007bff] focus:ring-2 focus:ring-[#007bff]/50 transition-all duration-200"
             />
           ))}
         </div>
-        <button 
-          type="button" 
-          onClick={handleResend} 
-          className={`resend-button ${isResendDisabled ? 'disabled' : ''}`}
+
+        {/* Resend OTP Button */}
+        <button
+          type="button"
+          onClick={handleResend}
+          className={`w-full text-sm text-[#1e90ff] underline hover:text-[#0066cc] transition-colors duration-200 ${
+            isResendDisabled ? "text-[#999] cursor-not-allowed no-underline" : ""
+          }`}
           disabled={isResendDisabled}
         >
-          {isResendDisabled 
-            ? `Resend OTP in ${resendTimer}s` 
-            : 'Resend OTP'}
+          {isResendDisabled
+            ? `Resend OTP in ${resendTimer}s`
+            : "Resend OTP"}
         </button>
 
-        <button type="submit" className="otp">
-          Submit
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full py-3 px-6 bg-[#0026ff] text-white font-semibold rounded-[12px] hover:bg-[#3452fe] hover:-translate-y-[1px] active:scale-95 transition-all duration-300"
+        >
+          Verify
         </button>
       </form>
+
+   
     </div>
-  );
+);  
 }
 
 export default VerifyEmail;

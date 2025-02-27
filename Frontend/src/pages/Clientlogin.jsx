@@ -26,18 +26,29 @@ function Clientlogin() {
     setIsLoading(true);
   
     try {
-      // Ensure credentials (cookies) are included in the request
-      axios.defaults.withCredentials = true;
+      // Configure axios for credentials
+      const config = {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
   
       // Send login request to the backend
-      const response = await axios.post(backendUrl + '/api/auth/login', {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${backendUrl}/api/auth/login`, 
+        { email, password },
+        config
+      );
   
       // Check if the login was successful
       if (response.status === 200) {
         console.log("User logged in successfully:", response.data);
+  
+        // Check if cookies were set
+        setTimeout(() => {
+          console.log("Cookies after login:", document.cookie);
+        }, 100);
   
         // Update the login state
         setIsLoggedIn(true);
@@ -45,8 +56,7 @@ function Clientlogin() {
         // Fetch user data
         await getUserData();
         
-        // Redirect to home or the page they were trying to access
-        
+        // Redirect to home
         navigate("/", { replace: true });
   
         // Show success message
@@ -54,9 +64,6 @@ function Clientlogin() {
       }
     } catch (err) {
       console.error("Login error:", err);
-  
-      // Show error message
-      //toast.error(err.message);
   
       // Handle specific error messages from the backend
       if (err.response && err.response.data && err.response.data.msg) {
@@ -81,8 +88,7 @@ function Clientlogin() {
             muted
             className="w-full h-auto rounded-[16px] shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
           ></video>
-                      <div className="absolute inset-0 bg-[#0022fc]/10 opacity-0 group-hover:opacity-100 rounded-[16px] transition-opacity duration-300 pointer-events-none"></div>
-
+          <div className="absolute inset-0 bg-[#0022fc]/10 opacity-0 group-hover:opacity-100 rounded-[16px] transition-opacity duration-300 pointer-events-none"></div>
         </div>
   
         {/* Form Container - Full width on mobile */}

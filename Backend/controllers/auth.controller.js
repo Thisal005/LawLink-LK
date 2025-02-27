@@ -110,6 +110,7 @@ export const signup = async (req, res) => {
             username: savedUser.username,
             msg: "User created successfully. Please check your email for the OTP.",
         });
+
     } catch (err) {
         console.error("Error in signup controller:", err.message);
         res.status(500).json({ msg: "Something went wrong" });
@@ -246,47 +247,39 @@ export const sendVerifyOtp = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
     const { email, otp } = req.body;
-
+    console.log("Request Body:", req.body);
+  
     if (!email || !otp) {
-        return res.status(400).json({ msg: "Missing userId or otp" });
+      return res.status(400).json({ msg: "Missing email or otp" });
     }
-
+  
     try {
-        
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(400).json({ msg: "User does not exist" });
-        }
-
-        if (user.verifyotp !== otp) {
-            return res.status(400).json({ msg: "Invalid otp" });
-        }
-
-        if (user.verifyOtpExpires < Date.now()) {
-            return res.status(400).json({ msg: "Otp has expired" });
-        }
-
-        user.isVerified = true;
-        user.verifyotp = '';
-        user.verifyOtpExpires = 0;
-
-        await user.save();
-
-      
-
-        try{
-            res.status(200).json({msg: "User is authenticated"});
-        }catch(error){
-            console.error("Error in isAuthenticated controller:", error.message);
-            res.status(500).json({msg: "Something went wrong"});
-        }
-
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(400).json({ msg: "User does not exist" });
+      }
+  
+      if (user.verifyotp !== otp) {
+        return res.status(400).json({ msg: "Invalid otp" });
+      }
+  
+      if (user.verifyOtpExpires < Date.now()) {
+        return res.status(400).json({ msg: "Otp has expired" });
+      }
+  
+      user.isVerified = true;
+      user.verifyotp = '';
+      user.verifyOtpExpires = 0;
+  
+      await user.save();
+  
+      res.status(200).json({ msg: "User is authenticated" });
     } catch (err) {
-        console.error("Error in verifyEmail controller:", err.message);
-        res.status(500).json({ msg: "Something went wrong" });
-        }
-};
+      console.error("Error in verifyEmail controller:", err.message);
+      res.status(500).json({ msg: "Something went wrong" });
+    }
+  };
 
 
 export const sendRestPasswordOtp = async (req, res) => {

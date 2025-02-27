@@ -93,7 +93,7 @@ function RestPasswordOtp() {
     }
   };
 
-  return (
+return (
       <div className="w-full max-w-md bg-white rounded-[20px] shadow-[0_8px_25px_rgba(0,0,0,0.1)] p-8 animate-float text-center">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Heading */}
@@ -161,7 +161,7 @@ function RestPasswordOtp() {
           </p>
         </div>
       </div>
-  );
+  );  
 }
 
 export default RestPasswordOtp;
