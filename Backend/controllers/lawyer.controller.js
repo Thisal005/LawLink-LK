@@ -20,6 +20,7 @@ export const getLawyerData = async (req, res) => {
     res.status(200).json({
       success: true,
       UserData: {
+        _id: lawyer._id,
         fullName: req.lawyer.fullName,
         email: req.lawyer.email,
         contact: req.lawyer.contact,

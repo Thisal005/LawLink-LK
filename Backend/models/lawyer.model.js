@@ -61,6 +61,14 @@ const lawyerSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    publicKey: {
+        type: String,
+        default: "",
+    },
+    privateKey: {
+        type: String,
+        default: "",
+    },
 });
 
 const Lawyer = mongoose.model("Lawyer", lawyerSchema);

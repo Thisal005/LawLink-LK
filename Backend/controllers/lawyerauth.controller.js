@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import Lawyer from "../models/lawyer.model.js";
 import generateToken from "../utills/generateToken.js";
 import transporter from "../config/nodemailer.js";
+import sodium from "libsodium-wrappers";
+
 import dotenv from "dotenv";
 import multer from "multer";
 import path from "path";
@@ -48,6 +50,11 @@ export const signup = async (req, res) => {
 
             const otp = String(Math.floor(100000 + Math.random() * 900000));
 
+            await sodium.ready;
+        const keyPair = sodium.crypto_box_keypair();
+        const publicKey = sodium.to_hex(keyPair.publicKey);
+        const privateKey = sodium.to_hex(keyPair.privateKey);
+
 
     
             const newLawyer = new Lawyer({
@@ -60,6 +67,8 @@ export const signup = async (req, res) => {
                 documentForVerification,
                 verifyotp: otp,
                 verifyOtpExpires: Date.now() + 5 * 60 * 1000,
+                publicKey,
+                privateKey,
             });
 
             await newLawyer.save();

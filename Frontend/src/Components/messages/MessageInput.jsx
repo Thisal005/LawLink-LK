@@ -1,31 +1,37 @@
-import React, { useState, useContext } from 'react';
-import { Paperclip, Send } from 'lucide-react';
+import { useState, useContext, useRef } from 'react';
+import { Paperclip, Send, X, Image } from 'lucide-react';
 import useSendMessage from '../../hooks/useSendMessage';
 import { AppContext } from '../../Context/AppContext';
 
 const MessageInput = () => {
     const [message, setMessage] = useState('');
     const [files, setFiles] = useState([]);
+    const [isTyping, setIsTyping] = useState(false);
     const { loading, sendMessage } = useSendMessage();
     const { backendUrl } = useContext(AppContext);
+    const inputRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
-        setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+        if (selectedFiles.length > 0) {
+            // Limit to 5 files
+            const newFiles = [...files, ...selectedFiles].slice(0, 5);
+            setFiles(newFiles);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!message && files.length === 0) return;
+        if ((!message.trim() && files.length === 0) || loading) return;
 
         try {
-            // Send the message (and files if applicable)
             await sendMessage(message);
-            setMessage(''); // Clear the input field
-            setFiles([]); // Clear the file list
+            setMessage('');
+            setFiles([]);
+            inputRef.current?.focus();
         } catch (err) {
-            console.error("Error in handleSubmit:", err);
-            // Optionally, show a toast or error message to the user
+            console.error("Error sending message:", err);
         }
     };
 
@@ -36,74 +42,140 @@ const MessageInput = () => {
     const handleDrop = (e) => {
         e.preventDefault();
         const droppedFiles = Array.from(e.dataTransfer.files);
-        setFiles((prevFiles) => [...prevFiles, ...droppedFiles]);
+        if (droppedFiles.length > 0) {
+            const newFiles = [...files, ...droppedFiles].slice(0, 5);
+            setFiles(newFiles);
+        }
+    };
+
+    const handleTyping = (e) => {
+        setMessage(e.target.value);
+        
+        // Handle enter key press to send message
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(e);
+        }
+    };
+
+    const handlePaste = (e) => {
+        const clipboardItems = e.clipboardData.items;
+        const images = Array.from(clipboardItems)
+            .filter(item => item.type.indexOf('image') !== -1)
+            .map(item => item.getAsFile());
+            
+        if (images.length > 0) {
+            const newFiles = [...files, ...images].slice(0, 5);
+            setFiles(newFiles);
+        }
     };
 
     return (
-        <div className="max-w-3xl mx-auto">
-            <form onSubmit={handleSubmit} className="relative" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
+        <div className="max-w-3xl mx-auto w-full">
+            <form 
+                onSubmit={handleSubmit} 
+                className="relative" 
+                onDrop={handleDrop} 
+                onDragOver={(e) => e.preventDefault()}
+            >
                 {/* File Preview Area */}
                 {files.length > 0 && (
-                    <div className="mb-0.5 p-2 bg-gray-50/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                        {files.map((file, index) => (
-                            <div key={index} className="flex items-center gap-2 text-sm text-gray-600 mb-1 bg-white px-10 py-1 rounded-lg shadow-xs">
-                                <Paperclip className="w-4 h-4 text-gray-400" />
-                                <span className="truncate flex-1">{file.name}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => removeFile(index)}
-                                    className="p-1 hover:bg-gray-100 rounded-full transition-all"
-                                    aria-label={`Remove file ${file.name}`}
-                                >
-                                    <svg className="w-10 h-4 text-gray-500 hover:text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                        ))}
+                    <div className="mb-2 p-2 bg-gray-50 rounded-lg border border-gray-100 overflow-x-auto">
+                        <div className="flex gap-2">
+                            {files.map((file, index) => (
+                                <div key={index} className="relative group min-w-[80px]">
+                                    {file.type.startsWith('image/') ? (
+                                        <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-200 relative">
+                                            <img 
+                                                src={URL.createObjectURL(file)} 
+                                                alt={file.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFile(index)}
+                                                className="absolute top-1 right-1 p-1 bg-white/80 rounded-full hover:bg-white"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="w-20 h-20 rounded-lg border border-gray-200 flex flex-col items-center justify-center bg-white p-1 text-center relative">
+                                            <Paperclip className="w-4 h-4 text-gray-400 mb-1" />
+                                            <span className="text-xs truncate w-full">{file.name.split('.').pop()}</span>
+                                            <span className="text-[10px] text-gray-500 truncate w-full">
+                                                {(file.size / 1024 < 1024) 
+                                                    ? `${Math.round(file.size / 1024)}KB` 
+                                                    : `${Math.round(file.size / 1024 / 1024 * 10) / 10}MB`}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFile(index)}
+                                                className="absolute top-1 right-1 p-1 bg-white/80 rounded-full hover:bg-white"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
 
                 {/* Input Area */}
-                <div className="flex items-center gap-3 w-full border border-gray-200 rounded-3xl bg-white p-2 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
+                <div className="flex items-center gap-2 w-full border border-gray-200 rounded-full bg-white px-3 py-1 shadow-sm hover:shadow transition-all">
                     {/* File Upload Button */}
-                    <label className="cursor-pointer p-3 hover:bg-gray-50 rounded-xl transition-all group">
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="p-2 hover:bg-gray-50 rounded-full transition-all"
+                        disabled={loading || files.length >= 5}
+                    >
                         <input
+                            ref={fileInputRef}
                             type="file"
                             multiple
                             onChange={handleFileChange}
                             className="hidden"
                             accept="image/*,.pdf,.doc,.docx"
-                            disabled={loading}
-                            aria-label="Attach files"
+                            disabled={loading || files.length >= 5}
                         />
-                        <Paperclip className="w-5 h-7 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                    </label>
+                        <Image className="w-5 h-5 text-gray-400" />
+                    </button>
 
                     {/* Message Input */}
                     <input
+                        ref={inputRef}
                         type="text"
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={handleTyping}
+                        onKeyDown={handleTyping}
+                        onPaste={handlePaste}
                         placeholder="Type a message..."
-                        style={{ height: '30px' }}
-                        className="flex-1 outline-none text-gray-800 placeholder-gray-400 text-sm py-3 bg-transparent"
+                        className="flex-1 outline-none text-gray-800 placeholder-gray-400 py-2 bg-transparent"
                         maxLength={500}
                         disabled={loading}
-                        aria-label="Message input"
                     />
 
-                    {/* Character Counter */}
-                    <span className="text-xs text-gray-400">{message.length}/500</span>
+                    {/* Character Counter when typing */}
+                    {message.length > 0 && (
+                        <span className="text-xs text-gray-400 mr-1">
+                            {message.length}/500
+                        </span>
+                    )}
 
                     {/* Send Button */}
                     <button
                         type="submit"
-                        disabled={loading || (!message && files.length === 0)}
-                        className="p-3 rounded-xl hover:bg-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
-                        aria-label="Send message"
+                        disabled={loading || (!message.trim() && files.length === 0)}
+                        className={`p-2 rounded-full ${
+                            loading || (!message.trim() && files.length === 0)
+                                ? 'text-gray-300'
+                                : 'text-blue-500 hover:bg-blue-50'
+                        } transition-all`}
                     >
-                        <Send className="w-5 h-5 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                        <Send className="w-5 h-5" />
                     </button>
                 </div>
             </form>
