@@ -1,3 +1,4 @@
+import { profile } from "console";
 import userModel from "../models/user.model.js";
 
 import jwt from 'jsonwebtoken';
@@ -25,6 +26,9 @@ export const getUserData = async (req, res) => {
         email: user.email,
         contact: user.contact,
         isVerified: user.isVerified,
+        publicKey: user.publicKey,
+        privateKey: user.privateKey,
+        profilePicture: user.profilePicture,
       },
     });
   } catch (error) {

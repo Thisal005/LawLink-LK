@@ -1,23 +1,37 @@
 import { useState, useContext, useRef } from 'react';
 import { Paperclip, Send, X, Image } from 'lucide-react';
 import useSendMessage from '../../hooks/useSendMessage';
+import useSendFiles from '../../hooks/useSendFiles';
 import { AppContext } from '../../Context/AppContext';
 
 const MessageInput = () => {
     const [message, setMessage] = useState('');
     const [files, setFiles] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
-    const { loading, sendMessage } = useSendMessage();
+    const { loading: messageLoading, sendMessage } = useSendMessage();
+    const { loading: fileLoading, sendFiles } = useSendFiles();
     const { backendUrl } = useContext(AppContext);
     const inputRef = useRef(null);
     const fileInputRef = useRef(null);
+    
+    const loading = messageLoading || fileLoading;
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const selectedFiles = Array.from(e.target.files);
-        if (selectedFiles.length > 0) {
-            // Limit to 5 files
-            const newFiles = [...files, ...selectedFiles].slice(0, 5);
-            setFiles(newFiles);
+        if (selectedFiles.length === 0) return;
+        
+        // Limit to 5 files
+        const newFiles = [...files, ...selectedFiles].slice(0, 5);
+        setFiles(newFiles);
+
+        try {
+            // Send files immediately on selection
+            await sendFiles(selectedFiles);
+            setFiles([]); // Clear files after sending
+            inputRef.current?.focus();
+        } catch (err) {
+            console.error("Error sending files:", err);
+            // Toast notification is handled in the hook
         }
     };
 
@@ -26,12 +40,22 @@ const MessageInput = () => {
         if ((!message.trim() && files.length === 0) || loading) return;
 
         try {
-            await sendMessage(message);
-            setMessage('');
-            setFiles([]);
+            // If there are files that weren't sent on selection, send them now
+            if (files.length > 0) {
+                await sendFiles(files);
+                setFiles([]);
+            }
+            
+            // Only send text message if there's actual text
+            if (message.trim()) {
+                await sendMessage(message);
+                setMessage('');
+            }
+            
             inputRef.current?.focus();
         } catch (err) {
             console.error("Error sending message:", err);
+            // Toast notification is handled in the hooks
         }
     };
 
@@ -129,7 +153,11 @@ const MessageInput = () => {
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="p-2 hover:bg-gray-50 rounded-full transition-all"
+                        className={`p-2 rounded-full transition-all ${
+                            loading || files.length >= 5
+                                ? 'opacity-50 cursor-not-allowed'
+                                : 'hover:bg-gray-50'
+                        }`}
                         disabled={loading || files.length >= 5}
                     >
                         <input
@@ -153,7 +181,9 @@ const MessageInput = () => {
                         onKeyDown={handleTyping}
                         onPaste={handlePaste}
                         placeholder="Type a message..."
-                        className="flex-1 outline-none text-gray-800 placeholder-gray-400 py-2 bg-transparent"
+                        className={`flex-1 outline-none text-gray-800 placeholder-gray-400 py-2 bg-transparent ${
+                            loading ? 'opacity-50' : ''
+                        }`}
                         maxLength={500}
                         disabled={loading}
                     />
@@ -161,7 +191,7 @@ const MessageInput = () => {
                     {/* Character Counter when typing */}
                     {message.length > 0 && (
                         <span className="text-xs text-gray-400 mr-1">
-                            {message.length}/500
+                            {message.length}/1000
                         </span>
                     )}
 
@@ -171,7 +201,7 @@ const MessageInput = () => {
                         disabled={loading || (!message.trim() && files.length === 0)}
                         className={`p-2 rounded-full ${
                             loading || (!message.trim() && files.length === 0)
-                                ? 'text-gray-300'
+                                ? 'text-gray-300 cursor-not-allowed'
                                 : 'text-blue-500 hover:bg-blue-50'
                         } transition-all`}
                     >

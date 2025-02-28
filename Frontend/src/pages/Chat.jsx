@@ -13,7 +13,6 @@ function Chat() {
 
       {/* Header */}
       <div className="z-40">
-          <Header />
       </div>
 
         {/* Page Content */}

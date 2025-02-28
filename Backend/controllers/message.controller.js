@@ -108,21 +108,23 @@ export const uploadFile = async (req, res) => {
     try {
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
-        const file = req.file;
+        const files = req.files;
 
-        if (!file) {
-            return res.status(400).json({ error: "No file uploaded" });
+        if (!files || files.length === 0) {
+            return res.status(400).json({ error: "No files uploaded" });
         }
+
+        const attachments = files.map(file => ({
+            fileName: file.originalname,
+            mimeType: file.mimetype,
+            path: file.path,
+            size: file.size,
+        }));
 
         const newMessage = new Message({
             senderId,
             receiverId,
-            file: {
-                fileName: file.originalname,
-                mimeType: file.mimetype,
-                path: file.path,
-                size: file.size,
-            }
+            attachments,
         });
 
         await newMessage.save();
