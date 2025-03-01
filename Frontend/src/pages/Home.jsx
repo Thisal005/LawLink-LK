@@ -39,10 +39,12 @@ function Home() {
   return (
     <div className="min-h-screen w-371 bg-gray-100 font-sans flex">
       {/* Sidebar */}
+        <Header />
+      <Sidebar />
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <Header />
+      
         {/* Page Content */}
         <div className="flex-1 p-8 overflow-y-auto bg-gray-50">
           <div className="max-w-4xl mx-auto">
@@ -66,12 +68,7 @@ function Home() {
                 >
                   Chat
                 </button>
-                <button 
-                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-                  onClick={handleLogout} // Connect the logout button to the handleLogout function
-                >
-                  Logout
-                </button>
+               
               </div>
             </div>
           </div>
