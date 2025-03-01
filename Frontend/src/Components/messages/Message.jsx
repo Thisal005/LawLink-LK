@@ -1,53 +1,34 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../Context/AppContext";
 import dayjs from "dayjs";
-import { Heart, ThumbsUp, Reply, MoreHorizontal, Trash } from "lucide-react";
+import { Heart, ThumbsUp, Reply, MoreHorizontal, Trash, Download, Paperclip, Image } from "lucide-react";
 
 const Message = ({ message, onReply, onDelete }) => {
-    const { userData, lawyerData } = useContext(AppContext);
+    const { userData, lawyerData, backendUrl } = useContext(AppContext);
     const [showOptions, setShowOptions] = useState(false);
     const [reaction, setReaction] = useState(message.reaction || null);
     const [reactionTime, setReactionTime] = useState(null);
 
     const currentUserId = userData?._id || lawyerData?._id || "defaultUserId";
     const isOwnMessage = message.senderId === currentUserId;
-    
+
     const formatTime = (time) => {
         const messageDate = dayjs(time);
         const today = dayjs();
-        
+
         if (messageDate.isSame(today, 'day')) {
             return messageDate.format("h:mm A");
         }
-        
+
         if (messageDate.isSame(today.subtract(1, 'day'), 'day')) {
             return "Yesterday, " + messageDate.format("h:mm A");
         }
-        
+
         return messageDate.format("MMM D, h:mm A");
     };
 
-    const formatReactionTime = (seconds) => {
-        if (seconds < 60) {
-            return `${seconds}s`;
-        } else if (seconds < 3600) {
-            return `${Math.floor(seconds / 60)}m`;
-        } else if (seconds < 86400) {
-            return `${Math.floor(seconds / 3600)}h`;
-        } else {
-            return `${Math.floor(seconds / 86400)}d`;
-        }
-    };
-
-    const handleReaction = (type) => {
-        const now = dayjs();
-        const messageTime = dayjs(message.createdAt);
-        const timeDiff = now.diff(messageTime, 'second');
-
-        setReaction(reaction === type ? null : type);
-        setReactionTime(timeDiff);
-
-        // Here you would also update the reaction in your backend
+    const handleDownload = (messageId, documentIndex) => {
+        window.open(`${backendUrl}/api/messages/download/${messageId}/${documentIndex}`, '_blank');
     };
 
     return (
@@ -67,12 +48,12 @@ const Message = ({ message, onReply, onDelete }) => {
                     )}
                 </div>
             )}
-            
+
             <div className="flex flex-col max-w-[70%]">
                 {!isOwnMessage && message.senderName && (
                     <span className="text-xs text-gray-500 mb-1 ml-1">{message.senderName}</span>
                 )}
-                
+
                 <div
                     className={`relative px-4 py-2 rounded-2xl ${
                         isOwnMessage
@@ -92,7 +73,32 @@ const Message = ({ message, onReply, onDelete }) => {
                         )}
                         {message.message}
                     </div>
-                    
+
+                    {message.documents && message.documents.length > 0 && (
+                        <div className="mt-2 space-y-2">
+                            {message.documents.map((doc, index) => (
+                                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center">
+                                        {doc.mimetype.startsWith("image/") ? (
+                                            <Image className="w-4 h-4 text-gray-400 mr-2" />
+                                        ) : doc.mimetype === "application/pdf" ? (
+                                            <Paperclip className="w-4 h-4 text-gray-400 mr-2" />
+                                        ) : (
+                                            <Paperclip className="w-4 h-4 text-gray-400 mr-2" />
+                                        )}
+                                        <span className="text-sm text-gray-700">{doc.originalname}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDownload(message._id, index)}
+                                        className="p-1 rounded-full hover:bg-gray-100"
+                                    >
+                                        <Download className="w-4 h-4 text-gray-500" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     <div className={`flex items-center text-xs mt-1 ${
                         isOwnMessage ? "text-blue-100" : "text-gray-500"
                     }`}>
@@ -110,7 +116,7 @@ const Message = ({ message, onReply, onDelete }) => {
                             </span>
                         )}
                     </div>
-                    
+
                     {showOptions && (
                         <div className={`absolute ${isOwnMessage ? 'left-0' : 'right-0'} -top-8 bg-white shadow-md rounded-full p-1 flex gap-1`}>
                             <button 
@@ -142,12 +148,6 @@ const Message = ({ message, onReply, onDelete }) => {
                         </div>
                     )}
                 </div>
-                
-                {reactionTime !== null && (
-                    <div className={`text-xs mt-1 ${isOwnMessage ? 'text-blue-100' : 'text-gray-500'}`}>
-                        Reacted after {formatReactionTime(reactionTime)}
-                    </div>
-                )}
             </div>
         </div>
     );

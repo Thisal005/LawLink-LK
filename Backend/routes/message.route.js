@@ -1,14 +1,12 @@
 import express from "express";
-import { sendMessage, getMessages, uploadFile, downloadFile } from "../controllers/message.controller.js";
+import { sendMessage, getMessages, downloadDocument } from "../controllers/message.controller.js";
 import { protectRoute } from "../middleware/protectRoute.js";
-import multer from "multer";
+import upload from "../config/documentUpload.js";
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads-chat/' });
 
 router.get("/:id", protectRoute, getMessages);
-router.post("/send/:id", protectRoute, sendMessage);
-router.post("/upload/:id", protectRoute, upload.array('files'), uploadFile); 
-router.get("/download/:messageId", protectRoute, downloadFile);
+router.post("/send/:id", protectRoute, upload.array('documents', 5), sendMessage);
+router.get("/download/:messageId/:documentIndex", protectRoute, downloadDocument);
 
 export default router;

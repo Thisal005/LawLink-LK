@@ -1,23 +1,11 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js"; 
 import Lawyer from "../models/lawyer.model.js";
 import Message from "../models/message.model.js";
 import { promises } from "dns";
-
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "uploads-chat/");
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname)); // Unique file name
-    },
-});
-
-const upload = multer({ storage: storage });
 
 
 export const sendMessage = async (req, res) => {
@@ -26,9 +14,13 @@ export const sendMessage = async (req, res) => {
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
-        // Validate input
-        if (!message || !receiverId || !senderId) {
-            return res.status(400).json({ error: "Incomplete input data" });
+        // Check if either message or files are provided
+        if ((!message || message.trim() === '') && (!req.files || req.files.length === 0)) {
+            return res.status(400).json({ error: "Message or documents are required" });
+        }
+
+        if (!receiverId || !senderId) {
+            return res.status(400).json({ error: "Sender and receiver IDs are required" });
         }
 
         const sender = await User.findById(senderId) || await Lawyer.findById(senderId);
@@ -38,27 +30,33 @@ export const sendMessage = async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        let conversation = await Conversation.findOneAndUpdate(
-            {
-                participants: {
-                    $all: [sender, receiver],
-                },
+        let conversation = await Conversation.findOne({
+            participants: {
+                $all: [senderId, receiverId],
             },
-            {},
-            { new: true }
-        );
+        });
 
         if (!conversation) {
             conversation = await Conversation.create({
-                participants: [sender, receiver],
+                participants: [senderId, receiverId],
             });
         }
+
+        // Prepare document data if files are uploaded
+        const documentData = req.files ? req.files.map(file => ({
+            filename: file.filename,
+            originalname: file.originalname,
+            path: file.path,
+            mimetype: file.mimetype,
+            size: file.size
+        })) : [];
 
         // Create a new message
         const newMessage = new Message({
             senderId,
             receiverId,
-            message, // Store plain text message
+            message: message || "", // Handle empty message case
+            documents: documentData
         });
 
         if (newMessage) {
@@ -74,7 +72,6 @@ export const sendMessage = async (req, res) => {
     }
 };
 
-// controllers/message.controller.js
 export const getMessages = async (req, res) => {
     try {
         const { id: receiverId } = req.params;
@@ -91,10 +88,13 @@ export const getMessages = async (req, res) => {
         // Fetch conversation
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] },
-        }).populate("messages");
+        }).populate({
+            path: "messages",
+            options: { sort: { createdAt: 1 } } // Sort messages by creation time
+        });
 
         if (!conversation) {
-            return res.status(404).json({ error: "Conversation not found" });
+            return res.status(200).json([]); // Return empty array if no conversation found
         }
 
         res.status(200).json(conversation.messages);
@@ -104,67 +104,45 @@ export const getMessages = async (req, res) => {
     }
 };
 
-export const uploadFile = async (req, res) => {
+export const downloadDocument = async (req, res) => {
     try {
-        const { id: receiverId } = req.params;
-        const senderId = req.user._id;
-        const files = req.files;
-
-        if (!files || files.length === 0) {
-            return res.status(400).json({ error: "No files uploaded" });
-        }
-
-        const attachments = files.map(file => ({
-            fileName: file.originalname,
-            mimeType: file.mimetype,
-            path: file.path,
-            size: file.size,
-        }));
-
-        const newMessage = new Message({
-            senderId,
-            receiverId,
-            attachments,
-        });
-
-        await newMessage.save();
-
-        let conversation = await Conversation.findOneAndUpdate(
-            { participants: { $all: [senderId, receiverId] } },
-            { $push: { messages: newMessage._id } },
-            { new: true, upsert: true }
-        );
-
-        res.status(200).json(newMessage);
-    } catch (err) {
-        console.error("Error in uploadFile controller: ", err.message);
-        res.status(500).json({ error: err.message });
-    }
-};
-
-export const downloadFile = async (req, res) => {
-    try {
-        const { messageId } = req.params;
-        const userId = req.user._id;
-
+        const { messageId, documentIndex } = req.params;
+        
+        // Verify the user has access to this message
         const message = await Message.findById(messageId);
-
+        
         if (!message) {
             return res.status(404).json({ error: "Message not found" });
         }
-
-        if (message.senderId.toString() !== userId) {
-            return res.status(401).json({ error: "Unauthorized" });
+        
+        // Check if the user is either the sender or receiver of the message
+        const userId = req.user._id.toString();
+        if (message.senderId.toString() !== userId && message.receiverId.toString() !== userId) {
+            return res.status(403).json({ error: "Access denied" });
         }
-
-        if (!message.file) {
-            return res.status(404).json({ error: "File not found" });
+        
+        // Check if the document exists
+        if (!message.documents || !message.documents[documentIndex]) {
+            return res.status(404).json({ error: "Document not found" });
         }
-
-        const filePath = message.file.path;
-        res.download(filePath, message.file.fileName);
+        
+        const document = message.documents[documentIndex];
+        const filePath = document.path;
+        
+        // Check if file exists
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ error: "File not found on server" });
+        }
+        
+        // Set the appropriate headers
+        res.setHeader('Content-Disposition', `attachment; filename="${document.originalname}"`);
+        res.setHeader('Content-Type', document.mimetype);
+        
+        // Create read stream and pipe to response
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
     } catch (err) {
-        console.error("Error in downloadFile controller: ", err.message);
+        console.error("Error in downloadDocument controller:", err.message);
         res.status(500).json({ error: err.message });
     }
 };

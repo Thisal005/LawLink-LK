@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 const messageSchema = new mongoose.Schema({
     senderId: {
@@ -25,24 +24,38 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-    file: {
-        type: {
-            fileName: String,
-            mimeType: String,
-            path: String,
-            size: Number,
+    documents: [{
+        filename: {
+            type: String,
+            required: true
         },
-        required: false,
-    },
+        originalname: {
+            type: String,
+            required: true
+        },
+        path: {
+            type: String,
+            required: true
+        },
+        mimetype: {
+            type: String,
+            required: true
+        },
+        size: {
+            type: Number,
+            required: true
+        }
+    }],
     isRead: {
-        type : Date,
+        type: Date,
     },
-    status:{
+    status: {
         type: String,
-        enum : ["sent", "delivered", "read"],
-        default: "sent",}
+        enum: ["sent", "delivered", "read"],
+        default: "sent",
+    }
 },
-    {timestamps: true}
+{timestamps: true}
 );
 
 export default mongoose.model("Message", messageSchema);
