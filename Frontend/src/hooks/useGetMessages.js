@@ -20,7 +20,7 @@ const useGetMessages = () => {
 
         let otherUserId;
         if (userData) {
-            otherUserId = "67c033958471238ebaa4445a"; // Lawyer ID
+            otherUserId = "67c43974720ff8bf0517122f"; // Lawyer ID
         } else if (lawyerData) {
             otherUserId = "67bb15745b40ffa3d45ddd78"; // Client ID
         } else {

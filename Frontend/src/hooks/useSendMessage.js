@@ -18,7 +18,7 @@ const useSendMessage = () => {
             return;
         }
 
-        const receiverId = userData ? "67c033958471238ebaa4445a" : "67bb15745b40ffa3d45ddd78";
+        const receiverId = userData ? "67c43974720ff8bf0517122f" : "67bb15745b40ffa3d45ddd78";
 
         const formData = new FormData();
         formData.append('message', messageText);
