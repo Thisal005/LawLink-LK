@@ -6,6 +6,7 @@ import User from "../models/user.model.js";
 import Lawyer from "../models/lawyer.model.js";
 import Message from "../models/message.model.js";
 import { promises } from "dns";
+import sodium from "libsodium-wrappers";
 
 
 export const sendMessage = async (req, res) => {
@@ -41,6 +42,8 @@ export const sendMessage = async (req, res) => {
                 participants: [senderId, receiverId],
             });
         }
+
+        
 
         // Prepare document data if files are uploaded
         const documentData = req.files ? req.files.map(file => ({

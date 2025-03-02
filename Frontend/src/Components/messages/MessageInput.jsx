@@ -38,7 +38,7 @@ const MessageInput = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto w-full">
+        <div className="max-w-4xl mx-auto w-full">
             <form onSubmit={handleSubmit} className="relative">
                 {files.length > 0 && (
                     <div className="mb-2 p-2 bg-gray-50 rounded-lg border border-gray-100 overflow-x-auto">

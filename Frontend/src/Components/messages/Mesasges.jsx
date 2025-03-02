@@ -53,7 +53,7 @@ const Messages = () => {
     return (
         <div 
             ref={containerRef}
-            className="flex flex-col h-full overflow-y-auto px-4 py-2"
+            className="flex flex-col h-full overflow-y-auto px-4 py-2 "
         >
             {loading && isFirstLoad ? (
                 [...Array(3)].map((_, index) => <MessageSkeleton key={index} />)
