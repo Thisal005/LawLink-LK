@@ -36,7 +36,6 @@ function App() {
           <Routes>
             <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>} />
             <Route path="/lawyer-dashboard" element={<ProtectedRoute><LawyerDasgboard/></ProtectedRoute>} />
-
             <Route path="/create-account" element={<ClientCreateAcc />} />
             <Route path="/login" element={<Clientlogin />} />
             <Route path="/verify-email" element={<VerifyEmail />} />

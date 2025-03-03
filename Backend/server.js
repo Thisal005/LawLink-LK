@@ -9,6 +9,7 @@ import userRouter from "./routes/user.route.js";
 import lawyerAuthRouter from "./routes/lawyerAuth.route.js";
 import lawyerRouter from "./routes/lawyer.route.js";
 import caseRouter from "./routes/case.route.js";
+import taskRouter from "./routes/tasks.route.js";
 import path from "path";
 
 dotenv.config();
@@ -32,6 +33,7 @@ app.use("/api/user/", userRouter);
 app.use("/api/lawyer/", lawyerAuthRouter);
 app.use("/api/lawyer-data/", lawyerRouter);
 app.use("/api/case/", caseRouter);
+app.use("/api/tasks/", taskRouter);
 
 app.listen(PORT, () => {
     connectTomongoDB();

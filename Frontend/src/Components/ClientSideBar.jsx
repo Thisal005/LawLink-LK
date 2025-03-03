@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Grid, FileText, Settings, Menu, X } from 'lucide-react';
+import { Grid, FileText, Settings, Menu, X, Rocket } from 'lucide-react';
 import { useNavigate, useLocation } from "react-router-dom";
 
-const Sidebar = () => {
+const ClietnSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Add this to get current path
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,8 +13,9 @@ const Sidebar = () => {
 
   // Define navigation items for easier management
   const navItems = [
-    { path: "/lawyer-dashboard", label: "Dashboard", icon: Grid },
-    { path: "/view-cases", label: "View Cases", icon: FileText },
+    { path: "/", label: "Dashboard", icon: Grid },
+    { path: "#", label: "Post Case", icon: Rocket },
+    { path: "#", label: "LexBot", icon: Rocket },
     { path: "/settings", label: "Settings", icon: Settings },
   ];
 
@@ -31,7 +32,7 @@ const Sidebar = () => {
           <div className="flex items-center gap-2 mb-12">
             <div className="text-2xl font-bold tracking-tight">
               <img
-                onClick={() => navigate("/lawyer-dashboard")}
+                onClick={() => navigate("/")}
                 style={{ cursor: 'pointer' }}
                 src="./images/hori.png"
                 alt="Sidebar Logo"
@@ -115,4 +116,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default ClietnSidebar;
