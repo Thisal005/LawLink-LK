@@ -6,7 +6,7 @@ import { AppContext } from "../Context/AppContext";
 
 const useUpdateTaskStatus = () => {
   const [loading, setLoading] = useState(false);
-  const { backendUrl, userData, lawyerData } = useContext(AppContext);
+  const { backendUrl, userData } = useContext(AppContext);
 
   const updateTaskStatus = async (taskId, status) => {
     if (!taskId || !status) {
@@ -14,9 +14,8 @@ const useUpdateTaskStatus = () => {
       return;
     }
 
-    const currentUser = userData; // Only clients can update task status
-    if (!currentUser) {
-      toast.error("You must be a client to update task status");
+    if (!userData) {
+      toast.error("You must be logged in to update task status");
       return;
     }
 
@@ -27,19 +26,17 @@ const useUpdateTaskStatus = () => {
         `${backendUrl}/api/tasks/${taskId}`,
         { status },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
 
       toast.success("Task status updated successfully!");
       setLoading(false);
-      return res.data; // Return the updated task
+      return res.data;
     } catch (error) {
-      console.error("Error updating task status:", error);
-      toast.error("Failed to update task status");
+      console.error("Error updating task status:", error.response?.data || error.message);
+      toast.error(error.response?.data?.msg || "Failed to update task status");
       setLoading(false);
     }
   };

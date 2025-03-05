@@ -1,30 +1,51 @@
-import React from 'react';
+import React from "react";
 
-const LawyerNotes = function() {
+const NoteCard = ({ note }) => {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-6">
-        <div className="w-3 h-3 rounded-full bg-purple-400"></div>
-        <h2 className="text-xl font-semibold">LAWYER NOTES</h2>
+    <div
+      className="bg-white text-gray-900 rounded-xl shadow-lg p-6 mb-4 relative overflow-hidden transform transition-all duration-300 hover:shadow-xl group"
+      role="article"
+      aria-labelledby={`note-content-${note._id}`}
+    >
+      {/* Dynamic background gradient */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full filter blur-2xl opacity-50 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-28 h-28 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full filter blur-2xl opacity-50 animate-pulse animation-delay-2000"></div>
       </div>
 
-      <div className="space-y-6">
-        <div>
-          <h3 className="font-medium mb-2">Document Review Notes</h3>
-          <p className="text-sm text-gray-600">
-            I reviewed the employment contract you uploaded. The non-compete clause seems overly restrictive and may not hold up in court. I suggest renegotiating this clause with your employer to avoid future disputes.
-          </p>
-        </div>
+      <div className="relative z-10">
+        {/* Note Content */}
+        <p
+          id={`note-content-${note._id}`}
+          className="text-gray-800 group-hover:text-blue-700 transition-colors duration-200"
+        >
+          {note.content}
+        </p>
 
-        <div>
-          <h3 className="font-medium mb-2">Evidence Review</h3>
-          <p className="text-sm text-gray-600">
-            Reviewed the evidence provided on 2024.12.19. The witness statements strongly indicate regarding the faulty product. However, additional supporting documentation from the supplier will strengthen your case. Follow up with them to obtain the original invoice and warranty terms.
+        {/* Metadata */}
+        <div className="mt-4 text-sm text-gray-600">
+          <p>
+            From:{" "}
+            <span className="font-semibold text-gray-900">
+              {note.lawyerId.fullName}
+            </span>{" "}
+            |{" "}
+            <span className="text-gray-500">
+              {new Date(note.createdAt).toLocaleString()}
+            </span>
           </p>
+          {note.caseId && (
+            <p className="mt-1">
+              Case:{" "}
+              <span className="font-semibold text-gray-900">
+                {note.caseId.caseName}
+              </span>
+            </p>
+          )}
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default LawyerNotes;
+export default NoteCard;

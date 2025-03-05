@@ -3,6 +3,7 @@ import Task from "../models/tasks.model.js";
 import Case from "../models/case.model.js";
 import User from "../models/user.model.js";
 import Lawyer from "../models/lawyer.model.js";
+import Notification from "../models/notifications.model.js"; // New model for notifications
 
 // Assign a new task (Lawyer only)
 export const createTask = async (req, res) => {
@@ -10,7 +11,6 @@ export const createTask = async (req, res) => {
     const { taskName, description, clientId, caseId } = req.body;
     const lawyerId = req.user._id;
 
-    // Validate case and client
     const caseExists = await Case.findById(caseId);
     const clientExists = await User.findById(clientId);
 
@@ -18,7 +18,6 @@ export const createTask = async (req, res) => {
       return res.status(404).json({ msg: "Case or client not found" });
     }
 
-    // Create a new task
     const newTask = new Task({
       taskName,
       description,
@@ -62,19 +61,32 @@ export const updateTaskStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    const task = await Task.findById(id);
+    const task = await Task.findById(id)
+      .populate("clientId", "fullName")
+      .populate("lawyerId", "fullName")
+      .populate("caseId", "caseName");
 
     if (!task) {
       return res.status(404).json({ msg: "Task not found" });
     }
 
     // Ensure only the assigned client can update the task
-    if (task.clientId.toString() !== req.user._id.toString()) {
+    if (task.clientId._id.toString() !== req.user._id.toString()) {
       return res.status(403).json({ msg: "Unauthorized" });
     }
 
     task.status = status;
     await task.save();
+
+    // Notify lawyer if task is completed
+    if (status === "completed") {
+      const notification = new Notification({
+        recipientId: task.lawyerId._id,
+        message: `Client ${task.clientId.fullName} completed task "${task.taskName}" for case "${task.caseId.caseName}".`,
+        taskId: task._id,
+      });
+      await notification.save();
+    }
 
     res.status(200).json(task);
   } catch (err) {

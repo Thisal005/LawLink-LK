@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "../css/Verify-email.css";
 
 function LawyerVerifyEmail() {
   const navigate = useNavigate();

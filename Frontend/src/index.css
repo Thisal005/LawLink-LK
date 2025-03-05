@@ -274,3 +274,15 @@ label {
   opacity: 0.8;
   margin-top: 4px;
 }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+}
+.hover\:scrollbar-default:hover::-webkit-scrollbar {
+  display: block;
+}
+.hover\:scrollbar-default:hover {
+  scrollbar-width: thin; /* Firefox */
+}

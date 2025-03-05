@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
-import '../css/Verify-email.css';
 
 function LawyerRestPasswordOtp() {
   const navigate = useNavigate();

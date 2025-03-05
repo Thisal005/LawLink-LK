@@ -15,7 +15,7 @@ const Sidebar = () => {
   const navItems = [
     { path: "/lawyer-dashboard", label: "Dashboard", icon: Grid },
     { path: "/view-cases", label: "View Cases", icon: FileText },
-    { path: "/settings", label: "Settings", icon: Settings },
+    { path: "/case", label: "Settings", icon: Settings },
   ];
 
   return (

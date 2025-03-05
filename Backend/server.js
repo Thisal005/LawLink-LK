@@ -1,3 +1,4 @@
+// server.js
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -10,6 +11,9 @@ import lawyerAuthRouter from "./routes/lawyerAuth.route.js";
 import lawyerRouter from "./routes/lawyer.route.js";
 import caseRouter from "./routes/case.route.js";
 import taskRouter from "./routes/tasks.route.js";
+import notificationRouter from "./routes/notification.route.js"; 
+import noteRouter from "./routes/note.route.js"; 
+import todoRouter from "./routes/todo.route.js";
 import path from "path";
 
 dotenv.config();
@@ -17,13 +21,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json()); 
+app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = ['http://localhost:5173'];
-app.use(cors({ origin: allowedOrigins, credentials: true })); 
+const allowedOrigins = ["http://localhost:5173"];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 
-// Static file directories
 app.use("/uploads", express.static("uploads"));
 app.use("/uploads-chat", express.static("uploads-chat"));
 
@@ -34,8 +37,12 @@ app.use("/api/lawyer/", lawyerAuthRouter);
 app.use("/api/lawyer-data/", lawyerRouter);
 app.use("/api/case/", caseRouter);
 app.use("/api/tasks/", taskRouter);
+app.use("/api/notifications/", notificationRouter);
+app.use("/api/notes/", noteRouter);
+app.use("/api/todos/", todoRouter);
+
 
 app.listen(PORT, () => {
-    connectTomongoDB();
-    console.log(`Server running on port ${PORT}`);
+  connectTomongoDB();
+  console.log(`Server running on port ${PORT}`);
 });

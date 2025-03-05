@@ -16,6 +16,8 @@ import LawyerRestPasswordOtp from "./pages/LawyerPassword-Rest ";
 import LawyerDasgboard from "./pages/LawyerDasgboard";
 import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
+import Case from "./pages/Case";
+import Notifications from "./pages/Notifications";
 import { ToastContainer } from "react-toastify";
 import { AppContentProvider } from "./Context/AppContext";
 import { AuthContextProvider,useAuthContext } from "./Context/AuthContext";
@@ -49,6 +51,8 @@ function App() {
             <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
             <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />
             <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>} />
+            <Route path="/case" element={<ProtectedRoute><Case/></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

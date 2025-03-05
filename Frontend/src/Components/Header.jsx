@@ -174,7 +174,8 @@ const Header = ({ displayName: propDisplayName, practiceAreas = "Corporate Law" 
                 </div>
                 
                 <div className="p-3 text-center bg-gray-50 border-t border-gray-100">
-                  <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                  <button className="text-sm text-blue-600 hover:text-blue-800 font-medium"     onClick={() => navigate("/notifications")}
+                  >
                     View all notifications
                   </button>
                 </div>

@@ -7,32 +7,31 @@ import { AppContext } from "../Context/AppContext";
 const useFetchTasks = (caseId) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { backendUrl, userData, lawyerData } = useContext(AppContext);
+  const { backendUrl } = useContext(AppContext);
 
-  useEffect(() => {
+  const fetchTasks = async () => {
     if (!caseId) return;
 
-    const fetchTasks = async () => {
-      setLoading(true);
+    setLoading(true);
+    try {
+      const res = await axios.get(`${backendUrl}/api/tasks/case/${caseId}`, {
+        withCredentials: true,
+      });
 
-      try {
-        const res = await axios.get(`${backendUrl}/api/tasks/case/${caseId}`, {
-          withCredentials: true,
-        });
+      setTasks(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      toast.error("Failed to fetch tasks");
+      setLoading(false);
+    }
+  };
 
-        setTasks(res.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-        toast.error("Failed to fetch tasks");
-        setLoading(false);
-      }
-    };
-
+  useEffect(() => {
     fetchTasks();
   }, [caseId, backendUrl]);
 
-  return { tasks, loading };
+  return { tasks, loading, fetchTasks };
 };
 
 export default useFetchTasks;
