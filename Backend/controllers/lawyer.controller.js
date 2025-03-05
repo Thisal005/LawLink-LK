@@ -25,6 +25,9 @@ export const getLawyerData = async (req, res) => {
         email: req.lawyer.email,
         contact: req.lawyer.contact,
         isVerified: req.lawyer.isVerified,
+        publicKey: lawyer.publicKey,
+        privateKey: lawyer.privateKey,
+        profilePicture: lawyer.profilePicture,
       },
     });
   } catch (error) {
