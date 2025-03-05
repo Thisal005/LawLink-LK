@@ -8,114 +8,114 @@ import e from "express";
 
 dotenv.config();
 
-
-
 export const signup = async (req, res) => {
-
     try {
-        const { fullName, password, confirmPassword, email, contact } = req.body;
+      const { fullName, password, confirmPassword, email, contact } = req.body;
+  
+      if (password !== confirmPassword) {
+        return res.status(400).json({ msg: "Passwords do not match" });
+      }
+  
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ msg: "User already exists" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const username = fullName.toLowerCase().replace(/\s+/g, "");
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+  
+      await sodium.ready;
+      const keyPair = sodium.crypto_box_keypair();
+      const publicKey = sodium.to_hex(keyPair.publicKey);
+      const privateKey = sodium.to_hex(keyPair.privateKey);
+  
+      // Log the keys to verify
+      console.log("Generated Client Public Key:", publicKey);
+      console.log("Generated Client Private Key:", privateKey);
+  
+      const newUser = new User({
+        fullName,
+        username,
+        password: hashedPassword,
+        email,
+        contact,
+        verifyotp: otp,
+        verifyOtpExpires: Date.now() + 2 * 60 * 1000,
+        publicKey,
+        privateKey,
+      });
+  
+      await newUser.save();
+      const savedUser = await User.findById(newUser._id);
+  
+      const mailOptions = {
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: "Welcome to LawLink LK - Verify your email",
+        html: `
+            <            <div style="text-align: center; margin: 10px 0;">
+            <img src="https://i.ibb.co/Tq6mb2M/img1.png" 
+                alt="LawLink LK Header Image" 
+                style="max-width: 100%; max-width: 640px; height: auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        </div>
 
-        if (password !== confirmPassword) {
-            return res.status(400).json({ msg: "Passwords do not match" });
-        }
-
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ msg: "User already exists" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const username = fullName.toLowerCase().replace(/\s+/g, ""); 
-
-        const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-        await sodium.ready;
-        const keyPair = sodium.crypto_box_keypair();
-        const publicKey = sodium.to_hex(keyPair.publicKey);
-        const privateKey = sodium.to_hex(keyPair.privateKey);
-
-        const newUser = new User({
-            fullName,
-            username,
-            password: hashedPassword,
-            email,
-            contact,
-            verifyotp: otp,
-            verifyOtpExpires: Date.now() + 2 * 60 * 1000, 
-            publicKey,
-            privateKey,
-        });
-
-        await newUser.save(); 
-        const savedUser = await User.findById(newUser._id);
-
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: "Welcome to LawLink LK - Verify your email",
-            html: `
-                <            <div style="text-align: center; margin: 10px 0;">
-                <img src="https://i.ibb.co/Tq6mb2M/img1.png" 
-                    alt="LawLink LK Header Image" 
-                    style="max-width: 100%; max-width: 640px; height: auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-            </div>
-
-            <div style="background-color:rgb(232, 250, 255); padding: 40px 20px; font-family: 'Arial', sans-serif; color: #333; max-width: 600px; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-               
-                <div >
-                    <h2 style="color: #1e90ff; font-size: 28px;">Hi ${newUser.fullName},</h2>
-                    <p style="font-size: 16px; color: #555;">
-                        Welcome to <b>LawLink LK!</b><br>
-                        Thank you for registering with us. To complete the account creation process, please use the OTP below:
-                    </p>
-                    <div style="font-size: 32px; font-weight: bold; color:rgb(81, 0, 255); background-color: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-                        ${otp}
-                    </div>
-                    <p style="font-size: 14px; color: #777;">
-                        This OTP will expire in <strong>2 minutes</strong> After that, it will expire, and you will need to request a new one.
-                    </p>
-        
-                    <p style="font-size: 14px; color: #777; margin-top: 20px; ">
-                        <b>How to verify:</b><br>
-                        1. Enter the OTP in the verification field.<br>
-                        2. Complete the process to finish verifying your account.
-                    </p>
-        
-                    <p style="font-size: 14px; color: #555; margin-top: 20px;">
-                        If you didn’t request this, please ignore this email. Your account remains safe.
-                    </p>
-        
-                    <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
-                        <p style="font-size: 16px; color: #555;">
-                            If you need further assistance, contact us at
-                            <a href="mailto:support@lawlinklk.com" style="color: #1e90ff; text-decoration: none;">support@lawlinklk.com</a>.
-                        </p>
-                        <p style="font-size: 14px; color: #777;">Best regards,<br><b>LawLink LK Team</b><br>
-                      
-                            Visit us at <a href="https://www.lawlinklk.com" style="color: #1e90ff; text-decoration: none;">www.lawlinklk.com</a>
-                        </p>
-                    </div>
-        
-                    <img src="https://i.ibb.co/sHkgFsX/lawlink-hori-copy.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
+        <div style="background-color:rgb(232, 250, 255); padding: 40px 20px; font-family: 'Arial', sans-serif; color: #333; max-width: 600px; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+           
+            <div >
+                <h2 style="color: #1e90ff; font-size: 28px;">Hi ${newUser.fullName},</h2>
+                <p style="font-size: 16px; color: #555;">
+                    Welcome to <b>LawLink LK!</b><br>
+                    Thank you for registering with us. To complete the account creation process, please use the OTP below:
+                </p>
+                <div style="font-size: 32px; font-weight: bold; color:rgb(81, 0, 255); background-color: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                    ${otp}
                 </div>
+                <p style="font-size: 14px; color: #777;">
+                    This OTP will expire in <strong>2 minutes</strong> After that, it will expire, and you will need to request a new one.
+                </p>
+    
+                <p style="font-size: 14px; color: #777; margin-top: 20px; ">
+                    <b>How to verify:</b><br>
+                    1. Enter the OTP in the verification field.<br>
+                    2. Complete the process to finish verifying your account.
+                </p>
+    
+                <p style="font-size: 14px; color: #555; margin-top: 20px;">
+                    If you didn’t request this, please ignore this email. Your account remains safe.
+                </p>
+    
+                <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
+                    <p style="font-size: 16px; color: #555;">
+                        If you need further assistance, contact us at
+                        <a href="mailto:support@lawlinklk.com" style="color: #1e90ff; text-decoration: none;">support@lawlinklk.com</a>.
+                    </p>
+                    <p style="font-size: 14px; color: #777;">Best regards,<br><b>LawLink LK Team</b><br>
+                  
+                        Visit us at <a href="https://www.lawlinklk.com" style="color: #1e90ff; text-decoration: none;">www.lawlinklk.com</a>
+                    </p>
+                </div>
+    
+                <img src="https://i.ibb.co/sHkgFsX/lawlink-hori-copy.png" alt="LawLink LK" style="width: 200px; margin-top: 20px;">
             </div>
-            `,
-        };
+        </div>
+        `,
+    };
 
-        await transporter.sendMail(mailOptions);
-
-        res.status(201).json({
-            _id: savedUser._id,
-            fullName: savedUser.fullName,
-            username: savedUser.username,
-            msg: "User created successfully. Please check your email for the OTP.",
-        });
-
+    await transporter.sendMail(mailOptions);
+  
+      res.status(201).json({
+        _id: savedUser._id,
+        fullName: savedUser.fullName,
+        username: savedUser.username,
+        msg: "User created successfully. Please check your email for the OTP.",
+      });
     } catch (err) {
-        console.error("Error in signup controller:", err.message);
-        res.status(500).json({ msg: "Something went wrong" });
+      console.error("Error in signup controller:", err.message);
+      res.status(500).json({ msg: "Something went wrong" });
     }
-};
+  };
+
 
 export const login = async(req, res) => {
     try{

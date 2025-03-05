@@ -11,7 +11,7 @@ const TaskList = ({ caseId }) => {
 
   return (
     <div
-      className="bg-white text-gray-900 rounded-xl shadow-sm p-6 max-w-lg mx-auto  h-"
+      className="bg-white text-gray-900 rounded-xl shadow-sm p-6 max-w-lg mx-auto  h-[550px]"
       aria-labelledby="tasks-header"
     >
       {/* Header with Green Dot Indicator */}

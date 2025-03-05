@@ -27,8 +27,8 @@ function Home() {
   ];
 
   // Example client and case IDs (consider fetching these dynamically)
-  const clientId = "67c59a08370d0f802db80583";
-  const caseId = "67c8000fc05fc45a8fbf5978";
+  const clientId = "67c893b3db23727fa64b7550";
+  const caseId = "67c8957fef9fc5bc2a450e24";
 
   return (
     <div>

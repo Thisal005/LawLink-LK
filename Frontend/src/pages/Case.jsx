@@ -18,8 +18,8 @@ function Case() {
   const navigate = useNavigate();
 
   // Client and case IDs for API calls or data fetching
-  const clientId = "67c7fe29bc4d0952007bfa5a";
-  const caseId = "67c8000fc05fc45a8fbf5978";
+  const clientId = "67c893b3db23727fa64b7550";
+  const caseId = "67c8957fef9fc5bc2a450e24";
 
   return (
     <div>
