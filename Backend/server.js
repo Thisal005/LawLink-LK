@@ -31,16 +31,16 @@ app.use("/uploads", express.static("uploads"));
 app.use("/uploads-chat", express.static("uploads-chat"));
 
 // Routes
-app.use("/api/auth/", authRoute);
-app.use("/api/messages/", messageRoute);
-app.use("/api/user/", userRouter);
-app.use("/api/lawyer/", lawyerAuthRouter);
-app.use("/api/lawyer-data/", lawyerRouter);
-app.use("/api/case/", caseRouter);
-app.use("/api/tasks/", taskRouter);
-app.use("/api/notifications/", notificationRouter);
-app.use("/api/notes/", noteRouter);
-app.use("/api/todos/", todoRouter);
+app.use("/api/auth", authRoute);
+app.use("/api/messages", messageRoute);
+app.use("/api/user", userRouter); // Mounts /api/user/data and /api/user/:id
+app.use("/api/lawyer", lawyerAuthRouter);
+app.use("/api/lawyer-data", lawyerRouter); // Mounts /api/lawyer-data/data and /api/lawyer-data/:id
+app.use("/api/case", caseRouter);
+app.use("/api/tasks", taskRouter);
+app.use("/api/notifications", notificationRouter);
+app.use("/api/notes", noteRouter);
+app.use("/api/todos", todoRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -3,114 +3,133 @@ import { createContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { getCookie } from "../utills/cookies";
 
-export const AppContext = createContext(); 
-
+export const AppContext = createContext();
 
 export const AppContentProvider = (props) => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL; 
-    const [isLoggedIn, setIsLoggedIn] = useState(false); 
-    const [userData, setUserData] = useState(null);
-    const [lawyerData, setLawyerData] = useState(null);
-    const [email, setEmail] = useState("");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [lawyerData, setLawyerData] = useState(null);
+  const [email, setEmail] = useState("");
+  const [privateKey, setPrivateKey] = useState(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New loading state
 
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      setIsCheckingAuth(true);
+      try {
+        // Check user login
+        try {
+          const { data } = await axios.get(`${backendUrl}/api/user/data`, { withCredentials: true });
+          console.log("User data response:", data); // Debug log
+          if (data.success) {
+            setIsLoggedIn(true);
+            setUserData(data.userData);
+            setPrivateKey(data.userData.privateKey);
+            return;
+          }
+        } catch (error) {
+          console.log("User auth check failed:", error.response?.data || error.message);
+        }
 
- useEffect(() => {
-  const checkLoginStatus = async () => {
+        // Check lawyer login
+        try {
+          const { data } = await axios.get(`${backendUrl}/api/lawyer-data/data`, { withCredentials: true });
+          console.log("Lawyer data response:", data); // Debug log
+          if (data.success) {
+            setIsLoggedIn(true);
+            setLawyerData(data.UserData);
+            setPrivateKey(data.UserData.privateKey);
+            return;
+          }
+        } catch (error) {
+          console.log("Lawyer auth check failed:", error.response?.data || error.message);
+        }
+
+        setIsLoggedIn(false);
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        setIsLoggedIn(false);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, [backendUrl]);
+
+  const getUserData = async () => {
     try {
-      // Check for user login
-      try {
-        const { data } = await axios.get(backendUrl + '/api/user/data', {
-          withCredentials: true
-        });
-        
-        if (data.success) {
-          setIsLoggedIn(true);
-          setUserData(data.userData);
-          return; // If user is logged in, stop here
-        }
-      } catch (error) {
-        // User not logged in, try checking lawyer next
+      const { data } = await axios.get(`${backendUrl}/api/user/data`, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${getCookie("jwt")}` },
+      });
+      console.log("Fetched user data:", data); // Debug log
+      if (data.success) {
+        setUserData(data.userData);
+        setPrivateKey(data.userData.privateKey);
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
       }
-      
-      // Check for lawyer login
-      try {
-        const { data } = await axios.get(backendUrl + '/api/lawyer-data/data', {
-          withCredentials: true
-        });
-        
-        if (data.success) {
-          setIsLoggedIn(true);
-          setLawyerData(data.UserData);
-          return;
-        }
-      } catch (error) {
-        // Lawyer not logged in either
-      }
-      
-      // If we reach here, no one is logged in
-      setIsLoggedIn(false);
-      
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error("Error fetching user data:", error.response?.data || error.message);
+      toast.error("Error fetching user data.");
       setIsLoggedIn(false);
     }
   };
-  
-  checkLoginStatus();
-}, [backendUrl]);
 
-    const getUserData = async () => {
-        try {
-            const { data } = await axios.get(backendUrl + '/api/user/data', {
-                withCredentials: true, 
-                headers: {
-                    Authorization: `Bearer ${getCookie('jwt')}`,
-                },
-            });
-        
-            if (data.success) {
-                setUserData(data.userData);
-            } 
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-            toast.error('Error fetching user data.');
-        }
-    };
-
-    const getLawyerData = async () => {
-      try {
-        const { data } = await axios.get(backendUrl + '/api/lawyer-data/data', {
-          withCredentials: true, 
-        });
-      
-        if (data.success) {
-          setLawyerData(data.UserData);
-        } else {
-          toast.error(data.message || 'Failed to retrieve lawyer data.');
-        }
-      } catch (error) {
-        console.error('Error fetching lawyer data:', error);
-        toast.error('Error fetching lawyer data.');
+  const getLawyerData = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/lawyer-data/data`, { withCredentials: true });
+      console.log("Fetched lawyer data:", data); // Debug log
+      if (data.success) {
+        setLawyerData(data.UserData);
+        setPrivateKey(data.UserData.privateKey);
+        setIsLoggedIn(true);
+      } else {
+        toast.error(data.message || "Failed to retrieve lawyer data.");
+        setIsLoggedIn(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching lawyer data:", error.response?.data || error.message);
+      toast.error("Error fetching lawyer data.");
+      setIsLoggedIn(false);
+    }
+  };
 
-    const value = {
-        backendUrl,
-        isLoggedIn,
-        setIsLoggedIn,
-        getUserData,
-        getLawyerData,
-        userData,
-        setUserData,
-        lawyerData,
-        setLawyerData,
-        email,
-        setEmail
-    };
+  const getPublicKey = async (userId, isLawyer = false) => {
+    try {
+      const endpoint = isLawyer ? `/api/lawyer-data/${userId}` : `/api/user/${userId}`;
+      const { data } = await axios.get(`${backendUrl}${endpoint}`, { withCredentials: true });
+      console.log(`Public key response for ${userId}:`, data); // Debug log
+      if (data.success && data.data.publicKey) {
+        return data.data.publicKey;
+      }
+      throw new Error("Public key not found in response");
+    } catch (error) {
+      console.error("Error fetching public key:", error.response?.data || error.message);
+      toast.error(`Failed to fetch public key for ${isLawyer ? "lawyer" : "user"} ${userId}`);
+      return null;
+    }
+  };
 
-    return (
-        <AppContext.Provider value={value}>
-            {props.children}
-        </AppContext.Provider>
-    );
+  const value = {
+    backendUrl,
+    isLoggedIn,
+    setIsLoggedIn,
+    getUserData,
+    getLawyerData,
+    userData,
+    setUserData,
+    lawyerData,
+    setLawyerData,
+    email,
+    setEmail,
+    privateKey,
+    getPublicKey,
+    isCheckingAuth, // Expose loading state
+  };
+
+  return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;
 };
