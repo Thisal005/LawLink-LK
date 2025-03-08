@@ -8,7 +8,7 @@ export const createCase = async (req, res) => {
         await newCase.save();
         res.status(201).json(newCase);
     } catch (error) {
-        console.error("Error in createCase controller:", error.message);
+        console.error("Error in createCase controllers:", error.message);
         res.status(500).json({ error: error.message });
     }
 };
