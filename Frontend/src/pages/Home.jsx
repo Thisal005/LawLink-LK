@@ -21,7 +21,7 @@ function Home() {
   const navigate = useNavigate();
 
   // Case ID for fetching case-related data
-  const caseId = "67c8957fef9fc5bc2a450e24";
+  const caseId = "67cd4ab0240c311403203c96";
 
   return (
     <div>

@@ -14,16 +14,28 @@ const useGetMessages = () => {
 
   const decryptMessage = async (encryptedMessage, nonce, senderPublicKey, receiverPrivateKey) => {
     await sodium.ready;
-    if (!senderPublicKey || !receiverPrivateKey) {
-      throw new Error("Missing keys for decryption");
+    if (!senderPublicKey || !receiverPrivateKey || !encryptedMessage || !nonce) {
+      throw new Error("Missing required parameters for decryption");
     }
-    const decrypted = sodium.crypto_box_open_easy(
-      sodium.from_hex(encryptedMessage),
-      sodium.from_hex(nonce),
-      sodium.from_hex(senderPublicKey),
-      sodium.from_hex(receiverPrivateKey)
-    );
-    return sodium.to_string(decrypted);
+    console.log("Decryption Attempt:");
+    console.log("Encrypted Message:", encryptedMessage);
+    console.log("Nonce:", nonce);
+    console.log("Sender Public Key:", senderPublicKey);
+    console.log("Receiver Private Key:", receiverPrivateKey);
+    try {
+      const decrypted = sodium.crypto_box_open_easy(
+        sodium.from_hex(encryptedMessage),
+        sodium.from_hex(nonce),
+        sodium.from_hex(senderPublicKey),
+        sodium.from_hex(receiverPrivateKey)
+      );
+      const decryptedText = sodium.to_string(decrypted);
+      console.log("Decrypted Text:", decryptedText);
+      return decryptedText;
+    } catch (err) {
+      console.error("Decryption failed with error:", err);
+      throw err;
+    }
   };
 
   const getMessages = useCallback(
@@ -34,7 +46,7 @@ const useGetMessages = () => {
         return [];
       }
 
-      const otherUserId = userData ? "67c894b63412856749f2e91f" : "67c893b3db23727fa64b7550";
+      const otherUserId = userData ? "67cd474a2a7c3762b6b96557" : "67c893b3db23727fa64b7550";
       const isOtherUserLawyer = userData ? true : false;
 
       if (!forceRefresh && lastFetch && Date.now() - lastFetch < 2000) {
@@ -50,6 +62,8 @@ const useGetMessages = () => {
           headers: { "Content-Type": "application/json" },
         });
 
+        console.log("Fetched Messages Response:", res.data); // Debug raw response
+
         const data = res.data;
         setLastFetch(Date.now());
 
@@ -57,9 +71,11 @@ const useGetMessages = () => {
           const messageArray = Array.isArray(data.data) ? data.data : [];
           const decryptedMessages = await Promise.all(
             messageArray.map(async (msg) => {
+              console.log("Processing Message:", msg); // Debug each message
               if (msg.message && msg.nonce) {
-                const senderPublicKey = await getPublicKey(msg.senderId, msg.senderId === "67c894b63412856749f2e91f");
+                const senderPublicKey = await getPublicKey(msg.senderId, msg.senderId === "67cd474a2a7c3762b6b96557");
                 if (!senderPublicKey) {
+                  console.warn("Missing sender public key for message:", msg._id);
                   return { ...msg, message: "[Failed to decrypt: Missing sender key]" };
                 }
                 try {
@@ -75,7 +91,8 @@ const useGetMessages = () => {
                   return { ...msg, message: "[Decryption failed]" };
                 }
               }
-              return msg;
+              console.warn("Message missing encryption data:", msg._id);
+              return msg; // Return unencrypted message as-is if no nonce
             })
           );
 
@@ -90,6 +107,7 @@ const useGetMessages = () => {
           const combinedMessages = [...decryptedMessages, ...filteredPendingMessages];
           combinedMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
+          console.log("Final Messages State:", combinedMessages); // Debug final state
           setMessages(combinedMessages);
           return combinedMessages;
         } else {
@@ -120,12 +138,13 @@ const useGetMessages = () => {
       const data = JSON.parse(event.data);
       if (data.type === "message") {
         const { message } = data;
+        console.log("WebSocket Message Received:", message); // Debug WebSocket
         const senderPublicKey = await getPublicKey(
           message.senderId,
-          message.senderId === "67c894b63412856749f2e91f"
+          message.senderId === "67cd474a2a7c3762b6b96557"
         );
         let decryptedText = "[Failed to decrypt]";
-        if (senderPublicKey) {
+        if (senderPublicKey && message.nonce) {
           try {
             decryptedText = await decryptMessage(
               message.message,

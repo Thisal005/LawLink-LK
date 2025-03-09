@@ -1,43 +1,14 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import sodium from "libsodium-wrappers";
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
 import Lawyer from "../models/lawyer.model.js";
 import Message from "../models/message.model.js";
 
-const encryptMessage = async (message, senderPrivateKey, receiverPublicKey) => {
-  await sodium.ready;
-
-  // Validate keys
-  if (!senderPrivateKey || !receiverPublicKey) {
-    throw new Error("Missing sender private key or receiver public key");
-  }
-  if (typeof senderPrivateKey !== "string" || typeof receiverPublicKey !== "string") {
-    throw new Error("Keys must be strings");
-  }
-
-  try {
-    const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES);
-    const encrypted = sodium.crypto_box_easy(
-      message,
-      nonce,
-      sodium.from_hex(receiverPublicKey),
-      sodium.from_hex(senderPrivateKey)
-    );
-    return {
-      encrypted: sodium.to_hex(encrypted),
-      nonce: sodium.to_hex(nonce),
-    };
-  } catch (error) {
-    throw new Error(`Encryption failed: ${error.message}`);
-  }
-};
-
 export const sendMessage = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, nonce } = req.body; // Expect encrypted message and nonce from frontend
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
@@ -54,14 +25,6 @@ export const sendMessage = async (req, res) => {
 
     if (!sender || !receiver) {
       return res.status(404).json({ error: "User not found" });
-    }
-
-    // Log and validate keys
-    console.log("Sender Private Key:", sender.privateKey);
-    console.log("Receiver Public Key:", receiver.publicKey);
-
-    if (!sender.privateKey || !receiver.publicKey) {
-      return res.status(500).json({ error: "Missing encryption keys for sender or receiver" });
     }
 
     let conversation = await Conversation.findOne({
@@ -85,22 +48,11 @@ export const sendMessage = async (req, res) => {
         }))
       : [];
 
-    let encryptedMessage = null;
-    let encryptionResult = null;
-    if (message) {
-      encryptionResult = await encryptMessage(
-        message,
-        sender.privateKey,
-        receiver.publicKey
-      );
-      encryptedMessage = encryptionResult.encrypted;
-    }
-
     const newMessage = new Message({
       senderId,
       receiverId,
-      message: encryptedMessage || "",
-      nonce: encryptionResult?.nonce,
+      message: message || "", // Store encrypted message as-is
+      nonce: nonce || "", // Store nonce as-is
       documents: documentData,
       status: "sent",
     });
@@ -108,7 +60,7 @@ export const sendMessage = async (req, res) => {
     conversation.messages.push(newMessage._id);
     await Promise.all([newMessage.save(), conversation.save()]);
 
-    // Notify recipient via WebSocket (assuming 'clients' is available from server.js)
+    // Notify recipient via WebSocket
     const recipientWs = global.clients?.get(receiverId.toString());
     if (recipientWs && recipientWs.readyState === WebSocket.OPEN) {
       recipientWs.send(
@@ -118,7 +70,7 @@ export const sendMessage = async (req, res) => {
             _id: newMessage._id,
             senderId,
             receiverId,
-            message: encryptedMessage,
+            message: newMessage.message,
             nonce: newMessage.nonce,
             documents: documentData,
             createdAt: newMessage.createdAt,
@@ -140,8 +92,6 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-
-
 export const getMessages = async (req, res) => {
   try {
     const { id: receiverId } = req.params;
@@ -158,32 +108,31 @@ export const getMessages = async (req, res) => {
       participants: { $all: [senderId, receiverId] },
     }).populate({
       path: "messages",
-      options: { sort: { createdAt: 1 } }
+      options: { sort: { createdAt: 1 } },
     });
 
     if (!conversation) {
       return res.status(200).json({ success: true, data: [] });
     }
 
-    // Update message status to delivered
     await Message.updateMany(
-      { 
-        _id: { $in: conversation.messages.map(m => m._id) },
+      {
+        _id: { $in: conversation.messages.map((m) => m._id) },
         receiverId: senderId,
-        status: "sent" 
+        status: "sent",
       },
       { $set: { status: "delivered" } }
     );
 
     res.status(200).json({
       success: true,
-      data: conversation.messages
+      data: conversation.messages,
     });
   } catch (error) {
     console.error("Error in getMessages:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Failed to fetch messages",
-      message: error.message 
+      message: error.message,
     });
   }
 };
@@ -198,8 +147,10 @@ export const downloadDocument = async (req, res) => {
       return res.status(404).json({ error: "Message not found" });
     }
 
-    if (message.senderId.toString() !== userId.toString() && 
-        message.receiverId.toString() !== userId.toString()) {
+    if (
+      message.senderId.toString() !== userId.toString() &&
+      message.receiverId.toString() !== userId.toString()
+    ) {
       return res.status(403).json({ error: "Access denied" });
     }
 
@@ -214,16 +165,16 @@ export const downloadDocument = async (req, res) => {
       return res.status(404).json({ error: "File not found on server" });
     }
 
-    res.setHeader('Content-Disposition', `attachment; filename="${document.originalname}"`);
-    res.setHeader('Content-Type', document.mimetype);
-    
+    res.setHeader("Content-Disposition", `attachment; filename="${document.originalname}"`);
+    res.setHeader("Content-Type", document.mimetype);
+
     const fileStream = fs.createReadStream(filePath);
     fileStream.pipe(res);
   } catch (error) {
     console.error("Error in downloadDocument:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Failed to download document",
-      message: error.message 
+      message: error.message,
     });
   }
 };

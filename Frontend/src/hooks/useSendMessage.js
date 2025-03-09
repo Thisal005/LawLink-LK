@@ -19,6 +19,7 @@ const useSendMessage = () => {
       sodium.from_hex(receiverPublicKey),
       sodium.from_hex(senderPrivateKey)
     );
+    console.log("Encryption - Sender Private:", senderPrivateKey, "Receiver Public:", receiverPublicKey);
     return {
       encrypted: sodium.to_hex(encrypted),
       nonce: sodium.to_hex(nonce),
@@ -34,7 +35,7 @@ const useSendMessage = () => {
       return;
     }
 
-    const receiverId = userData ? "67c894b63412856749f2e91f" : "67c893b3db23727fa64b7550"; // Lawyer or Client ID
+    const receiverId = userData ? "67cd474a2a7c3762b6b96557" : "67c893b3db23727fa64b7550";
     const isReceiverLawyer = userData ? true : false;
     const receiverPublicKey = await getPublicKey(receiverId, isReceiverLawyer);
 
@@ -60,7 +61,7 @@ const useSendMessage = () => {
 
       const formData = new FormData();
       formData.append("message", encryptedMessage);
-      if (nonce) formData.append("nonce", nonce); // Optional: Send nonce if needed
+      formData.append("nonce", nonce);
       files.forEach((file) => {
         formData.append("documents", file);
       });
@@ -71,7 +72,6 @@ const useSendMessage = () => {
       });
 
       if (res.data.success) {
-        // Add the plaintext message to the local state for the sender
         const newMessage = {
           ...res.data.data,
           message: messageText, // Display plaintext for sender

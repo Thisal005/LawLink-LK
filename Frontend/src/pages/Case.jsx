@@ -19,7 +19,7 @@ function Case() {
 
   // Client and case IDs for API calls or data fetching
   const clientId = "67c893b3db23727fa64b7550";
-  const caseId = "67c8957fef9fc5bc2a450e24";
+  const caseId = "67cd4ab0240c311403203c96";
 
   return (
     <div>

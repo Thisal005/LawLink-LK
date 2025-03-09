@@ -14,7 +14,6 @@ import taskRouter from "./routes/tasks.route.js";
 import notificationRouter from "./routes/notification.route.js";
 import noteRouter from "./routes/note.route.js";
 import todoRouter from "./routes/todo.route.js";
-import sodium from "libsodium-wrappers";
 
 dotenv.config();
 
@@ -30,19 +29,17 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use("/uploads", express.static("uploads"));
 app.use("/uploads-chat", express.static("uploads-chat"));
 
-// Routes
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoute);
-app.use("/api/user", userRouter); // Mounts /api/user/data and /api/user/:id
+app.use("/api/user", userRouter);
 app.use("/api/lawyer", lawyerAuthRouter);
-app.use("/api/lawyer-data", lawyerRouter); // Mounts /api/lawyer-data/data and /api/lawyer-data/:id
+app.use("/api/lawyer-data", lawyerRouter);
 app.use("/api/case", caseRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/notes", noteRouter);
 app.use("/api/todos", todoRouter);
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -56,53 +53,44 @@ const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// WebSocket setup
-const wss = new WebSocketServer({ server });
-
-// Make clients Map global
 global.clients = new Map();
 
-wss.on("connection", async (ws, req) => {
-  try {
-    await sodium.ready;
+const wss = new WebSocketServer({ server });
 
-    ws.on("message", async (message) => {
-      try {
-        const data = JSON.parse(message);
+wss.on("connection", (ws, req) => {
+  ws.on("message", async (message) => {
+    try {
+      const data = JSON.parse(message);
 
-        if (data.type === "register") {
-          global.clients.set(data.userId, ws);
-          ws.userId = data.userId;
-          return;
-        }
-
-        if (data.type === "message") {
-          const recipientWs = global.clients.get(data.receiverId);
-          if (recipientWs && recipientWs.readyState === WebSocket.OPEN) {
-            recipientWs.send(
-              JSON.stringify({
-                type: "message",
-                message: data.message,
-              })
-            );
-          }
-        }
-      } catch (error) {
-        console.error("WebSocket message error:", error);
+      if (data.type === "register") {
+        global.clients.set(data.userId, ws);
+        ws.userId = data.userId;
+        return;
       }
-    });
 
-    ws.on("close", () => {
-      if (ws.userId) {
-        global.clients.delete(ws.userId);
+      if (data.type === "message") {
+        const recipientWs = global.clients.get(data.receiverId);
+        if (recipientWs && recipientWs.readyState === WebSocket.OPEN) {
+          recipientWs.send(
+            JSON.stringify({
+              type: "message",
+              message: data.message,
+            })
+          );
+        }
       }
-    });
+    } catch (error) {
+      console.error("WebSocket message error:", error);
+    }
+  });
 
-    ws.on("error", (error) => {
-      console.error("WebSocket error:", error);
-    });
-  } catch (error) {
-    console.error("WebSocket connection error:", error);
-    ws.close();
-  }
+  ws.on("close", () => {
+    if (ws.userId) {
+      global.clients.delete(ws.userId);
+    }
+  });
+
+  ws.on("error", (error) => {
+    console.error("WebSocket error:", error);
+  });
 });
