@@ -19,6 +19,7 @@ const useSendMessage = () => {
       sodium.from_hex(receiverPublicKey),
       sodium.from_hex(senderPrivateKey)
     );
+    console.log("Encryption - Sender Private:", senderPrivateKey, "Receiver Public:", receiverPublicKey);
     return {
       encrypted: sodium.to_hex(encrypted),
       nonce: sodium.to_hex(nonce),
@@ -49,22 +50,6 @@ const useSendMessage = () => {
       return;
     }
 
-    // Create a temporary pending message to show immediately
-    const tempId = Date.now().toString(); // Temporary ID for the pending message
-    const tempMessage = {
-      _id: tempId,
-      senderId: currentUser._id,
-      receiverId: receiverId,
-      message: messageText,
-      messagePlaintext: messageText, // Store plaintext for later reference
-      createdAt: new Date(),
-      isPending: true,
-      status: "pending"
-    };
-    
-    // Add to state immediately to provide instant feedback
-    setMessages((prev) => [...prev, tempMessage]);
-
     setLoading(true);
 
     try {
@@ -93,28 +78,20 @@ const useSendMessage = () => {
       });
 
       if (res.data.success) {
-        // Replace the pending message with the actual message from server
         const newMessage = {
           ...res.data.data,
-          message: messageText, // Use the plaintext for display
-          messagePlaintext: messageText, // Store plaintext for later use
+          message: messageText, // Display plaintext for sender immediately
+          messagePlaintext: messageText, // Store plaintext locally in state
           isPending: false,
         };
-        
-        setMessages((prev) => prev.map(msg => 
-          msg._id === tempId ? newMessage : msg
-        ));
+        // Persist plaintext in localStorage
+        localStorage.setItem(`message_${newMessage._id}`, messageText);
+        setMessages((prev) => [...prev, newMessage]); // Add to state immediately
       } else {
         throw new Error("Failed to send message");
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      
-      // Mark the temporary message as failed
-      setMessages((prev) => prev.map(msg => 
-        msg._id === tempId ? { ...msg, status: "failed", isPending: false } : msg
-      ));
-      
       toast.error("Failed to send message");
     } finally {
       setLoading(false);

@@ -12,15 +12,16 @@ const useGetMessages = () => {
   const { messages, setMessages, selectedConversation } = useConversation();
   const { backendUrl, userData, lawyerData, privateKey, getPublicKey } = useContext(AppContext);
 
-  // Keep a local cache of sent message plaintexts using messageId as key
-  const [sentMessageCache] = useState(new Map());
-
   const decryptMessage = async (encryptedMessage, nonce, senderPublicKey, receiverPrivateKey) => {
     await sodium.ready;
     if (!senderPublicKey || !receiverPrivateKey || !encryptedMessage || !nonce) {
       throw new Error("Missing required parameters for decryption");
     }
-    
+    console.log("Decryption Attempt:");
+    console.log("Encrypted Message:", encryptedMessage);
+    console.log("Nonce:", nonce);
+    console.log("Sender Public Key:", senderPublicKey);
+    console.log("Receiver Private Key:", receiverPrivateKey);
     try {
       const decrypted = sodium.crypto_box_open_easy(
         sodium.from_hex(encryptedMessage),
@@ -29,31 +30,13 @@ const useGetMessages = () => {
         sodium.from_hex(receiverPrivateKey)
       );
       const decryptedText = sodium.to_string(decrypted);
+      console.log("Decrypted Text:", decryptedText);
       return decryptedText;
     } catch (err) {
       console.error("Decryption failed with error:", err);
       throw err;
     }
   };
-
-  // Cache plaintext when sending a message
-  const cachePlaintext = useCallback((messageId, plaintext) => {
-    if (messageId && plaintext) {
-      sentMessageCache.set(messageId, plaintext);
-    }
-  }, [sentMessageCache]);
-
-  // Look for plaintext for a message
-  const getPlaintext = useCallback((messageId) => {
-    // First check in the local cache
-    if (sentMessageCache.has(messageId)) {
-      return sentMessageCache.get(messageId);
-    }
-    
-    // Then check in the existing messages state
-    const existingMsg = messages.find(m => m._id === messageId && m.messagePlaintext);
-    return existingMsg?.messagePlaintext;
-  }, [sentMessageCache, messages]);
 
   const getMessages = useCallback(
     async (forceRefresh = false) => {
@@ -89,6 +72,8 @@ const useGetMessages = () => {
           headers: { "Content-Type": "application/json" },
         });
 
+        console.log("Fetched Messages Response:", res.data);
+
         const data = res.data;
         setLastFetch(Date.now());
 
@@ -98,52 +83,17 @@ const useGetMessages = () => {
             messageArray.map(async (msg) => {
               const isOwnMessage = msg.senderId.toString() === currentUser._id.toString();
 
-              // If it's our own message, first check if we have the plaintext stored
               if (isOwnMessage) {
-                const plaintext = getPlaintext(msg._id);
-                if (plaintext) {
-                  return {
-                    ...msg,
-                    message: plaintext,
-                    messagePlaintext: plaintext
-                  };
-                }
-                
-                // No plaintext found, try to decrypt
-                if (msg.message && msg.nonce) {
-                  try {
-                    const senderPublicKey = await getPublicKey(
-                      msg.senderId.toString(),
-                      msg.senderId === lawyerData?._id
-                    );
-                    
-                    if (senderPublicKey) {
-                      const decryptedText = await decryptMessage(
-                        msg.message,
-                        msg.nonce,
-                        senderPublicKey,
-                        privateKey
-                      );
-                      
-                      // Cache the decrypted text for future use
-                      cachePlaintext(msg._id, decryptedText);
-                      
-                      return { 
-                        ...msg, 
-                        message: decryptedText,
-                        messagePlaintext: decryptedText 
-                      };
-                    }
-                  } catch (err) {
-                    console.error("Self-message decryption error:", err);
-                  }
-                }
-                
-                // Fallback if all else fails
-                return { ...msg, message: "[Message sent]" };
+                const localPlaintext =
+                  localStorage.getItem(`message_${msg._id}`) ||
+                  messages.find((m) => m._id === msg._id)?.messagePlaintext;
+                return {
+                  ...msg,
+                  message: localPlaintext || "[Message sent]", // Use localStorage or state
+                  messagePlaintext: localPlaintext, // Preserve for future use
+                };
               }
 
-              // For messages from others, decrypt as before
               if (msg.message && msg.nonce) {
                 const senderPublicKey = await getPublicKey(
                   msg.senderId.toString(),
@@ -161,11 +111,9 @@ const useGetMessages = () => {
                   );
                   return { ...msg, message: decryptedText };
                 } catch (err) {
-                  console.error("Decryption error for message", msg._id, err);
                   return { ...msg, message: "[Decryption failed]" };
                 }
               }
-              
               return msg;
             })
           );
@@ -181,7 +129,7 @@ const useGetMessages = () => {
           const combinedMessages = [...decryptedMessages, ...filteredPendingMessages];
           combinedMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-          // Update the messages state with our combined decrypted messages
+          console.log("Final Messages State:", combinedMessages);
           setMessages(combinedMessages);
           return combinedMessages;
         } else {
@@ -195,7 +143,7 @@ const useGetMessages = () => {
         setLoading(false);
       }
     },
-    [backendUrl, userData, lawyerData, privateKey, messages, setMessages, lastFetch, getPublicKey, selectedConversation, getPlaintext, cachePlaintext]
+    [backendUrl, userData, lawyerData, privateKey, messages, setMessages, lastFetch, getPublicKey, selectedConversation]
   );
 
   useEffect(() => {
@@ -211,110 +159,53 @@ const useGetMessages = () => {
     ws.onmessage = async (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "message") {
-        const { message: newMsg } = data;
+        const { message } = data;
+        console.log("WebSocket Message Received:", message);
         const currentUser = userData || lawyerData;
-        const isOwnMessage = newMsg.senderId.toString() === currentUser._id.toString();
+        const isOwnMessage = message.senderId.toString() === currentUser._id.toString();
 
         let decryptedText;
-        let messagePlaintext;
-
         if (isOwnMessage) {
-          // For own messages, first check cached plaintext
-          const plaintext = getPlaintext(newMsg._id);
-          if (plaintext) {
-            decryptedText = plaintext;
-            messagePlaintext = plaintext;
-          } else if (newMsg.nonce) {
-            // Try to decrypt
+          const localPlaintext =
+            localStorage.getItem(`message_${message._id}`) ||
+            messages.find((m) => m._id === message._id)?.messagePlaintext;
+          decryptedText = localPlaintext || "[Message sent]";
+        } else if (message.nonce) {
+          const isSenderLawyer = message.senderId === selectedConversation?._id && selectedConversation?.isLawyer;
+          const senderPublicKey = await getPublicKey(
+            message.senderId.toString(),
+            isSenderLawyer
+          );
+          if (senderPublicKey) {
             try {
-              const senderPublicKey = await getPublicKey(
-                newMsg.senderId.toString(), 
-                newMsg.senderId === lawyerData?._id
+              decryptedText = await decryptMessage(
+                message.message,
+                message.nonce,
+                senderPublicKey,
+                privateKey
               );
-              
-              if (senderPublicKey) {
-                decryptedText = await decryptMessage(
-                  newMsg.message,
-                  newMsg.nonce,
-                  senderPublicKey,
-                  privateKey
-                );
-                messagePlaintext = decryptedText;
-                
-                // Cache the result
-                cachePlaintext(newMsg._id, decryptedText);
-              } else {
-                decryptedText = "[Message sent]";
-              }
             } catch (err) {
-              console.error("WebSocket self-message decryption error:", err);
-              decryptedText = "[Message sent]";
+              decryptedText = "[Decryption failed]";
             }
           } else {
-            decryptedText = "[Message sent]";
+            decryptedText = "[Failed to decrypt: Missing sender key]";
           }
         } else {
-          // For messages from others
-          decryptedText = "[Decrypting...]";
-          if (newMsg.nonce) {
-            const isSenderLawyer = newMsg.senderId === selectedConversation?._id && selectedConversation?.isLawyer;
-            const senderPublicKey = await getPublicKey(
-              newMsg.senderId.toString(),
-              isSenderLawyer
-            );
-            if (senderPublicKey) {
-              try {
-                decryptedText = await decryptMessage(
-                  newMsg.message,
-                  newMsg.nonce,
-                  senderPublicKey,
-                  privateKey
-                );
-              } catch (err) {
-                console.error("WebSocket decryption error:", err);
-                decryptedText = "[Decryption failed]";
-              }
-            } else {
-              decryptedText = "[Failed to decrypt: Missing sender key]";
-            }
-          }
+          decryptedText = message.message;
         }
-        
-        const processedMessage = { 
-          ...newMsg, 
+
+        const newMessage = {
+          ...message,
           message: decryptedText,
-          ...(messagePlaintext && { messagePlaintext })
+          messagePlaintext: isOwnMessage ? decryptedText : undefined, // Preserve plaintext locally
         };
-        
-        setMessages((prev) => {
-          // Check if this message already exists
-          const existing = prev.find(m => m._id === newMsg._id);
-          if (existing) {
-            // Update existing message
-            return prev.map(m => m._id === newMsg._id ? processedMessage : m)
-              .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-          }
-          
-          // Add new message
-          return [...prev, processedMessage]
-            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        });
+        setMessages((prev) => [...prev, newMessage].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)));
       }
     };
 
     ws.onerror = (error) => console.error("WebSocket error:", error);
     return () => ws.close();
-  }, [userData, lawyerData, privateKey, setMessages, getPublicKey, selectedConversation, getPlaintext, cachePlaintext]);
-
-  // When useSendMessage creates a new message, we need to handle the plaintext
-  useEffect(() => {
-    // Look for any new messages with plaintext
-    messages.forEach(msg => {
-      if (msg.messagePlaintext && msg._id) {
-        cachePlaintext(msg._id, msg.messagePlaintext);
-      }
-    });
-  }, [messages, cachePlaintext]);
+  }, [userData, lawyerData, privateKey, setMessages, getPublicKey, selectedConversation, messages]);
 
   const safeMessages = Array.isArray(messages) ? messages : [];
 

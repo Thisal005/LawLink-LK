@@ -8,7 +8,7 @@ import Message from "../models/message.model.js";
 
 export const sendMessage = async (req, res) => {
   try {
-    const { message, nonce } = req.body; // Expect encrypted message and nonce from frontend
+    const { message, nonce } = req.body; // Only encrypted message and nonce
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
@@ -51,8 +51,8 @@ export const sendMessage = async (req, res) => {
     const newMessage = new Message({
       senderId,
       receiverId,
-      message: message || "", // Store encrypted message as-is
-      nonce: nonce || "", // Store nonce as-is
+      message: message || "", // Encrypted message
+      nonce: nonce || "",
       documents: documentData,
       status: "sent",
     });
