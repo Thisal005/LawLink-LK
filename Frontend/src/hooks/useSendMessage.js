@@ -19,7 +19,6 @@ const useSendMessage = () => {
       sodium.from_hex(receiverPublicKey),
       sodium.from_hex(senderPrivateKey)
     );
-    console.log("Encryption - Sender Private:", senderPrivateKey, "Receiver Public:", receiverPublicKey);
     return {
       encrypted: sodium.to_hex(encrypted),
       nonce: sodium.to_hex(nonce),
@@ -35,14 +34,36 @@ const useSendMessage = () => {
       return;
     }
 
-    const receiverId = userData ? "67cd474a2a7c3762b6b96557" : "67c893b3db23727fa64b7550";
-    const isReceiverLawyer = userData ? true : false;
+    if (!selectedConversation) {
+      toast.error("No conversation selected");
+      return;
+    }
+
+    const receiverId = selectedConversation._id;
+    const isReceiverLawyer = selectedConversation.isLawyer;
+
     const receiverPublicKey = await getPublicKey(receiverId, isReceiverLawyer);
 
     if (!receiverPublicKey) {
       toast.error("Failed to fetch receiver's public key");
       return;
     }
+
+    // Create a temporary pending message to show immediately
+    const tempId = Date.now().toString(); // Temporary ID for the pending message
+    const tempMessage = {
+      _id: tempId,
+      senderId: currentUser._id,
+      receiverId: receiverId,
+      message: messageText,
+      messagePlaintext: messageText, // Store plaintext for later reference
+      createdAt: new Date(),
+      isPending: true,
+      status: "pending"
+    };
+    
+    // Add to state immediately to provide instant feedback
+    setMessages((prev) => [...prev, tempMessage]);
 
     setLoading(true);
 
@@ -72,17 +93,28 @@ const useSendMessage = () => {
       });
 
       if (res.data.success) {
+        // Replace the pending message with the actual message from server
         const newMessage = {
           ...res.data.data,
-          message: messageText, // Display plaintext for sender
+          message: messageText, // Use the plaintext for display
+          messagePlaintext: messageText, // Store plaintext for later use
           isPending: false,
         };
-        setMessages([...messages, newMessage]);
+        
+        setMessages((prev) => prev.map(msg => 
+          msg._id === tempId ? newMessage : msg
+        ));
       } else {
         throw new Error("Failed to send message");
       }
     } catch (error) {
       console.error("Error sending message:", error);
+      
+      // Mark the temporary message as failed
+      setMessages((prev) => prev.map(msg => 
+        msg._id === tempId ? { ...msg, status: "failed", isPending: false } : msg
+      ));
+      
       toast.error("Failed to send message");
     } finally {
       setLoading(false);
