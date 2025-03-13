@@ -1,7 +1,9 @@
 import Meeting from "../models/meeting.model.js";
 import Case from "../models/case.model.js";
-import Availability from "../models/availability.model.js";
+import Lawyer from "../models/lawyer.model.js";
+import User from "../models/user.model.js";
 
+// Schedule a meeting
 export const scheduleMeeting = async (req, res) => {
   try {
     const { caseId, scheduledAt } = req.body;
@@ -22,23 +24,35 @@ export const scheduleMeeting = async (req, res) => {
       return res.status(400).json({ error: "Cannot schedule a meeting in the past" });
     }
 
-    const slot = await Availability.findOne({
+    const meeting = new Meeting({
+      caseId,
       lawyerId,
-      startTime: { $lte: scheduledTime },
-      endTime: { $gte: scheduledTime },
-      status: "available",
+      clientId,
+      scheduledAt: scheduledTime,
     });
-    if (!slot) return res.status(400).json({ error: "Selected time slot is not available" });
 
-    const meeting = new Meeting({ caseId, lawyerId, clientId, scheduledAt: scheduledTime });
     await meeting.save();
 
-    slot.status = "booked";
-    await slot.save();
-
+    // Notify both lawyer and client
     const lawyerWs = global.clients.get(lawyerId.toString());
+    const clientWs = global.clients.get(clientId.toString());
+
+    const notificationPayload = {
+      type: "newMeeting",
+      meeting: {
+        _id: meeting._id,
+        caseId,
+        scheduledAt,
+        meetingId: meeting.meetingId,
+        caseTitle: caseData.title,
+      },
+    };
+
     if (lawyerWs && lawyerWs.readyState === WebSocket.OPEN) {
-      lawyerWs.send(JSON.stringify({ type: "newMeeting", meeting }));
+      lawyerWs.send(JSON.stringify(notificationPayload));
+    }
+    if (clientWs && clientWs.readyState === WebSocket.OPEN) {
+      clientWs.send(JSON.stringify(notificationPayload));
     }
 
     res.status(201).json({ success: true, data: meeting });
@@ -48,15 +62,17 @@ export const scheduleMeeting = async (req, res) => {
   }
 };
 
+// Get scheduled meetings for the logged-in user
 export const getMeetings = async (req, res) => {
   try {
     const userId = req.user._id;
-    const isLawyer = req.user.role === "lawyer"; // Assuming role is added to user model
+    const isLawyer = await Lawyer.findById(userId);
     const filter = isLawyer ? { lawyerId: userId } : { clientId: userId };
 
     const meetings = await Meeting.find(filter)
       .populate("caseId", "title")
       .sort({ scheduledAt: 1 });
+
     res.status(200).json({ success: true, data: meetings });
   } catch (error) {
     console.error("Error in getMeetings:", error);
@@ -64,23 +80,70 @@ export const getMeetings = async (req, res) => {
   }
 };
 
-export const updateMeetingStatus = async (req, res) => {
-  const { meetingId, status } = req.body;
-  const userId = req.user._id;
-
+// Join a meeting
+export const joinMeeting = async (req, res) => {
   try {
-    const meeting = await Meeting.findById(meetingId);
+    const { meetingId } = req.params;
+    const userId = req.user._id;
+
+    const meeting = await Meeting.findOne({ meetingId })
+      .populate("caseId", "title");
+
     if (!meeting) return res.status(404).json({ error: "Meeting not found" });
 
-    if (meeting.clientId.toString() !== userId.toString() && meeting.lawyerId.toString() !== userId.toString()) {
-      return res.status(403).json({ error: "Unauthorized to update this meeting" });
+    const isLawyer = meeting.lawyerId.toString() === userId.toString();
+    const isClient = meeting.clientId.toString() === userId.toString();
+
+    if (!isLawyer && !isClient) {
+      return res.status(403).json({ error: "Unauthorized to join this meeting" });
     }
 
-    meeting.status = status;
-    await meeting.save();
+    const now = new Date();
+    const scheduledAt = new Date(meeting.scheduledAt);
+    const timeDifference = (scheduledAt - now) / (1000 * 60); // in minutes
+
+    /*if (timeDifference > 5) { // Allow joining 5 minutes early
+      return res.status(400).json({ error: "Meeting has not yet started" });
+    }*/
+
+    if (meeting.status === "completed" || meeting.status === "cancelled") {
+      return res.status(400).json({ error: `Meeting is already ${meeting.status}` });
+    }
+
+    if (meeting.status === "scheduled") {
+      meeting.status = "ongoing";
+      await meeting.save();
+    }
+
     res.status(200).json({ success: true, data: meeting });
   } catch (error) {
-    console.error("Error in updateMeetingStatus:", error);
-    res.status(500).json({ error: "Failed to update status", message: error.message });
+    console.error("Error in joinMeeting:", error);
+    res.status(500).json({ error: "Failed to join meeting", message: error.message });
+  }
+};
+
+// End a meeting
+export const endMeeting = async (req, res) => {
+  try {
+    const { meetingId } = req.params;
+    const userId = req.user._id;
+
+    const meeting = await Meeting.findOne({ meetingId });
+    if (!meeting) return res.status(404).json({ error: "Meeting not found" });
+
+    const isLawyer = meeting.lawyerId.toString() === userId.toString();
+    const isClient = meeting.clientId.toString() === userId.toString();
+
+    if (!isLawyer && !isClient) {
+      return res.status(403).json({ error: "Unauthorized to end this meeting" });
+    }
+
+    meeting.status = "completed";
+    await meeting.save();
+
+    res.status(200).json({ success: true, message: "Meeting ended" });
+  } catch (error) {
+    console.error("Error in endMeeting:", error);
+    res.status(500).json({ error: "Failed to end meeting", message: error.message });
   }
 };

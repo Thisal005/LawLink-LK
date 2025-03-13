@@ -16,22 +16,21 @@ import notificationRouter from "./routes/notification.route.js";
 import noteRouter from "./routes/note.route.js";
 import todoRouter from "./routes/todo.route.js";
 import meetingRouter from "./routes/meeting.route.js";
-import availabilityRouter from "./routes/availability.route.js";
-import Meeting from "./models/meeting.model.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
+
+const allowedOrigins = ["http://localhost:5173"];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
+
 app.use("/uploads", express.static("uploads"));
 app.use("/uploads-chat", express.static("uploads-chat"));
 
-// Routes
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/user", userRouter);
@@ -43,56 +42,44 @@ app.use("/api/notifications", notificationRouter);
 app.use("/api/notes", noteRouter);
 app.use("/api/todos", todoRouter);
 app.use("/api/meetings", meetingRouter);
-app.use("/api/availability", availabilityRouter);
 
-// Error Handling Middleware
 app.use((err, req, res, next) => {
-  console.error("Server Error:", err.stack);
+  console.error(err.stack);
   res.status(500).json({
     error: "Internal Server Error",
-    message: process.env.NODE_ENV === "development" ? err.message : "Something went wrong",
+    message: process.env.NODE_ENV === "development" ? err.message : undefined,
   });
 });
 
-// Create HTTP Server
 const server = http.createServer(app);
-
-// Start Server
 server.listen(PORT, () => {
-  connectTomongoDB()
-    .then(() => console.log(`Server running on port ${PORT}`))
-    .catch((err) => console.error("Failed to connect to MongoDB:", err));
+  connectTomongoDB();
+  console.log(`Server running on port ${PORT}`);
 });
 
-// WebSocket Setup
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: allowedOrigins,
     credentials: true,
   },
 });
 
-// Store connected clients
 global.clients = new Map();
 
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
+  console.log(`User connected: ${userId} (Socket ID: ${socket.id})`);
 
-  // Validate userId
-  if (!userId) {
-    socket.disconnect();
-    console.warn("No userId provided, disconnected socket");
-    return;
+  if (userId) {
+    global.clients.set(userId, socket);
+    socket.userId = userId;
+  } else {
+    console.warn("No userId provided for socket connection");
   }
 
-  console.log(`User connected: ${userId} (Socket ID: ${socket.id})`);
-  global.clients.set(userId, socket);
-  socket.userId = userId;
-
-  // Chat Message Handling
   socket.on("newMessage", (message) => {
     const recipientSocket = global.clients.get(message.receiverId);
-    if (recipientSocket && recipientSocket.readyState === WebSocket.OPEN) {
+    if (recipientSocket) {
       console.log(`Forwarding message from ${userId} to ${message.receiverId}`);
       recipientSocket.emit("newMessage", message);
     } else {
@@ -100,30 +87,10 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Video Call Signaling
-  socket.on("join-meeting", async (meetingId) => {
-    try {
-      const meeting = await Meeting.findOne({ meetingId });
-      if (!meeting) {
-        socket.emit("error", "Meeting not found");
-        return;
-      }
-      if (meeting.clientId.toString() !== userId && meeting.lawyerId.toString() !== userId) {
-        socket.emit("error", "Unauthorized to join this meeting");
-        return;
-      }
-      if (meeting.status !== "scheduled" && meeting.status !== "ongoing") {
-        socket.emit("error", "Meeting is not active");
-        return;
-      }
-
-      socket.join(meetingId);
-      console.log(`${userId} joined meeting: ${meetingId}`);
-      socket.to(meetingId).emit("user-joined", userId);
-    } catch (error) {
-      console.error(`Error joining meeting ${meetingId}:`, error);
-      socket.emit("error", "Failed to join meeting");
-    }
+  socket.on("join-meeting", (meetingId) => {
+    console.log(`${userId} joined meeting: ${meetingId}`);
+    socket.join(meetingId);
+    socket.to(meetingId).emit("user-joined", userId);
   });
 
   socket.on("offer", ({ offer, meetingId }) => {
@@ -147,7 +114,6 @@ io.on("connection", (socket) => {
     socket.leave(meetingId);
   });
 
-  // Handle Disconnection
   socket.on("disconnect", (reason) => {
     console.log(`User disconnected: ${userId}. Reason: ${reason}`);
     if (userId) {
@@ -158,23 +124,5 @@ io.on("connection", (socket) => {
         }
       });
     }
-  });
-
-  // Error Handling for Socket
-  socket.on("error", (err) => {
-    console.error(`Socket error for user ${userId}:`, err);
-    socket.emit("error", "An error occurred on the server");
-  });
-});
-
-// Graceful Shutdown
-process.on("SIGINT", () => {
-  console.log("Shutting down server...");
-  server.close(() => {
-    console.log("HTTP server closed");
-    io.close(() => {
-      console.log("WebSocket server closed");
-      process.exit(0);
-    });
   });
 });
