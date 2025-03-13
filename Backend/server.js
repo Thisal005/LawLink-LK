@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { WebSocketServer } from "ws";
+import { Server } from "socket.io"; // Replace ws with socket.io
 import authRoute from "./routes/auth.route.js";
 import messageRoute from "./routes/message.route.js";
 import connectTomongoDB from "./db/connectTomongoDB.js";
@@ -53,44 +53,63 @@ const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
+});
+
 global.clients = new Map();
 
-const wss = new WebSocketServer({ server });
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
 
-wss.on("connection", (ws, req) => {
-  ws.on("message", async (message) => {
-    try {
-      const data = JSON.parse(message);
+  // Register user based on query param from frontend
+  const userId = socket.handshake.query.userId;
+  if (userId) {
+    global.clients.set(userId, socket);
+    socket.userId = userId;
+  }
 
-      if (data.type === "register") {
-        global.clients.set(data.userId, ws);
-        ws.userId = data.userId;
-        return;
-      }
-
-      if (data.type === "message") {
-        const recipientWs = global.clients.get(data.receiverId);
-        if (recipientWs && recipientWs.readyState === WebSocket.OPEN) {
-          recipientWs.send(
-            JSON.stringify({
-              type: "message",
-              message: data.message,
-            })
-          );
-        }
-      }
-    } catch (error) {
-      console.error("WebSocket message error:", error);
+  // Existing message handling
+  socket.on("message", (data) => {
+    const recipientSocket = global.clients.get(data.receiverId);
+    if (recipientSocket) {
+      recipientSocket.emit("newMessage", data.message);
     }
   });
 
-  ws.on("close", () => {
-    if (ws.userId) {
-      global.clients.delete(ws.userId);
+  // WebRTC signaling
+  socket.on("join-meeting", (meetingId) => {
+    socket.join(meetingId);
+    socket.to(meetingId).emit("user-connected", userId); // Notify others in room
+  });
+
+  socket.on("offer", ({ offer, meetingId }) => {
+    socket.to(meetingId).emit("offer", { offer, from: userId });
+  });
+
+  socket.on("answer", ({ answer, meetingId }) => {
+    socket.to(meetingId).emit("answer", { answer, from: userId });
+  });
+
+  socket.on("ice-candidate", ({ candidate, meetingId }) => {
+    socket.to(meetingId).emit("ice-candidate", { candidate, from: userId });
+  });
+
+  socket.on("disconnect", (meetingId) => {
+    socket.to(meetingId).emit("user-disconnected", userId); // Notify others in room
+    socket.leave(meetingId);
+  });
+  
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+    if (socket.userId) {
+      global.clients.delete(socket.userId);
     }
   });
 
-  ws.on("error", (error) => {
-    console.error("WebSocket error:", error);
-  });
+ 
 });

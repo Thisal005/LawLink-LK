@@ -4,7 +4,7 @@ import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-function LawyerCreateAcc() {
+function ClientCreateAcc() {
   const navigate = useNavigate();
   const { backendUrl, setEmail } = useContext(AppContext);
 
@@ -339,4 +339,4 @@ function LawyerCreateAcc() {
   );
 }
 
-export default LawyerCreateAcc;
+export default ClientCreateAcc;
