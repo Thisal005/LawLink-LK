@@ -33,4 +33,7 @@ const meetingSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-export default mongoose.model("Meeting", meetingSchema);
+const Meeting = mongoose.model("Meeting", meetingSchema);
+
+export default Meeting;
+
