@@ -15,6 +15,8 @@ import LawyerNewpassword from "./pages/LawyerNewpassword";
 import LawyerRestPasswordOtp from "./pages/LawyerPassword-Rest ";
 import LawyerDasgboard from "./pages/LawyerDasgboard";
 import Chat from "./pages/Chat";
+import Meeting from "./pages/Meeting";
+import VideoTestPage from "./pages/TestVidep";
 import NotFound from "./pages/NotFound";
 import Case from "./pages/Case";
 import Notifications from "./pages/Notifications";
@@ -51,6 +53,8 @@ function App() {
             <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
             <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />
             <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>} />
+            {/*<Route path="/meeting" element={<ProtectedRoute><Meeting/></ProtectedRoute>} />*/}
+            <Route path="/video-test" element={<ProtectedRoute><VideoTestPage/></ProtectedRoute>} />
             <Route path="/case" element={<ProtectedRoute><Case/></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
