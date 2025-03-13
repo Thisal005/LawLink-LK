@@ -9,18 +9,21 @@ const ScheduleMeeting = ({ caseId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Mock lawyer availability (replace with real data later)
   useEffect(() => {
-    // Simulate fetching lawyer's available slots for the case
-    const mockSlots = [
-      new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
-      new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // Day after
-    ];
-    setAvailableSlots(mockSlots);
+    const fetchSlots = async () => {
+      try {
+        const caseRes = await axios.get(`http://localhost:5000/api/case/${caseId}`, { withCredentials: true });
+        const res = await axios.get(`http://localhost:5000/api/availability/${caseRes.data.lawyerId}`, { withCredentials: true });
+        setAvailableSlots(res.data.data);
+      } catch (err) {
+        setError(err.response?.data?.error || "Failed to fetch available slots");
+      }
+    };
+    fetchSlots();
   }, [caseId]);
 
   const handleSchedule = async () => {
-    if (!selectedSlot) return;
+    if (!selectedSlot) return setError("Please select a time slot");
     setLoading(true);
     setError(null);
 
@@ -49,8 +52,8 @@ const ScheduleMeeting = ({ caseId }) => {
       >
         <option value="">Select a time slot</option>
         {availableSlots.map((slot) => (
-          <option key={slot} value={slot}>
-            {new Date(slot).toLocaleString()}
+          <option key={slot._id} value={slot.startTime}>
+            {new Date(slot.startTime).toLocaleString()} - {new Date(slot.endTime).toLocaleString()}
           </option>
         ))}
       </select>
@@ -58,9 +61,7 @@ const ScheduleMeeting = ({ caseId }) => {
       <button
         onClick={handleSchedule}
         disabled={loading || !selectedSlot}
-        className={`w-full p-2 rounded text-white ${
-          loading || !selectedSlot ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-        }`}
+        className={`w-full p-2 rounded text-white ${loading || !selectedSlot ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"}`}
       >
         {loading ? "Scheduling..." : "Schedule Meeting"}
       </button>
