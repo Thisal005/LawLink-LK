@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { Server } from "socket.io"; // Replace ws with socket.io
+import { Server } from "socket.io";
+import http from "http";
 import authRoute from "./routes/auth.route.js";
 import messageRoute from "./routes/message.route.js";
 import connectTomongoDB from "./db/connectTomongoDB.js";
@@ -50,7 +51,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const server = app.listen(PORT, () => {
+const server = http.createServer(app); // Use http.createServer for Socket.IO
+server.listen(PORT, () => {
   connectTomongoDB();
   console.log(`Server running on port ${PORT}`);
 });
@@ -66,52 +68,66 @@ const io = new Server(server, {
 global.clients = new Map();
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
-  // Register user based on query param from frontend
   const userId = socket.handshake.query.userId;
+  console.log(`User connected: ${userId} (Socket ID: ${socket.id})`);
+
   if (userId) {
     global.clients.set(userId, socket);
     socket.userId = userId;
+  } else {
+    console.warn("No userId provided for socket connection");
   }
 
-  // Existing message handling
-  socket.on("message", (data) => {
-    const recipientSocket = global.clients.get(data.receiverId);
+  // Chat message handling (aligned with message.controller.js)
+  socket.on("newMessage", (message) => {
+    const recipientSocket = global.clients.get(message.receiverId);
     if (recipientSocket) {
-      recipientSocket.emit("newMessage", data.message);
+      console.log(`Forwarding message from ${userId} to ${message.receiverId}`);
+      recipientSocket.emit("newMessage", message);
+    } else {
+      console.log(`Recipient ${message.receiverId} not connected`);
     }
   });
 
-  // WebRTC signaling
+  // Video call signaling
   socket.on("join-meeting", (meetingId) => {
+    console.log(`${userId} joined meeting: ${meetingId}`);
     socket.join(meetingId);
-    socket.to(meetingId).emit("user-connected", userId); // Notify others in room
+    socket.to(meetingId).emit("user-joined", userId); // Notify others in the meeting
   });
 
   socket.on("offer", ({ offer, meetingId }) => {
+    console.log(`Received offer from ${userId} for meeting: ${meetingId}`);
     socket.to(meetingId).emit("offer", { offer, from: userId });
   });
 
   socket.on("answer", ({ answer, meetingId }) => {
+    console.log(`Received answer from ${userId} for meeting: ${meetingId}`);
     socket.to(meetingId).emit("answer", { answer, from: userId });
   });
 
   socket.on("ice-candidate", ({ candidate, meetingId }) => {
+    console.log(`Received ICE candidate from ${userId} for meeting: ${meetingId}`);
     socket.to(meetingId).emit("ice-candidate", { candidate, from: userId });
   });
 
-  socket.on("disconnect", (meetingId) => {
-    socket.to(meetingId).emit("user-disconnected", userId); // Notify others in room
+  socket.on("leave-meeting", (meetingId) => {
+    console.log(`${userId} left meeting: ${meetingId}`);
+    socket.to(meetingId).emit("user-left", userId);
     socket.leave(meetingId);
   });
-  
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-    if (socket.userId) {
-      global.clients.delete(socket.userId);
+
+  // Handle disconnection
+  socket.on("disconnect", (reason) => {
+    console.log(`User disconnected: ${userId}. Reason: ${reason}`);
+    if (userId) {
+      global.clients.delete(userId);
+      // Notify all rooms the user was in (e.g., meetings)
+      socket.rooms.forEach((room) => {
+        if (room !== socket.id) { // Exclude the socket's own room
+          socket.to(room).emit("user-left", userId);
+        }
+      });
     }
   });
-
- 
 });

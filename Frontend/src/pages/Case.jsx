@@ -9,6 +9,7 @@ import Header from "../Components/Header";
 import TaskForm from "../Components/dashboard/lawyer/assignTask";
 import NoteForm from "../Components/dashboard/lawyer/CreateNote";
 import TodoList from "../Components/ToDoList";
+import ScheduledMeetings from "../Components/scheduledMeetings";
 import useConversation from "../zustand/useConversation";
 import axios from "axios";
 
@@ -108,6 +109,7 @@ function Case() {
             </div>
           </div>
         </div>
+        <ScheduledMeetings />
       </main>
     </div>
   );

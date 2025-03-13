@@ -52,7 +52,7 @@ function App() {
             <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
             <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />
             <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>} />
-            <Route path="/meeting" element={<ProtectedRoute><Meeting/></ProtectedRoute>} />
+            <Route path="/meeting/:meetingId" element={<Meeting />} />
             <Route path="/case" element={<ProtectedRoute><Case/></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />

@@ -185,6 +185,8 @@ function Home() {
           </div>
         </div>
 
+        
+
         {/* Button to navigate to chat */}
         <button
           onClick={() => navigate("/chat")}

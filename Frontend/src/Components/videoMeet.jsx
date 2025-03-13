@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import useVideocall from "../hooks/useVideocall";
 
-const videoMeet = ({meetingId}) => {
+const VideoMeet = ({meetingId}) => {
     const { localStream, remoteStream, isCallActive, startCall, endCall } = useVideocall(meetingId);
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
@@ -49,4 +49,4 @@ const videoMeet = ({meetingId}) => {
 
 };
 
-export default videoMeet;
+export default VideoMeet;

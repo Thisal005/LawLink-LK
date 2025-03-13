@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "../Components/Sidebar";
 import Header from "../Components/Header";
 import MessageContainer from "../Components/messages/MessageContainer";
+import ScheduledMeetings from "../Components/scheduledMeetings";
 
 function Chat() {
   return (
@@ -20,7 +21,7 @@ function Chat() {
         <div className="flex-1 flex justify-center items-center lg:ml-70 mt-10">
           <MessageContainer />
         </div>
-      </div>
+      </div>   
     </div>
   );
 }

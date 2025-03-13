@@ -1,12 +1,11 @@
 import Lawyer from "../models/lawyer.model.js";
-import jwt from 'jsonwebtoken';
-
+import jwt from "jsonwebtoken";
 
 export const getLawyerData = async (req, res) => {
   try {
     const token = req.cookies.jwt;
     if (!token) {
-      return res.status(401).json({ success: false, message: 'Unauthorized. No token provided.' });
+      return res.status(401).json({ success: false, message: "Unauthorized. No token provided." });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -14,20 +13,21 @@ export const getLawyerData = async (req, res) => {
 
     const lawyer = await Lawyer.findById(userId);
     if (!lawyer) {
-      return res.status(404).json({ success: false, message: 'Lawyer not found' });
+      return res.status(404).json({ success: false, message: "Lawyer not found" });
     }
 
     res.status(200).json({
       success: true,
       UserData: {
         _id: lawyer._id,
-        fullName: req.lawyer.fullName,
-        email: req.lawyer.email,
-        contact: req.lawyer.contact,
-        isVerified: req.lawyer.isVerified,
+        fullName: lawyer.fullName, // Fix: Use lawyer directly, not req.lawyer
+        email: lawyer.email,
+        contact: lawyer.contact,
+        isVerified: lawyer.isVerified,
         publicKey: lawyer.publicKey,
         privateKey: lawyer.privateKey,
-        profilePicture: lawyer.profilePicture,
+        lawyerID: lawyer.lawyerID, // Include additional fields from your log
+        documentForVerification: lawyer.documentForVerification,
       },
     });
   } catch (error) {

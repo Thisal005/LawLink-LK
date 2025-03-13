@@ -14,17 +14,28 @@ export const SocketProvider = ({ children }) => {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    const testUserId = user?._id || "test-user-" + Math.random().toString(36).substr(2, 9);
-    console.log("Initializing socket with userId:", testUserId);
+    console.log("SocketContext useEffect triggered. Current user:", user);
+
+    if (!user) {
+      console.log("No user available yet, skipping socket initialization");
+      if (socket) {
+        console.log("Closing existing socket due to no user");
+        socket.close();
+        setSocket(null);
+      }
+      return;
+    }
+
+    console.log("Initializing socket with userId:", user._id);
     const newSocket = io("http://localhost:5000", {
-      query: { userId: testUserId, name: user?.name || "Test User" },
-      reconnection: true, // Enable reconnection
+      query: { userId: user._id, name: user.fullName || "Unnamed User" }, // Use fullName from lawyer data
+      reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
     });
 
     newSocket.on("connect", () => {
-      console.log("Connected to WebSocket server with ID:", testUserId);
+      console.log("Connected to WebSocket server with ID:", user._id);
     });
 
     newSocket.on("disconnect", (reason) => {
@@ -47,14 +58,17 @@ export const SocketProvider = ({ children }) => {
       }));
     });
 
+    newSocket.on("newMeeting", (meeting) => {
+      console.log("New meeting scheduled:", meeting);
+    });
+
     setSocket(newSocket);
 
-    // Cleanup only when the provider unmounts (app closes)
     return () => {
-      console.log("Cleaning up socket");
+      console.log("Cleaning up socket for user:", user._id);
       newSocket.close();
     };
-  }, []); // Empty dependency array to run once on mount
+  }, [user]);
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>

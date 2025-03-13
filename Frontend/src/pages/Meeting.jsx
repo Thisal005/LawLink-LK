@@ -1,17 +1,16 @@
 import React from "react";
-import videoMeet from "../Components/videoMeet";
-import {useParams} from "react-router-dom";
+import VideoMeet from "../Components/videoMeet";
+import { useParams } from "react-router-dom";
 
 const Meeting = () => {
-    const {meetingId} = useParams();
+  const { meetingId } = useParams();
 
-    return(
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Scheduled Meeting </h1>
-            <videoMeet meetingId={meetingId} />
-        </div>
-    );
-
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Video Meeting</h1>
+      <VideoMeet meetingId={meetingId} />
+    </div>
+  );
 };
 
 export default Meeting;

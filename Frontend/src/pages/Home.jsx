@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import CaseCard from "../Components/CaseCard";
 import TaskList from "../Components/TaskList";
 import NoteList from "../Components/NoteList";
+import ScheduledMeetings from "../Components/scheduledMeetings";
+import ScheduleMeeting from "../Components/ScheduleMeeting";
 import useConversation from "../zustand/useConversation";
 import axios from "axios";
 
@@ -85,6 +87,8 @@ function Home() {
             </div>
           </div>
         </div>
+        <ScheduleMeeting caseId={caseId} />
+      <ScheduledMeetings />
         <button
           onClick={() => navigate("/chat")}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all"
