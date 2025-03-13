@@ -11,107 +11,53 @@ export const useSocketContext = () => {
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [peerConnection, setPeerConnection] = useState(null);
   const { user } = useAuthContext();
 
   useEffect(() => {
-    if (user) {
-      console.log("Connecting to WebSocket with userId:", user._id);
-      const newSocket = io("http://localhost:5000", {
-        query: {
-          userId: user._id,
-          name: user?.name || "",
-        },
-      });
+    const testUserId = user?._id || "test-user-" + Math.random().toString(36).substr(2, 9);
+    console.log("Initializing socket with userId:", testUserId);
+    const newSocket = io("http://localhost:5000", {
+      query: { userId: testUserId, name: user?.name || "Test User" },
+      reconnection: true, // Enable reconnection
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
 
-      newSocket.on("connect", () => {
-        console.log("Connected to WebSocket server");
-      });
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket server with ID:", testUserId);
+    });
 
-      newSocket.on("disconnect", () => {
-        console.log("Disconnected from WebSocket server");
-        setSocket(null);
-      });
+    newSocket.on("disconnect", (reason) => {
+      console.log("Disconnected from WebSocket server. Reason:", reason);
+      setSocket(null);
+    });
 
-      newSocket.on("getOnlineUsers", (users) => {
-        setOnlineUsers(users);
-      });
+    newSocket.on("connect_error", (err) => {
+      console.error("Socket connection error:", err.message);
+    });
 
-      newSocket.on("newMessage", (newMessage) => {
-        const message = {
-          ...newMessage,
-          shouldShake: true,
-          createdAt: Date.now(),
-        };
-        useConversation.setState((prev) => ({
-          messages: [...prev.messages, message],
-        }));
-      });
+    newSocket.on("getOnlineUsers", (users) => {
+      setOnlineUsers(users);
+    });
 
-      setSocket(newSocket);
+    newSocket.on("newMessage", (newMessage) => {
+      const message = { ...newMessage, shouldShake: true, createdAt: Date.now() };
+      useConversation.setState((prev) => ({
+        messages: [...prev.messages, message],
+      }));
+    });
 
-      // Cleanup
-      return () => {
-        newSocket.close();
-      };
-    }
-  }, [user]);
+    setSocket(newSocket);
 
-  // WebRTC setup
-  const startVideoCall = async (roomId) => {
-    const configuration = {
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    // Cleanup only when the provider unmounts (app closes)
+    return () => {
+      console.log("Cleaning up socket");
+      newSocket.close();
     };
-    const pc = new RTCPeerConnection(configuration);
-    setPeerConnection(pc);
-
-    // Get local stream
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-    stream.getTracks().forEach((track) => pc.addTrack(track, stream));
-    document.getElementById("localVideo").srcObject = stream;
-
-    // Handle ICE candidates
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        socket.emit("ice-candidate", { candidate: event.candidate, roomId });
-      }
-    };
-
-    // Handle remote stream
-    pc.ontrack = (event) => {
-      document.getElementById("remoteVideo").srcObject = event.streams[0];
-    };
-
-    // Join room
-    socket.emit("join-room", roomId);
-
-    // Create and send offer
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    socket.emit("offer", { offer, roomId });
-
-    // Handle incoming signaling
-    socket.on("offer", async ({ offer, from }) => {
-      await pc.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      socket.emit("answer", { answer, roomId });
-    });
-
-    socket.on("answer", ({ answer }) => {
-      pc.setRemoteDescription(new RTCSessionDescription(answer));
-    });
-
-    socket.on("ice-candidate", ({ candidate }) => {
-      pc.addIceCandidate(new RTCIceCandidate(candidate));
-    });
-  };
+  }, []); // Empty dependency array to run once on mount
 
   return (
-    <SocketContext.Provider value={{ socket, startVideoCall }}>
+    <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}
     </SocketContext.Provider>
   );
