@@ -87,8 +87,25 @@ function Home() {
             </div>
           </div>
         </div>
-        <ScheduleMeeting caseId={caseId} />
-      <ScheduledMeetings />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-rows-1 md:grid-rows-2 gap-5">
+          <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
+            <div className="h-[340px]">
+            <ScheduleMeeting caseId={caseId} />
+            </div>
+          </div>
+         
+        </div>
+          <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
+            <div className="h-[350px]">
+            <ScheduledMeetings />
+            </div>
+          </div>
+        </div>
+        
+        
+    
         <button
           onClick={() => navigate("/chat")}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all"

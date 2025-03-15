@@ -4,6 +4,7 @@ const meetingSchema = new mongoose.Schema({
   caseId: { type: mongoose.Schema.Types.ObjectId, ref: "Case", required: true },
   lawyerId: { type: mongoose.Schema.Types.ObjectId, ref: "Lawyer", required: true },
   clientId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  caseId: { type: mongoose.Schema.Types.ObjectId, ref: "Case", required: true },
   meetingId: {
     type: String,
     unique: true,

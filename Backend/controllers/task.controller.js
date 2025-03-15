@@ -83,7 +83,7 @@ export const updateTaskStatus = async (req, res) => {
       const notification = new Notification({
         recipientId: task.lawyerId._id,
         message: `Client ${task.clientId.fullName} completed task "${task.taskName}" for case "${task.caseId.caseName}".`,
-        taskId: task._id,
+        
       });
       await notification.save();
     }

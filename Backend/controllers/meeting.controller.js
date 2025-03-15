@@ -2,13 +2,15 @@ import Meeting from "../models/meeting.model.js";
 import Case from "../models/case.model.js";
 import Lawyer from "../models/lawyer.model.js";
 import User from "../models/user.model.js";
+import Notification from "../models/notifications.model.js";
+import Availability from "../models/availability.model.js"; // Add this import
 
-// Schedule a meeting
 export const scheduleMeeting = async (req, res) => {
   try {
     const { caseId, scheduledAt } = req.body;
     const clientId = req.user._id;
 
+    // Fetch case data
     const caseData = await Case.findById(caseId);
     if (!caseData) return res.status(404).json({ error: "Case not found" });
 
@@ -24,6 +26,21 @@ export const scheduleMeeting = async (req, res) => {
       return res.status(400).json({ error: "Cannot schedule a meeting in the past" });
     }
 
+    // Check and update availability slot
+    const availabilitySlot = await Availability.findOne({
+      lawyerId,
+      startTime: scheduledTime,
+      status: "available",
+    });
+
+    if (!availabilitySlot) {
+      return res.status(400).json({ error: "Selected time slot is not available" });
+    }
+
+    // Update slot status to booked
+    availabilitySlot.status = "booked";
+    await availabilitySlot.save();
+
     const meeting = new Meeting({
       caseId,
       lawyerId,
@@ -33,29 +50,21 @@ export const scheduleMeeting = async (req, res) => {
 
     await meeting.save();
 
-    // Notify both lawyer and client
-    const lawyerWs = global.clients.get(lawyerId.toString());
-    const clientWs = global.clients.get(clientId.toString());
+    // Fetch client data for full name
+    const client = await User.findById(clientId);
+    if (!client) return res.status(404).json({ error: "Client not found" });
 
-    const notificationPayload = {
-      type: "newMeeting",
-      meeting: {
-        _id: meeting._id,
-        caseId,
-        scheduledAt,
-        meetingId: meeting.meetingId,
-        caseTitle: caseData.title,
-      },
-    };
+    // Create notification
+    const notification = new Notification({
+      recipientId: lawyerId,
+      message: `Client ${client.fullName} scheduled a meeting for case "${caseData.caseName}" on ${scheduledTime.toLocaleString()}.`,
+    });
+    await notification.save();
 
-    if (lawyerWs && lawyerWs.readyState === WebSocket.OPEN) {
-      lawyerWs.send(JSON.stringify(notificationPayload));
-    }
-    if (clientWs && clientWs.readyState === WebSocket.OPEN) {
-      clientWs.send(JSON.stringify(notificationPayload));
-    }
-
-    res.status(201).json({ success: true, data: meeting });
+    res.status(201).json({
+      message: "Meeting scheduled successfully",
+      meeting: meeting,
+    });
   } catch (error) {
     console.error("Error in scheduleMeeting:", error);
     res.status(500).json({ error: "Failed to schedule meeting", message: error.message });
@@ -100,11 +109,11 @@ export const joinMeeting = async (req, res) => {
 
     const now = new Date();
     const scheduledAt = new Date(meeting.scheduledAt);
-    const timeDifference = (scheduledAt - now) / (1000 * 60); // in minutes
+    const timeDifference = (scheduledAt - now) / (1000 * 60); 
 
-    /*if (timeDifference > 5) { // Allow joining 5 minutes early
+    if (timeDifference > 5) { 
       return res.status(400).json({ error: "Meeting has not yet started" });
-    }*/
+    }
 
     if (meeting.status === "completed" || meeting.status === "cancelled") {
       return res.status(400).json({ error: `Meeting is already ${meeting.status}` });
@@ -145,5 +154,71 @@ export const endMeeting = async (req, res) => {
   } catch (error) {
     console.error("Error in endMeeting:", error);
     res.status(500).json({ error: "Failed to end meeting", message: error.message });
+  }
+};
+
+// Cancel a meeting
+export const cancelMeeting = async (req, res) => {
+  try {
+    const { meetingId } = req.params;
+    const userId = req.user._id;
+
+    const meeting = await Meeting.findOne({ meetingId }).populate(
+      "caseId",
+      "caseName"
+    );
+    if (!meeting) return res.status(404).json({ error: "Meeting not found" });
+
+    // Rest of your existing cancelMeeting logic...
+    const isLawyer = meeting.lawyerId.toString() === userId.toString();
+    const isClient = meeting.clientId.toString() === userId.toString();
+
+    if (!isLawyer && !isClient) {
+      return res.status(403).json({ error: "Unauthorized to cancel this meeting" });
+    }
+
+    const now = new Date();
+    const scheduledAt = new Date(meeting.scheduledAt);
+    const timeDifference = (scheduledAt - now) / (1000 * 60);
+
+    if (timeDifference <= 15) {
+      return res.status(400).json({
+        error: "Cannot cancel meeting less than 15 minutes before start time",
+      });
+    }
+
+    if (meeting.status === "cancelled" || meeting.status === "completed") {
+      return res.status(400).json({ error: `Meeting is already ${meeting.status}` });
+    }
+
+    meeting.status = "cancelled";
+    await meeting.save();
+
+    const client = await User.findById(meeting.clientId);
+    if (!client) return res.status(404).json({ error: "Client not found" });
+
+    const lawyer = await Lawyer.findById(meeting.lawyerId);
+    if (!lawyer) return res.status(404).json({ error: "Lawyer not found" });
+
+    const canceller = isLawyer ? lawyer.fullName : client.fullName;
+    const recipientId = isLawyer ? meeting.clientId : meeting.lawyerId;
+    const recipientRole = isLawyer ? "Client" : "Lawyer";
+
+    const notification = new Notification({
+      recipientId,
+      message: `${recipientRole} ${canceller} cancelled the meeting for case "${meeting.caseId.caseName}" scheduled on ${scheduledAt.toLocaleString()}.`,
+    });
+    await notification.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Meeting cancelled successfully",
+    });
+  } catch (error) {
+    console.error("Error in cancelMeeting:", error);
+    res.status(500).json({
+      error: "Failed to cancel meeting",
+      message: error.message,
+    });
   }
 };

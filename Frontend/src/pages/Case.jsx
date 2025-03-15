@@ -9,6 +9,8 @@ import Header from "../Components/Header";
 import TaskForm from "../Components/dashboard/lawyer/assignTask";
 import NoteForm from "../Components/dashboard/lawyer/CreateNote";
 import TodoList from "../Components/ToDoList";
+import LawyerAvailability from "../Components/dashboard/lawyer/AvailabilityForMeetings";
+
 import ScheduledMeetings from "../Components/scheduledMeetings";
 import useConversation from "../zustand/useConversation";
 import axios from "axios";
@@ -99,7 +101,7 @@ function Case() {
             </div>
             <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
               <div className="h-[200px]">
-                <NoteForm caseId={caseId} clientId={clientId} />
+              <ScheduledMeetings />
               </div>
             </div>
           </div>
@@ -109,7 +111,8 @@ function Case() {
             </div>
           </div>
         </div>
-        <ScheduledMeetings />
+        
+        <LawyerAvailability/>
       </main>
     </div>
   );

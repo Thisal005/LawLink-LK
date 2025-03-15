@@ -16,6 +16,7 @@ import notificationRouter from "./routes/notification.route.js";
 import noteRouter from "./routes/note.route.js";
 import todoRouter from "./routes/todo.route.js";
 import meetingRouter from "./routes/meeting.route.js";
+import availabiltiyRouter from "./routes/availability.route.js";
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use("/api/notifications", notificationRouter);
 app.use("/api/notes", noteRouter);
 app.use("/api/todos", todoRouter);
 app.use("/api/meetings", meetingRouter);
+app.use("/api/availability", availabiltiyRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
