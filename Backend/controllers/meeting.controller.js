@@ -10,7 +10,6 @@ export const scheduleMeeting = async (req, res) => {
     const { caseId, scheduledAt } = req.body;
     const clientId = req.user._id;
 
-    // Fetch case data
     const caseData = await Case.findById(caseId);
     if (!caseData) return res.status(404).json({ error: "Case not found" });
 
@@ -26,7 +25,6 @@ export const scheduleMeeting = async (req, res) => {
       return res.status(400).json({ error: "Cannot schedule a meeting in the past" });
     }
 
-    // Check and update availability slot
     const availabilitySlot = await Availability.findOne({
       lawyerId,
       startTime: scheduledTime,
@@ -37,7 +35,6 @@ export const scheduleMeeting = async (req, res) => {
       return res.status(400).json({ error: "Selected time slot is not available" });
     }
 
-    // Update slot status to booked
     availabilitySlot.status = "booked";
     await availabilitySlot.save();
 
@@ -50,11 +47,9 @@ export const scheduleMeeting = async (req, res) => {
 
     await meeting.save();
 
-    // Fetch client data for full name
     const client = await User.findById(clientId);
     if (!client) return res.status(404).json({ error: "Client not found" });
 
-    // Create notification
     const notification = new Notification({
       recipientId: lawyerId,
       message: `Client ${client.fullName} scheduled a meeting for case "${caseData.caseName}" on ${scheduledTime.toLocaleString()}.`,
@@ -71,7 +66,6 @@ export const scheduleMeeting = async (req, res) => {
   }
 };
 
-// Get scheduled meetings for the logged-in user
 export const getMeetings = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -111,9 +105,9 @@ export const joinMeeting = async (req, res) => {
     const scheduledAt = new Date(meeting.scheduledAt);
     const timeDifference = (scheduledAt - now) / (1000 * 60); 
 
-    if (timeDifference > 5) { 
+    /*if (timeDifference > 5) { 
       return res.status(400).json({ error: "Meeting has not yet started" });
-    }
+    }*/
 
     if (meeting.status === "completed" || meeting.status === "cancelled") {
       return res.status(400).json({ error: `Meeting is already ${meeting.status}` });

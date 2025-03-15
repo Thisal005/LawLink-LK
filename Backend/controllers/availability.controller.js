@@ -12,7 +12,7 @@ export const addAvailability = async (req, res) => {
       return res.status(400).json({ error: "Cannot set availability in the past" });
     }
 
-    const slot = new Availability({ lawyerId, startTime, endTime });
+    const slot = new Availability({ lawyerId, startTime, endTime, status: "available", date: new Date() });
     await slot.save();
     res.status(201).json({ success: true, data: slot });
   } catch (error) {

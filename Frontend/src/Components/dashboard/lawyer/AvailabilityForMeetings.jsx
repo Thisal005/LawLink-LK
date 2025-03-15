@@ -96,6 +96,7 @@ const LawyerAvailability = () => {
     }
 
     const newSlot = {
+      date: selectedDate.format("YYYY-MM-DD"),
       startTime: start.toISOString(),
       endTime: newSlotEnd.toISOString(),
       displayStart: start.format("HH:mm"),
@@ -110,12 +111,12 @@ const LawyerAvailability = () => {
     setError(null);
   };
 
-  // Remove a new slot (from newSlots)
+
   const handleRemoveNewSlot = (index) => {
     setNewSlots((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Remove an existing slot (from DB)
+  
   const handleRemoveExistingSlot = async (slotId) => {
     try {
       const response = await axios.delete(
@@ -161,7 +162,7 @@ const LawyerAvailability = () => {
         );
         const newSlotsWithIds = response.map((res, index) => ({
           ...newSlots[index],
-          _id: res.data.data._id, // Add the returned slot ID
+          _id: res.data.data._id, 
         }));
         setExistingSlots((prev) =>
           [...prev, ...newSlotsWithIds].sort((a, b) =>
@@ -234,11 +235,11 @@ const LawyerAvailability = () => {
                   .map((slot, index) => {
                     const minutesUntilStart = dayjs(slot.startTime).diff(dayjs(), "minute");
                     const canRemove = minutesUntilStart > 15 && slot.status === "available";
-                    const isNewSlot = !slot._id; // New slots won't have an _id yet
+                    const isNewSlot = !slot._id; 
 
                     return (
                       <ListItem
-                        key={slot._id || `new-${index}`} // Use index for new slots
+                        key={slot._id || `new-${index}`} 
                         secondaryAction={
                           <IconButton
                             edge="end"
