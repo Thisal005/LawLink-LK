@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { useAuthContext } from "../../../Context/AuthContext";
+import { AppContext } from "../../../Context/AppContext";
 import { toast } from "react-toastify";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -22,6 +23,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const LawyerAvailability = () => {
   const { user } = useAuthContext();
+  const {backendUrl} = React.useContext(AppContext);
   const [selectedDate, setSelectedDate] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [newSlots, setNewSlots] = useState([]); 
@@ -35,7 +37,7 @@ const LawyerAvailability = () => {
       const fetchSlots = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/availability/all/${user._id}`,
+            `${backendUrl}/api/availability/all/${user._id}`,
             { withCredentials: true }
           );
           const slots = response.data.data
@@ -118,7 +120,7 @@ const LawyerAvailability = () => {
   const handleRemoveExistingSlot = async (slotId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/availability/${slotId}`,
+        `${backendUrl}/api/availability/${slotId}`,
         { withCredentials: true }
       );
       if (response.data.success) {
@@ -144,7 +146,7 @@ const LawyerAvailability = () => {
       const response = await Promise.all(
         newSlots.map((slot) =>
           axios.post(
-            "http://localhost:5000/api/availability/add",
+            `${backendUrl}/api/availability/add`,
             {
               startTime: slot.startTime,
               endTime: slot.endTime,
