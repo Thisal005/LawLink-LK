@@ -210,7 +210,6 @@ const ScheduledMeetings = () => {
                   <div className="flex justify-end space-x-2">
                     <button
                       onClick={() => joinMeeting(meeting.meetingId)}
-                      disabled={!canJoin}
                       className={`px-4 py-2 rounded-lg text-white font-medium transition-all ${
                         canJoin
                           ? "bg-green-500 hover:bg-green-600 shadow-sm hover:shadow"

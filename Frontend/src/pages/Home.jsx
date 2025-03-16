@@ -10,6 +10,7 @@ import NoteList from "../Components/NoteList";
 import ScheduledMeetings from "../Components/scheduledMeetings";
 import ScheduleMeeting from "../Components/ScheduleMeeting";
 import useConversation from "../zustand/useConversation";
+import ChatButton from "../Components/ChatButton";
 import axios from "axios";
 
 function Home() {
@@ -102,12 +103,7 @@ function Home() {
           </div>
         </div>
 
-        <button
-          onClick={() => navigate("/chat")}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all"
-        >
-          Chat
-        </button>
+        <ChatButton/>
       </main>
     </div>
   );

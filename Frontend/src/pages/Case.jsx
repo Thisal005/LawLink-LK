@@ -11,6 +11,8 @@ import NoteForm from "../Components/dashboard/lawyer/CreateNote";
 import TodoList from "../Components/ToDoList";
 import AssignedTasks from "../Components/dashboard/lawyer/AssignedTasks";
 import LawyerAvailability from "../Components/dashboard/lawyer/AvailabilityForMeetings";
+import ChatButton from "../Components/ChatButton";
+
 
 import ScheduledMeetings from "../Components/scheduledMeetings";
 import useConversation from "../zustand/useConversation";
@@ -108,23 +110,10 @@ function Case() {
             </div>
           </div>
         </div>
-        <div className="flex flex-row gap-5">
-                <button
-                  onClick={() => navigate("/chat")}
-                  className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1.5 px-3 rounded-md shadow-md transition-all transform hover:scale-105 active:scale-95 text-sm"
-                >
-                  <FaComments className="h-5 w-10 mr-1" />
-                  Chat
-                </button>
-                <button
-                  onClick={() => navigate("/chat")}
-                  className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 px-3 rounded-md shadow-md transition-all transform hover:scale-105 active:scale-95 text-sm"
-                >
-                  <FaVideo className="h-5 w-10 mr-1" />
-                  Video Call
-                </button>
-              </div>
+      
         <LawyerAvailability/>
+        <ChatButton/>
+
         
       </main>
     </div>

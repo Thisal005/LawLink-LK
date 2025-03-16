@@ -24,6 +24,7 @@
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "framer-motion": "^12.5.0",
     "libsodium-wrappers": "^0.7.15",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
