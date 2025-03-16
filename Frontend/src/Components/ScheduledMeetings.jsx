@@ -2,22 +2,23 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSocketContext } from "../Context/SocketContext";
+import { AppContext } from "../Context/AppContext";
 import { toast } from "react-toastify";
 
 const ScheduledMeetings = () => {
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {backendUrl} = useContext(AppContext);
   const navigate = useNavigate();
   const { socket } = useSocketContext();
 
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/meetings", {
+        const res = await axios.get(`${backendUrl}/api/meetings`, {
           withCredentials: true,
         });
         console.log("Fetched meetings:", res.data.data);
-        // Filter out completed and cancelled meetings
         const activeMeetings = res.data.data.filter(
           (meeting) => meeting.status !== "completed" && meeting.status !== "cancelled"
         );
@@ -33,7 +34,6 @@ const ScheduledMeetings = () => {
 
     if (socket) {
       socket.on("newMeeting", (meeting) => {
-        // Only add the new meeting if it's neither completed nor cancelled
         if (meeting.status !== "completed" && meeting.status !== "cancelled") {
           setMeetings((prev) => [...prev, meeting]);
           toast.info(
@@ -54,7 +54,7 @@ const ScheduledMeetings = () => {
     try {
       console.log("Attempting to join meeting:", meetingId);
       const res = await axios.get(
-        `http://localhost:5000/api/meetings/join/${meetingId}`,
+        `${backendUrl}/api/meetings/join/${meetingId}`,
         {
           withCredentials: true,
         }
@@ -73,12 +73,11 @@ const ScheduledMeetings = () => {
   const cancelMeeting = async (meetingId) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/meetings/cancel/${meetingId}`,
+        `${backendUrl}/api/meetings/cancel/${meetingId}`,
         {},
         { withCredentials: true }
       );
       if (res.data.success) {
-        // Remove the cancelled meeting from the list instead of just updating status
         setMeetings((prev) =>
           prev.filter((meeting) => meeting.meetingId !== meetingId)
         );
@@ -93,7 +92,7 @@ const ScheduledMeetings = () => {
   if (loading) return <p>Loading meetings...</p>;
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 max-w-lg mx-auto h-[300px]">
+    <div className="p-6 bg-white rounded-lg h-[300px] border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 transition-all duration-300 hover:shadow-lg cursor-pointer">
      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-yellow-50 flex items-center justify-center group-hover:scale-110 transition-transform">

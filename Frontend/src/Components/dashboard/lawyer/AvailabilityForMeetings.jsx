@@ -24,13 +24,12 @@ const LawyerAvailability = () => {
   const { user } = useAuthContext();
   const [selectedDate, setSelectedDate] = useState(null);
   const [startTime, setStartTime] = useState("");
-  const [newSlots, setNewSlots] = useState([]); // Slots being added in current session
-  const [existingSlots, setExistingSlots] = useState([]); // All slots from DB
+  const [newSlots, setNewSlots] = useState([]); 
+  const [existingSlots, setExistingSlots] = useState([]); 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch all slots when date changes
   useEffect(() => {
     if (selectedDate && user?._id) {
       const fetchSlots = async () => {
@@ -42,10 +41,10 @@ const LawyerAvailability = () => {
           const slots = response.data.data
             .filter((slot) => dayjs(slot.startTime).isSame(selectedDate, "day"))
             .map((slot) => ({
-              _id: slot._id, // Add slot ID for removal
+              _id: slot._id, 
               startTime: slot.startTime,
               endTime: slot.endTime,
-              status: slot.status, // Include status
+              status: slot.status, 
               displayStart: dayjs(slot.startTime).format("HH:mm"),
               displayEnd: dayjs(slot.endTime).format("HH:mm"),
             }));
@@ -59,7 +58,6 @@ const LawyerAvailability = () => {
     }
   }, [selectedDate, user?._id]);
 
-  // Calculate end time (30 minutes after start time)
   const getEndTime = useCallback(
     (time) => {
       const start = dayjs(`${selectedDate.format("YYYY-MM-DD")} ${time}`);
@@ -215,7 +213,7 @@ const LawyerAvailability = () => {
               onChange={(e) => setStartTime(e.target.value)}
               fullWidth
               InputLabelProps={{ shrink: true }}
-              inputProps={{ step: 1800 }} // 30-minute intervals
+              inputProps={{ step: 1800 }}
             />
             <Button
               variant="outlined"

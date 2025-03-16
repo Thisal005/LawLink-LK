@@ -11,8 +11,7 @@ const TaskList = ({ caseId }) => {
 
   return (
     <div
-      className="bg-white text-gray-900 rounded-xl shadow-sm p-6 max-w-lg mx-auto  h-[550px]"
-      aria-labelledby="tasks-header"
+    className="p-6 bg-white rounded-lg h-[550px] border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 transition-all duration-300 hover:shadow-lg cursor-pointer"      aria-labelledby="tasks-header"
     >
       {/* Header with Green Dot Indicator */}
       <div className="flex items-center gap-3 mb-6 ">

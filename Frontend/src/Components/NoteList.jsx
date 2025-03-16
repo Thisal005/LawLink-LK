@@ -7,7 +7,7 @@ const NoteList = () => {
 
   return (
     <div
-      className="bg-white text-gray-900 rounded-xl shadow-sm p-6 max-w-lg mx-auto h-[550px]"
+      className="p-6 bg-white rounded-lg h-[550px] border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 transition-all duration-300 hover:shadow-lg cursor-pointer"
       aria-labelledby="notes-header"
     >
       {/* Header with Purple Dot Indicator */}

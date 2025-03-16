@@ -13,7 +13,7 @@ const ScheduleMeeting = ({ caseId }) => {
   const [fetchLoading, setFetchLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  let lawyerId = "67cd474a2a7c3762b6b96557"; // This should ideally come from case data
+  let lawyerId = "67cd474a2a7c3762b6b96557"; 
 
   useEffect(() => {
     const fetchAvailableSlots = async () => {
@@ -63,7 +63,7 @@ const ScheduleMeeting = ({ caseId }) => {
         { withCredentials: true }
       );
       toast.success("Meeting scheduled successfully!");
-      // Remove the booked slot from available slots
+   
       setAvailableSlots((prev) =>
         prev.filter((slot) => slot.startTime !== selectedSlot)
       );
@@ -78,7 +78,7 @@ const ScheduleMeeting = ({ caseId }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 max-w-lg mx-auto">
+    <div className="p-6 bg-white rounded-lg h-[340px] border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 transition-all duration-300 hover:shadow-lg cursor-pointer">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center group-hover:scale-110 transition-transform">
