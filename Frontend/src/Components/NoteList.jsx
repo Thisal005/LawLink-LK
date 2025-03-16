@@ -1,5 +1,5 @@
 import React from "react";
-import useFetchNotes from "../hooks/useFetchNotes"; // We'll create this hook
+import useFetchNotes from "../hooks/useFetchNotes"; 
 import NoteCard from "./dashboard/client/LawyerNotes";
 
 const NoteList = () => {
@@ -23,10 +23,8 @@ const NoteList = () => {
         </h2>
       </div>
 
-      {/* Divider with Animation */}
       <div className="h-[5px] bg-purple-500 w-113 rounded-full my-4 transition-all duration-300 hover:w-113 hover:bg-purple-300"></div>
 
-      {/* Loading State */}
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((_, index) => (
@@ -42,7 +40,6 @@ const NoteList = () => {
           ))}
         </div>
       ) : notes.length > 0 ? (
-        // Notes List with Scrollable Container
         <div
           className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-hide hover:scrollbar-default"
           aria-label="Notes list"
@@ -52,7 +49,6 @@ const NoteList = () => {
           ))}
         </div>
       ) : (
-        // Enhanced Empty State
         <div
           className="text-center py-8 bg-gray-50 rounded-xl"
           role="alert"

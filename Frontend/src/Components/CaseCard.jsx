@@ -1,4 +1,3 @@
-// components/CaseCard.jsx
 import React from "react";
 import useFetchCase from "../hooks/useFetchCase";
 

@@ -9,6 +9,7 @@ import Header from "../Components/Header";
 import TaskForm from "../Components/dashboard/lawyer/assignTask";
 import NoteForm from "../Components/dashboard/lawyer/CreateNote";
 import TodoList from "../Components/ToDoList";
+import AssignedTasks from "../Components/dashboard/lawyer/AssignedTasks";
 import LawyerAvailability from "../Components/dashboard/lawyer/AvailabilityForMeetings";
 
 import ScheduledMeetings from "../Components/scheduledMeetings";
@@ -89,10 +90,21 @@ function Case() {
             </div>
           </div>
         </div>
-        <div className="bg-white text-gray-900 rounded-3xl shadow-xl p-5 mb-5 mt-5 relative overflow-hidden transform transition-all duration-300 hover:shadow-2xl w-290">
-          <TaskForm caseId={caseId} clientId={clientId} />
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
+            <div className="h-[400px]">
+            <TaskForm caseId={caseId} clientId={clientId} />
+
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
+            <div className="h-[400px]">
+              <AssignedTasks />
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="grid grid-rows-1 md:grid-rows-2 gap-5">
             <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
               <div className="h-[300px]">

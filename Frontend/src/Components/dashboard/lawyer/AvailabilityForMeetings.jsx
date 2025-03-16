@@ -190,7 +190,7 @@ const LawyerAvailability = () => {
   };
 
   return (
-    <div className="lawyer-availability p-6 bg-white rounded-lg shadow-md">
+    <div>
       <Button variant="contained" onClick={handleOpen} sx={{ mb: 2 }}>
         Manage Availability
       </Button>
