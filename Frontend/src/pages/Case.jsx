@@ -59,22 +59,7 @@ function Case() {
           <div className="relative z-10 flex flex-col md:flex-row justify-between gap-6">
             <div className="flex-1 space-y-6">
               <CaseCard caseId={caseId} />
-              <div className="flex flex-row gap-5">
-                <button
-                  onClick={() => navigate("/chat")}
-                  className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1.5 px-3 rounded-md shadow-md transition-all transform hover:scale-105 active:scale-95 text-sm"
-                >
-                  <FaComments className="h-5 w-10 mr-1" />
-                  Chat
-                </button>
-                <button
-                  onClick={() => navigate("/chat")}
-                  className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 px-3 rounded-md shadow-md transition-all transform hover:scale-105 active:scale-95 text-sm"
-                >
-                  <FaVideo className="h-5 w-10 mr-1" />
-                  Video Call
-                </button>
-              </div>
+              
             </div>
             <div className="self-center md:self-start">
               <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
@@ -99,7 +84,7 @@ function Case() {
           </div>
           <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
             <div className="h-[400px]">
-              <AssignedTasks />
+              <AssignedTasks caseId={caseId} clientId={clientId}/>
             </div>
           </div>
         </div>
@@ -123,8 +108,24 @@ function Case() {
             </div>
           </div>
         </div>
-        
+        <div className="flex flex-row gap-5">
+                <button
+                  onClick={() => navigate("/chat")}
+                  className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1.5 px-3 rounded-md shadow-md transition-all transform hover:scale-105 active:scale-95 text-sm"
+                >
+                  <FaComments className="h-5 w-10 mr-1" />
+                  Chat
+                </button>
+                <button
+                  onClick={() => navigate("/chat")}
+                  className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 px-3 rounded-md shadow-md transition-all transform hover:scale-105 active:scale-95 text-sm"
+                >
+                  <FaVideo className="h-5 w-10 mr-1" />
+                  Video Call
+                </button>
+              </div>
         <LawyerAvailability/>
+        
       </main>
     </div>
   );
