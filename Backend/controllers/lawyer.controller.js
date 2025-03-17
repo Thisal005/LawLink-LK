@@ -20,13 +20,13 @@ export const getLawyerData = async (req, res) => {
       success: true,
       UserData: {
         _id: lawyer._id,
-        fullName: lawyer.fullName, // Fix: Use lawyer directly, not req.lawyer
+        fullName: lawyer.fullName, 
         email: lawyer.email,
         contact: lawyer.contact,
         isVerified: lawyer.isVerified,
         publicKey: lawyer.publicKey,
         privateKey: lawyer.privateKey,
-        lawyerID: lawyer.lawyerID, // Include additional fields from your log
+        lawyerID: lawyer.lawyerID, 
         documentForVerification: lawyer.documentForVerification,
       },
     });

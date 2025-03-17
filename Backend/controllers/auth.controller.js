@@ -30,7 +30,6 @@ export const signup = async (req, res) => {
       const publicKey = sodium.to_hex(keyPair.publicKey);
       const privateKey = sodium.to_hex(keyPair.privateKey);
   
-      // Log the keys to verify
       console.log("Generated Client Public Key:", publicKey);
       console.log("Generated Client Private Key:", privateKey);
   
@@ -38,6 +37,7 @@ export const signup = async (req, res) => {
         fullName,
         username,
         password: hashedPassword,
+        role: "client",
         email,
         contact,
         verifyotp: otp,
