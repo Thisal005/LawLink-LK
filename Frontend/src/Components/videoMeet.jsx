@@ -88,7 +88,7 @@ const VideoMeet = ({ meetingId, userName }) => {
     toast.info(videoEnabled ? "Camera off" : "Camera on");
   };
 
-  // Pre-meeting screen
+  
   if (!callStarted) {
     return (
       <div className="p-6 bg-white rounded-lg h-full border border-gray-200 flex flex-col justify-center items-center">

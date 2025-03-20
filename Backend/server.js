@@ -15,8 +15,10 @@ import taskRouter from "./routes/tasks.route.js";
 import notificationRouter from "./routes/notification.route.js";
 import noteRouter from "./routes/note.route.js";
 import todoRouter from "./routes/todo.route.js";
+import summarizationRouter from "./routes/summarization.route.js";
 import meetingRouter from "./routes/meeting.route.js";
 import availabiltiyRouter from "./routes/availability.route.js";
+
 
 dotenv.config();
 
@@ -31,6 +33,8 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 app.use("/uploads", express.static("uploads"));
 app.use("/uploads-chat", express.static("uploads-chat"));
+app.use("/uploads/pdf", express.static("uploads/pdf"));
+app.use("/audio", express.static("audio"));
 
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoute);
@@ -44,6 +48,8 @@ app.use("/api/notes", noteRouter);
 app.use("/api/todos", todoRouter);
 app.use("/api/meetings", meetingRouter);
 app.use("/api/availability", availabiltiyRouter);
+app.use("/api/summarization", summarizationRouter);
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

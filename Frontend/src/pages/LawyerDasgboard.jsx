@@ -9,11 +9,8 @@ import Calender from "../Components/dashboard/Calender";
 import BasicLineChart from "../Components/dashboard/Linechart";
 import BasicTimeClock from "../Components/dashboard/Clock";
 
-/**
- * Home component - the main dashboard for lawyers.
- */
+
 function Home() {
-  // Access lawyer data from the global AppContext
   const { lawyerData } = useContext(AppContext);
 
   // Hook for navigation
