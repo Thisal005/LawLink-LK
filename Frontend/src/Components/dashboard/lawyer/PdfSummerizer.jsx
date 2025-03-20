@@ -4,7 +4,7 @@ import { MdDelete } from 'react-icons/md';
 import { FaFilePdf } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { AppContext } from '../../../../Context/AppContext';
+import { AppContext } from '../../../Context/AppContext';
 
 const PDFSummarizer = () => {
   const [file, setFile] = useState(null);
@@ -155,7 +155,7 @@ const PDFSummarizer = () => {
   };
 
   return (
-    <div className="w-full bg-white rounded-xl shadow-md overflow-hidden">
+    <div className="w-full bg-white rounded-xl shadow-md overflow-hidden mt-6 shadow-xl  hover:shadow-2xl">
       <div className="px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600">
         <h2 className="text-xl font-bold text-white">PDF Summarizer</h2>
       </div>
@@ -167,7 +167,7 @@ const PDFSummarizer = () => {
             <h3 className="text-lg font-semibold mb-4">Upload Your PDF</h3>
             <form onSubmit={handleSubmit}>
               <div 
-                className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-blue-50 transition-colors"
                 onClick={() => fileInputRef.current.click()}
               >
                 <BsUpload className="text-gray-400 text-3xl mb-2" />
@@ -185,7 +185,7 @@ const PDFSummarizer = () => {
               </div>
               <button 
                 type="submit" 
-                className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-indigo-300"
+                className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-blue-300"
                 disabled={!file || isLoading}
               >
                 {isLoading ? 'Processing...' : 'Summarize'}
@@ -197,7 +197,10 @@ const PDFSummarizer = () => {
             <h3 className="text-lg font-semibold mb-4 flex items-center">
               <BsClockHistory className="mr-2" /> Previous Summaries
             </h3>
-            <div className="overflow-y-auto max-h-64 space-y-2">
+            <div
+          className="space-y-4 max-h-[150px] overflow-y-auto pr-2 scrollbar-hide hover:scrollbar-default"
+          aria-label="Notes list"
+        >
               {history.length === 0 ? (
                 <p className="text-sm text-gray-500">No previous summaries found</p>
               ) : (
