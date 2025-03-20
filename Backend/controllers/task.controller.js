@@ -3,9 +3,9 @@ import Task from "../models/tasks.model.js";
 import Case from "../models/case.model.js";
 import User from "../models/user.model.js";
 import Lawyer from "../models/lawyer.model.js";
-import Notification from "../models/notifications.model.js"; // New model for notifications
+import Notification from "../models/notifications.model.js"; 
 
-// Assign a new task (Lawyer only)
+// Assign a new task
 export const createTask = async (req, res) => {
   try {
     const { taskName, description, clientId, caseId } = req.body;
@@ -55,7 +55,7 @@ export const getTask = async (req, res) => {
   }
 };
 
-// Update task status (Client only)
+// Update task status
 export const updateTaskStatus = async (req, res) => {
   try {
     const { id } = req.params;
