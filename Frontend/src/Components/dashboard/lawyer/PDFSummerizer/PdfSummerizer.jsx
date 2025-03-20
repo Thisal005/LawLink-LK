@@ -156,7 +156,7 @@ const PDFSummarizer = () => {
 
   return (
     <div className="w-full bg-white rounded-xl shadow-md overflow-hidden">
-      <div className="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600">
+      <div className="px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600">
         <h2 className="text-xl font-bold text-white">PDF Summarizer</h2>
       </div>
       
