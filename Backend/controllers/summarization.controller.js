@@ -55,7 +55,7 @@ export const summarizePDF = async (req, res) => {
       }
 
       const summarizationCount = await Summarization.countDocuments({ lawyerId });
-      if (summarizationCount >= 10) {
+      if (summarizationCount >= 20) {
         return res.status(403).json({ message: "Summarization limit reached" });
       }
 
@@ -65,7 +65,9 @@ export const summarizePDF = async (req, res) => {
 
       // Generate summary
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const prompt = `Summarize the following text for better documentation (do not add "*" sysmbol) ${text}`;
+      const prompt = `Summarize the following text concisely for improved documentation. 
+                      Ensure clarity and completeness while maintaining the original meaning. 
+                      Do not include any additional styling such as bold, italics, or special symbols. ${text}`;
       const result = await model.generateContent(prompt);
       const summary = result.response.text();
 

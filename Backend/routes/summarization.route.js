@@ -9,6 +9,6 @@ import { protectRoute } from "../middleware/protectRoute.js";
 const summarizationRouter = express.Router();
 
 summarizationRouter.post("/summarize", protectRoute, summarizePDF);
-summarizationRouter.get("/summarization/history", protectRoute, getSummarizationHistory);
+summarizationRouter.get("/history", protectRoute, getSummarizationHistory);
 
 export default summarizationRouter;
