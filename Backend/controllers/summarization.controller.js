@@ -65,9 +65,11 @@ export const summarizePDF = async (req, res) => {
 
       // Generate summary
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const prompt = `Summarize the following text concisely for improved documentation. 
-                      Ensure clarity and completeness while maintaining the original meaning. 
-                      Do not include any additional styling such as bold, italics, or special symbols. ${text}`;
+      const prompt = `Summarize the following text clearly and concisely to enhance documentation quality. 
+                      Ensure the summary retains key information while improving readability and coherence. 
+                      Present the content in a structured and well-organized manner without adding any special formatting, 
+                      such as bold, italics, or symbols. ${text}`;
+                      
       const result = await model.generateContent(prompt);
       const summary = result.response.text();
 

@@ -199,7 +199,7 @@ const PDFSummarizer = () => {
             </h3>
             <div
           className="space-y-4 max-h-[150px] overflow-y-auto pr-2 scrollbar-hide hover:scrollbar-default"
-          aria-label="Notes list"
+         
         >
               {history.length === 0 ? (
                 <p className="text-sm text-gray-500">No previous summaries found</p>
@@ -249,7 +249,7 @@ const PDFSummarizer = () => {
             )}
           </div>
           
-          <div className="bg-white border border-gray-200 rounded-lg p-4 h-96 overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded-lg p-4 h-96 overflow-y-auto scrollbar-hide hover:scrollbar-default">
             {summary ? (
               <p className="text-gray-700 whitespace-pre-line">{summary}</p>
             ) : (
