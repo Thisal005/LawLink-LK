@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./Context/ProtectRoute";
 import ClientCreateAcc from "./pages/Client/Login&Signup/ClientCreateAcc";
 import Clientlogin from "./pages/Client/Login&Signup/Clientlogin";
-import Home from "./pages/Client/Home";
+import ClientDashboard from "./pages/Client/ClientDashboard";
 import VerifyEmail from "./pages/Client/Login&Signup/Verify-email";
 import PasswordRest from "./pages/Client/Login&Signup/Password-Rest";
 import EmailForResetPass from "./pages/Client/Login&Signup/EmailForResetPass";
@@ -40,7 +40,7 @@ function App() {
         <div>
           <ToastContainer />
           <Routes>
-            <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>} />
+            <Route path="/client-dashboard" element={<ProtectedRoute><ClientDashboard/></ProtectedRoute>} />
             <Route path="/lawyer-dashboard" element={<ProtectedRoute><LawyerDasgboard/></ProtectedRoute>} />
             <Route path="/create-account" element={<ClientCreateAcc />} />
             <Route path="/login" element={<Clientlogin />} />
