@@ -14,6 +14,7 @@ import LawyerEmailForResetPass from "./pages/LawyerEmailForResetPass";
 import LawyerNewpassword from "./pages/LawyerNewpassword";
 import LawyerRestPasswordOtp from "./pages/LawyerPassword-Rest ";
 import LawyerDasgboard from "./pages/LawyerDasgboard";
+import Chatbot from "./pages/Chatbot";
 import Chat from "./pages/Chat";
 import Meeting from "./pages/Meeting";
 import NotFound from "./pages/NotFound";
@@ -54,6 +55,7 @@ function App() {
             <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>} />
             <Route path="/meeting/:meetingId" element={<Meeting />} />
             <Route path="/case" element={<ProtectedRoute><Case/></ProtectedRoute>} />
+            <Route path="/chatbot" element={<ProtectedRoute><Chatbot/></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

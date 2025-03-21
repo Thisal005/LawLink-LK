@@ -1,4 +1,4 @@
-
+// models/case.model.js
 import mongoose from "mongoose";
 
 const caseSchema = new mongoose.Schema({
@@ -45,10 +45,9 @@ const caseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), 
+    default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from creation
   },
 });
 

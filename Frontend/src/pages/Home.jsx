@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Sidebar from "../Components/Sidebar";
 import { toast } from "react-toastify";
-import CaseCard from "../Components/CaseCard";
+import CaseCard from "../Components/CaseCardForClient";
 import TaskList from "../Components/TaskList";
 import NoteList from "../Components/NoteList";
 import ScheduledMeetings from "../Components/scheduledMeetings";

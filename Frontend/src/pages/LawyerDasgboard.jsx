@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { AppContext } from "../Context/AppContext";
 import { useNavigate } from 'react-router-dom';
-import Sidebar from "../Components/Sidebar";
+import Sidebar from "../Components/LawyerSidebar";
 import Header from "../Components/Header";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -182,15 +182,6 @@ function Home() {
           </div>
         </div>
 
-        
-
-        {/* Button to navigate to chat */}
-        <button
-          onClick={() => navigate("/chat")}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all"
-        >
-          Chat
-        </button>
       </main>
     </div>
   );

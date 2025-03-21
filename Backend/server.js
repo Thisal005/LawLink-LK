@@ -18,6 +18,7 @@ import todoRouter from "./routes/todo.route.js";
 import summarizationRouter from "./routes/summarization.route.js";
 import meetingRouter from "./routes/meeting.route.js";
 import availabiltiyRouter from "./routes/availability.route.js";
+import chatbotRoutes from "./routes/chatbot.route.js"; // Fixed typo
 
 
 dotenv.config();
@@ -49,6 +50,7 @@ app.use("/api/todos", todoRouter);
 app.use("/api/meetings", meetingRouter);
 app.use("/api/availability", availabiltiyRouter);
 app.use("/api/summarization", summarizationRouter);
+app.use("/api/chatbot", chatbotRoutes);
 
 
 app.use((err, req, res, next) => {
