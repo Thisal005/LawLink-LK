@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../Context/AppContext"; // Adjusted path to match first code
+import { AppContext } from "../../Context/AppContext"; // Adjusted path to match first code
 import { toast } from "react-toastify";
 import { FaComments, FaVideo } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import useConversation from "../zustand/useConversation"; // From first code
-import Header from "../Components/LawyerHeader"; // From first code
-import Sidebar from "../Components/dashboard/lawyer/LawyerSidebar"; // From first code
-import CaseCard from "../Components/dashboard/lawyer/CaseCardForLawyer"; // From first code
-import TaskForm from "../Components/dashboard/lawyer/assignTask"; // From first code
-import NoteForm from "../Components/dashboard/lawyer/CreateNote"; // From first code
-import TodoList from "../Components/ToDoList"; // From first code
-import AssignedTasks from "../Components/dashboard/lawyer/AssignedTasks"; // From first code
-import LawyerAvailability from "../Components/dashboard/lawyer/AvailabilityForMeetings"; // From first code
-import ChatButton from "../Components/ChatButton"; // From first code
-import PDFSummerizer from "../Components/dashboard/lawyer/PdfSummerizer"; // From first code
-import ScheduledMeetings from "../Components/scheduledMeetings"; // From first code
+import useConversation from "../../zustand/useConversation"; // From first code
+import Header from "../../Components/LawyerHeader"; // From first code
+import Sidebar from "../../Components/dashboard/lawyer/LawyerSidebar"; // From first code
+import CaseCard from "../../Components/dashboard/lawyer/CaseCardForLawyer"; // From first code
+import TaskForm from "../../Components/dashboard/lawyer/assignTask"; // From first code
+import NoteForm from "../../Components/dashboard/lawyer/CreateNote"; // From first code
+import TodoList from "../../Components/ToDoList"; // From first code
+import AssignedTasks from "../../Components/dashboard/lawyer/AssignedTasks"; // From first code
+import LawyerAvailability from "../../Components/dashboard/lawyer/AvailabilityForMeetings"; // From first code
+import ChatButton from "../../Components/ChatButton"; // From first code
+import PDFSummerizer from "../../Components/dashboard/lawyer/PdfSummerizer"; // From first code
+import ScheduledMeetings from "../../Components/scheduledMeetings"; // From first code
 
 function Case() {
   const { backendUrl, userData } = useContext(AppContext); // Using userData from second code

@@ -1,48 +1,79 @@
-import React, { useState,useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import {  toast } from "react-toastify";
-import { AppContext } from "../Context/AppContext";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AppContext } from "../../../Context/AppContext";
 import axios from "axios";
 
-
-
-function Lawyerlogin() {
-
+function Clientlogin() {
   const navigate = useNavigate();
-  const {backendUrl, setIsLoggedIn, getLawyerData} = useContext(AppContext);
+  const location = useLocation();
+  const { backendUrl, setIsLoggedIn, getUserData, isLoggedIn } = useContext(AppContext);
   const [email, setEmailLocal] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
- 
+
+  // If user is already logged in, redirect to home or the page they were trying to access
+  useEffect(() => {
+    if (isLoggedIn) {
+      const redirectTo = location.state?.from || "/";
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isLoggedIn, navigate, location]);
 
   const handleSubmit = async (e) => {
-    try { 
-      e.preventDefault();
-      axios.defaults.withCredentials = true;
-    
-
-    const lawyerData =await axios.post(backendUrl + '/api/lawyer/login',
-      { email, password})
-    console.log("User Logged in", );
-
-    if (lawyerData.status === 200) {
-      setIsLoggedIn(true);
-    
-      setTimeout(() => {
-        getLawyerData();
-        navigate("/lawyer-dashboard");
-      }, 500);
-
-    }else{
-        toast.error(userData.data.msg);
-     
+    e.preventDefault();
+    setIsLoading(true);
+  
+    try {
+      // Configure axios for credentials
+      const config = {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
+  
+      // Send login request to the backend
+      const response = await axios.post(
+        `${backendUrl}/api/auth/login`, 
+        { email, password },
+        config
+      );
+  
+      // Check if the login was successful
+      if (response.status === 200) {
+        console.log("User logged in successfully:", response.data);
+  
+        // Check if cookies were set
+        setTimeout(() => {
+          console.log("Cookies after login:", document.cookie);
+        }, 100);
+  
+        // Update the login state
+        setIsLoggedIn(true);
+  
+        // Fetch user data
+        await getUserData();
+        
+        // Redirect to home
+        navigate("/", { replace: true });
+  
+        // Show success message
+        toast.success("Logged in successfully!");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+  
+      // Handle specific error messages from the backend
+      if (err.response && err.response.data && err.response.data.msg) {
+        toast.error(err.response.data.msg);
+      } else {
+        toast.error("An error occurred during login. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-  }
-    catch(err){
-      console.log(err);
-    }
-    
   };
 
   return (
@@ -57,6 +88,7 @@ function Lawyerlogin() {
             muted
             className="w-full h-auto rounded-[16px] shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
           ></video>
+          <div className="absolute inset-0 bg-[#0022fc]/10 opacity-0 group-hover:opacity-100 rounded-[16px] transition-opacity duration-300 pointer-events-none"></div>
         </div>
   
         {/* Form Container - Full width on mobile */}
@@ -107,7 +139,7 @@ function Lawyerlogin() {
               <p className="text-[#3652fc] text-[14px] mt-2 text-right">
                 <a
                   href="#"
-                  onClick={() => navigate("/lawyer-email-for-password-reset")}
+                  onClick={() => navigate("/email-for-password-reset")}
                   className="hover:underline"
                 >
                   Forgot Password?
@@ -127,7 +159,7 @@ function Lawyerlogin() {
               Don't have an account?{" "}
               <a
                 href="#"
-                onClick={() => navigate("/lawyer-create-account")}
+                onClick={() => navigate("/create-account")}
                 className="text-[#3652fc] font-semibold hover:underline"
               >
                 Sign up now
@@ -140,4 +172,4 @@ function Lawyerlogin() {
   );
 }
 
-export default Lawyerlogin;
+export default Clientlogin;

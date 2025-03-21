@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../Context/AppContext";
+import { AppContext } from "../../Context/AppContext";
 import { useNavigate } from "react-router-dom";
-import Header from "../Components/LawyerHeader";
-import Sidebar from "../Components/Sidebar";
+import Header from "../../Components/LawyerHeader";
+import Sidebar from "../../Components/Sidebar";
 import { toast } from "react-toastify";
-import CaseCard from "../Components/CaseCardForClient";
-import TaskList from "../Components/TaskList";
-import NoteList from "../Components/NoteList";
-import ScheduledMeetings from "../Components/scheduledMeetings";
-import ScheduleMeeting from "../Components/ScheduleMeeting";
-import useConversation from "../zustand/useConversation";
-import ChatButton from "../Components/ChatButton";
+import CaseCard from "../../Components/CaseCardForClient";
+import TaskList from "../../Components/TaskList";
+import NoteList from "../../Components/NoteList";
+import ScheduledMeetings from "../../Components/scheduledMeetings";
+import ScheduleMeeting from "../../Components/ScheduleMeeting";
+import useConversation from "../../zustand/useConversation";
+import ChatButton from "../../Components/ChatButton";
 import axios from "axios";
 
 function Home() {

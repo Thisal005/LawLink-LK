@@ -1,9 +1,9 @@
 // frontend/src/pages/Dashboard/Lawyer/Components/LawyerAccountSettings.jsx
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../Context/AppContext";
+import { AppContext } from "../../Context/AppContext";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../Components/dashboard/lawyer/LawyerSidebar";
-import Header from "../Components/LawyerHeader";
+import Sidebar from "../../Components/dashboard/lawyer/LawyerSidebar";
+import Header from "../../Components/LawyerHeader";
 import axios from "axios";
 import { toast } from "react-toastify";
 
