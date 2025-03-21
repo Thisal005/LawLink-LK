@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import useConversation from "../../zustand/useConversation"; // From first code
-import Header from "../../Components/LawyerHeader"; // From first code (assuming it's compatible for clients)
-import Sidebar from "../../Components/Sidebar"; // From first code
+import Header from "../../Components/dashboard/client/ClientHeader"; // From first code (assuming it's compatible for clients)
+import ClietnSidebar from "../../Components/dashboard/client/ClientSideBar";
 import CaseCard from "../../Components/CaseCardForClient"; // From first code
 import TaskList from "../../Components/TaskList"; // From first code
 import NoteList from "../../Components/NoteList"; // From first code
@@ -86,7 +86,7 @@ function ClientDashboard() {
   return (
     <div>
       <Header />
-      <Sidebar activeTab="Dashboard" />
+      <ClietnSidebar activeTab="Dashboard" />
       <main className="ml-64 p-6 lg:p-8 pt-24">
         {/* Welcome Section */}
         <div className="bg-white text-gray-900 rounded-3xl shadow-xl p-5 mb-6 mt-5 relative overflow-hidden transform transition-all duration-300 hover:shadow-2xl w-290">

@@ -14,7 +14,7 @@ import LawyerEmailForResetPass from "./pages/Lawyer/Login&Signup/LawyerEmailForR
 import LawyerNewpassword from "./pages/Lawyer/Login&Signup/LawyerNewpassword";
 import LawyerRestPasswordOtp from "./pages/Lawyer/Login&Signup/LawyerPassword-Rest ";
 import LawyerDasgboard from "./pages/Lawyer/LawyerDashboard";
-import Chatbot from "./pages/Chatbot";
+import Chatbot from "./pages/Client/Chatbot";
 import Chat from "./pages/Chat";
 import Meeting from "./pages/Meeting";
 import NotFound from "./pages/NotFound";
@@ -27,7 +27,8 @@ import { AppContentProvider } from "./Context/AppContext";
 import { AuthContextProvider,useAuthContext } from "./Context/AuthContext";
 import { SocketProvider } from "./Context/SocketContext";
 import "react-toastify/dist/ReactToastify.css";
-
+import PostCaseForm from "./pages/Client/CreatePostForm";
+import CaseHistory from "./pages/Client/CaseHistory";
 
 
 
@@ -61,6 +62,8 @@ function App() {
             <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />
             <Route path="/view-cases" element={<ProtectedRoute><ViewCases/></ProtectedRoute>} />
             <Route path="/lawyer-account-settings" element={<ProtectedRoute><LawyerAccountSettings/></ProtectedRoute>} />
+            <Route path="/post-case" element={<ProtectedRoute><PostCaseForm/></ProtectedRoute>} />
+            <Route path="/case-history" element={<ProtectedRoute><CaseHistory/></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
 
           </Routes>

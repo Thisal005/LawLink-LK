@@ -3,8 +3,8 @@ import { Calendar, HelpCircle, Bell, User, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { AppContext } from "../Context/AppContext";
-import LawyerAvailability from "./dashboard/lawyer/AvailabilityForMeetings";
+import { AppContext } from "../../../Context/AppContext";
+import LawyerAvailability from "./AvailabilityForMeetings";
 
 const Header = ({ displayName: propDisplayName, practiceAreas = "Corporate Law" }) => {
   const [notificationsVisible, setNotificationsVisible] = useState(false);

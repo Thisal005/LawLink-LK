@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "../Components/Sidebar";
-import Header from "../Components/LawyerHeader";
+import Header from "../Components/dashboard/lawyer/LawyerHeader";
 import MessageContainer from "../Components/messages/MessageContainer";
 import ScheduledMeetings from "../Components/scheduledMeetings";
 

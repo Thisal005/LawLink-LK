@@ -1,8 +1,8 @@
 // frontend/src/Chatbot.jsx
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { AppContext } from "../Context/AppContext";
-import Sidebar from "../Components/Sidebar"; // Your app’s Sidebar
-import Header from "../Components/LawyerHeader";   // Your app’s Header
+import { AppContext } from "../../Context/AppContext";
+import ClietnSidebar from "../../Components/dashboard/client/ClientSideBar";
+import Header from "../../Components/dashboard/client/ClientHeader"; 
 import { PaperAirplaneIcon, ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
 
 const Chatbot = () => {
@@ -122,7 +122,7 @@ const Chatbot = () => {
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
-      <Sidebar />
+      <ClietnSidebar />
 
       {/* Main Container */}
       <div className="flex-1 flex flex-col lg:ml-64 xl:ml-72">

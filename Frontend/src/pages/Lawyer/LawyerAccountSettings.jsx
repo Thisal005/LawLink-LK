@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../Context/AppContext";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/dashboard/lawyer/LawyerSidebar";
-import Header from "../../Components/LawyerHeader";
+import Header from "../../Components/dashboard/lawyer/LawyerHeader";
 import axios from "axios";
 import { toast } from "react-toastify";
 

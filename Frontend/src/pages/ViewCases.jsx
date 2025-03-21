@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../Components/dashboard/lawyer/LawyerSidebar";
-import Header from "../Components/LawyerHeader";
+import Header from "../Components/dashboard/lawyer/LawyerHeader";
 import ViewCaseCard from "../Components/dashboard/lawyer/ViewCaseCard";
 
 const ViewCases = () => {

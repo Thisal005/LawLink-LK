@@ -1,49 +1,32 @@
 // controllers/case.controller.js
 import Case from "../models/case.model.js";
-import Notification from "../models/notifications.model.js";
-import mongoose from "mongoose";
+import Notification from "../models/notifications.model.js"; 
+import mongoose from "mongoose"; 
 
 const sendResponse = (res, status, success, data, msg) => {
   res.status(status).json({ success, data, msg });
 };
+
 
 export const createCase = async (req, res) => {
   try {
     console.log("Create case - req.user:", req.user);
     console.log("Request body:", req.body);
 
-    const { 
-      subject, 
-      caseType, 
-      district, 
-      courtDate, 
-      description,
-      caseName, // From second file
-      caseId: customCaseId, // Renamed to avoid confusion with route params
-      lawyerId, 
-      clientId, 
-      status 
-    } = req.body;
+    const { subject, caseType, district, courtDate, description } = req.body;
+    const clientId = req.user._id.toString();
 
-    // Use authenticated user ID if clientId not provided
-    const effectiveClientId = clientId || req.user._id.toString();
-
-    // Validation from first file
     if (!subject || !caseType || !district || !courtDate || !description) {
       return sendResponse(
         res,
         400,
         false,
         null,
-        "Required fields: subject, caseType, district, courtDate, description"
+        "All fields (subject, caseType, district, courtDate, description) are required"
       );
     }
 
-    // Pending cases limit check from first file
-    const pendingCount = await Case.countDocuments({ 
-      clientId: effectiveClientId, 
-      status: "pending" 
-    });
+    const pendingCount = await Case.countDocuments({ clientId, status: "pending" });
     if (pendingCount >= 3) {
       return sendResponse(
         res,
@@ -55,22 +38,20 @@ export const createCase = async (req, res) => {
     }
 
     const newCase = new Case({
-      caseName: caseName || subject, // Use caseName if provided, else subject
-      customCaseId, // Optional custom ID from second file
-      clientId: effectiveClientId,
-      lawyerId: lawyerId || null,
+      clientId,
+      lawyerId: null,
       subject,
       caseType,
       district,
       courtDate: new Date(courtDate),
       description,
-      status: status || "pending",
+      status: "pending",
     });
 
     await newCase.save();
 
     const notification = new Notification({
-      userId: effectiveClientId,
+      userId: clientId,
       userType: "User",
       message: `Your case "${subject}" has been posted successfully and is pending lawyer acceptance.`,
       createdAt: new Date(),
@@ -85,7 +66,7 @@ export const createCase = async (req, res) => {
   }
 };
 
-// Get case details by ID
+// Get case details by ID (for CaseDetails.jsx)
 export const getCaseDetails = async (req, res) => {
   try {
     const { caseId } = req.params;
@@ -116,7 +97,7 @@ export const getCaseDetails = async (req, res) => {
   }
 };
 
-// Delete case by ID
+// Delete case by ID (for CaseDetails.jsx)
 export const deleteCase = async (req, res) => {
   try {
     const { caseId } = req.params;
@@ -156,7 +137,7 @@ export const deleteCase = async (req, res) => {
   }
 };
 
-// Get user's cases
+// Existing endpoints from your Sidebar (for completeness)
 export const getUserCases = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -182,7 +163,6 @@ export const getUserCases = async (req, res) => {
   }
 };
 
-// Get pending cases count
 export const getPendingCasesCount = async (req, res) => {
   try {
     const { clientId } = req.params;
@@ -207,11 +187,14 @@ export const getPendingCasesCount = async (req, res) => {
   }
 };
 
-// Get all unassigned cases for lawyers
+// NEW: Get all unassigned cases for lawyers (for ViewCases.jsx)
 export const getAllCases = async (req, res) => {
   try {
     console.log("GET /api/case/all - Lawyer:", req.user._id);
+    console.log("Request cookies:", req.cookies);
+
     const cases = await Case.find({ lawyerId: null });
+    console.log("Unassigned cases found:", cases);
 
     if (!cases || cases.length === 0) {
       return sendResponse(res, 200, true, [], "No unassigned cases available");
@@ -224,7 +207,7 @@ export const getAllCases = async (req, res) => {
   }
 };
 
-// Send offer for a case
+// NEW: Send offer for a case (for ViewCaseCard.jsx)
 export const sendOffer = async (req, res) => {
   try {
     const { caseId } = req.params;
@@ -244,7 +227,7 @@ export const sendOffer = async (req, res) => {
     }
 
     caseItem.lawyerId = req.user._id;
-    caseItem.status = "ongoing";
+    caseItem.status = "ongoing"; // Update status as needed
     await caseItem.save();
 
     const notification = new Notification({
