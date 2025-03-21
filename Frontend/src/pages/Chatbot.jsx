@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { AppContext } from "../Context/AppContext";
 import Sidebar from "../Components/Sidebar"; // Your app’s Sidebar
-import Header from "../Components/Header";   // Your app’s Header
+import Header from "../Components/LawyerHeader";   // Your app’s Header
 import { PaperAirplaneIcon, ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
 
 const Chatbot = () => {

@@ -19,6 +19,8 @@ import Chat from "./pages/Chat";
 import Meeting from "./pages/Meeting";
 import NotFound from "./pages/NotFound";
 import Case from "./pages/Case";
+import LawyerAccountSettings from "./pages/LawyerAccountSettings";
+import ViewCases from "./pages/ViewCases";
 import Notifications from "./pages/Notifications";
 import { ToastContainer } from "react-toastify";
 import { AppContentProvider } from "./Context/AppContext";
@@ -57,7 +59,10 @@ function App() {
             <Route path="/case" element={<ProtectedRoute><Case/></ProtectedRoute>} />
             <Route path="/chatbot" element={<ProtectedRoute><Chatbot/></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />
+            <Route path="/view-cases" element={<ProtectedRoute><ViewCases/></ProtectedRoute>} />
+            <Route path="/lawyer-account-settings" element={<ProtectedRoute><LawyerAccountSettings/></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
+
           </Routes>
         </div>
     </SocketProvider>

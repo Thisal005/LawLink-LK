@@ -5,8 +5,8 @@ import { FaComments, FaVideo } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import useConversation from "../zustand/useConversation"; // From first code
-import Header from "../Components/Header"; // From first code
-import Sidebar from "../Components/LawyerSidebar"; // From first code
+import Header from "../Components/LawyerHeader"; // From first code
+import Sidebar from "../Components/dashboard/lawyer/LawyerSidebar"; // From first code
 import CaseCard from "../Components/dashboard/lawyer/CaseCardForLawyer"; // From first code
 import TaskForm from "../Components/dashboard/lawyer/assignTask"; // From first code
 import NoteForm from "../Components/dashboard/lawyer/CreateNote"; // From first code

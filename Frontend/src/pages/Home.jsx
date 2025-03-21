@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../Context/AppContext";
 import { useNavigate } from "react-router-dom";
-import Header from "../Components/Header";
+import Header from "../Components/LawyerHeader";
 import Sidebar from "../Components/Sidebar";
 import { toast } from "react-toastify";
 import CaseCard from "../Components/CaseCardForClient";

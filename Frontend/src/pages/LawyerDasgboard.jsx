@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { AppContext } from "../Context/AppContext";
 import { useNavigate } from 'react-router-dom';
-import Sidebar from "../Components/LawyerSidebar";
-import Header from "../Components/Header";
+import Sidebar from "../Components/dashboard/lawyer/LawyerSidebar";
+import Header from "../Components/LawyerHeader";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Calender from "../Components/dashboard/Calender";

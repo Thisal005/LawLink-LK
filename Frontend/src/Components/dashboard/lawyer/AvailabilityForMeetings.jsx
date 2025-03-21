@@ -21,16 +21,16 @@ import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const LawyerAvailability = () => {
+const LawyerAvailability = ({ open, onClose }) => {
   const { user } = useAuthContext();
   const {backendUrl} = React.useContext(AppContext);
   const [selectedDate, setSelectedDate] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [newSlots, setNewSlots] = useState([]); 
   const [existingSlots, setExistingSlots] = useState([]); 
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
 
   useEffect(() => {
     if (selectedDate && user?._id) {
@@ -191,11 +191,7 @@ const LawyerAvailability = () => {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleOpen} sx={{ mb: 2 }}>
-        Manage Availability
-      </Button>
-
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Manage Your Availability</DialogTitle>
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDayjs}>

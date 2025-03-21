@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "../Components/Sidebar";
-import Header from "../Components/Header";
+import Header from "../Components/LawyerHeader";
 import NotificationList from "../Components/NotificationList";
 
 function Notifications() {

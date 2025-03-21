@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Grid, Eye, MessageSquare, Menu, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AppContext } from "../Context/AppContext";
+import { AppContext } from "../../../Context/AppContext";
 
 const Sidebar = ({ activeTab }) => {
   const navigate = useNavigate();
