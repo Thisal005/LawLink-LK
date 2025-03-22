@@ -108,7 +108,7 @@ const Chatbot = () => {
   const isChatLimitReached = messages.length >= MESSAGE_LIMIT;
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div >
       < ClietnSidebar />
       <div className="flex-1 flex flex-col lg:ml-64 xl:ml-72">
         <Header
@@ -116,7 +116,7 @@ const Chatbot = () => {
           practiceAreas={lawyerData ? "Legal Assistance" : "Client"}
         />
         <div className="flex-1 flex items-center justify-center p-6 mt-16">
-          <div className="w-full max-w-8xl bg-gradient-to-br from-blue-50 to-blue-200 rounded-xl shadow-2xl h-[80vh] relative overflow-hidden transition-all duration-300">
+          <div className="w-full  bg-gradient-to-br from-blue-50 to-blue-200 rounded-xl shadow-2xl h-[80vh] relative overflow-hidden transition-all duration-300">
             {/* Main Chat Area */}
             <div className="flex flex-col h-full">
               {/* Toggle Sidebar Button - Hidden when sidebar is open */}

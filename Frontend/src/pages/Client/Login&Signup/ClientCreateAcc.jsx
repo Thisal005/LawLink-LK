@@ -134,7 +134,9 @@ function ClientCreateAcc() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[42%_58%] w-full max-w-[1100px] h-auto md:h-[660px] bg-white rounded-[28px] shadow-[0px_0px_1px_rgba(0,0,0,0.04),_0px_2px_6px_rgba(0,0,0,0.04),_0px_16px_24px_rgba(0,0,0,0.06)] overflow-hidden relative hover:shadow-[0px_0px_1px_rgba(0,0,0,0.08),_0px_8px_16px_rgba(0,0,0,0.08),_0px_24px_32px_rgba(0,0,0,0.12)] transition-shadow duration-300">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+
+    <div className="grid grid-cols-1 md:grid-cols-[42%_58%] w-full max-w-[1100px] h-auto md:h-[660px] bg-white rounded-[28px] shadow-[0px_0px_1px_rgba(0,0,0,0.04),_0px_2px_6px_rgba(0,0,0,0.04),_0px_16px_24px_rgba(0,0,0,0.06)] overflow-hidden relative hover:shadow-[0px_0px_1px_rgba(0,0,0,0.08),_0px_8px_16px_rgba(0,0,0,0.08),_0px_24px_32px_rgba(0,0,0,0.12)] transition-shadow duration-300 ">
       {/* Left Section - Animation Container (Hidden on Mobile) */}
       <div className="hidden md:block bg-gradient-to-br from-[#0022fc] to-[#001cd8] p-8 flex flex-col items-center justify-between relative overflow-hidden">
         <div className="text-white text-center">
@@ -335,6 +337,7 @@ function ClientCreateAcc() {
           .
         </p>
       </div>
+    </div>
     </div>
   );
 }
