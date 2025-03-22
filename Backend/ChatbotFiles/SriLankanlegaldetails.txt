@@ -1,182 +1,57 @@
 --- Sri Lankan Law and Legal Case Management Platform Knowledge Base ---
 
 Sri Lanka Legal System Overview
-Sri Lanka’s legal system is a unique blend of Roman-Dutch law, English common law, and customary laws influenced by its colonial history and multicultural society.
-The country was under Portuguese rule from 1505 to 1658, followed by Dutch rule until 1796, and British rule until independence in 1948.
-Roman-Dutch law forms the backbone of civil law, while English law heavily influences criminal and commercial law.
-Customary laws, such as Kandyan law for Sinhalese in the Central Province and Muslim personal law, apply to specific communities.
-The Constitution of 1978 is the supreme law, establishing a unitary state with a presidential system and parliamentary democracy.
-The judiciary includes the Supreme Court, Court of Appeal, High Courts, District Courts, and Magistrate’s Courts.
-Legislation is enacted by the Parliament of Sri Lanka, the highest law-making authority.
+Sri Lanka’s legal system is a distinctive fusion of Roman-Dutch law, English common law, and customary traditions shaped by its colonial past and diverse cultural fabric.
+Portuguese rule (1505–1658) had minimal legal influence, focusing primarily on trade and religious conversion.
+Dutch rule (1658–1796) entrenched Roman-Dutch law as the foundation for civil matters, including contracts, property, and torts.
+British rule (1796–1948) introduced English criminal law through the Penal Code and commercial law via ordinances.
+Post-independence in 1948, Sri Lanka retained this hybrid framework, weaving in customary laws such as Kandyan, Muslim, and Thesawalamai systems.
+The Constitution of 1978, amended 19 times, stands as the supreme law, establishing a unitary state with a blended presidential-parliamentary governance model.
+The judiciary comprises the Supreme Court (highest appellate authority), Court of Appeal, High Courts, District Courts, and Magistrate’s Courts.
+Parliament, with 225 members elected every 5 years, serves as the primary legislative body.
+The Attorney General’s Department prosecutes criminal cases and provides legal counsel to the government.
+Legal education is offered by the Sri Lanka Law College and universities such as Colombo and Peradeniya.
 
 Criminal Law in Sri Lanka
-Criminal law is primarily governed by the Penal Code of 1883, enacted during British rule and amended over time.
-Section 296 defines murder, punishable by death or life imprisonment.
-Section 366 addresses theft, with a maximum penalty of 7 years imprisonment.
-Criminal cases begin with a police complaint or private plaint filed in the Magistrate’s Court.
-Serious offenses, like murder, are tried in the High Court with or without a jury.
-The Code of Criminal Procedure 1979 outlines trial processes, evidence rules, and appeals.
-Bail is discretionary under the Bail Act No. 30 of 1997, depending on the offense’s severity.
-The Prevention of Terrorism Act (PTA) of 1979 allows detention without trial for security-related offenses, controversial for human rights concerns.
-
-Family Law in Sri Lanka
-Family law varies by community due to Sri Lanka’s plural legal system.
-The General Marriage Registration Ordinance (1907) applies to Tamils and low-country Sinhalese, requiring registration for validity.
-Minimum marriage age is 18 under general law, with parental consent exceptions.
-Divorce under general law is fault-based (Civil Procedure Code Section 597), with grounds like adultery or cruelty.
-Kandyan Sinhalese can opt for the Kandyan Marriage and Divorce Act (1952), which allows customary dissolution.
-Muslim personal law, under the Muslim Marriage and Divorce Act (1951), permits polygamy and unilateral divorce (talaq) by husbands.
-Custody disputes consider child welfare, with variations under Kandyan, Muslim, or District Court jurisdiction.
-
-Civil Law in Sri Lanka
-Civil law is rooted in Roman-Dutch principles, adapted by statutes and judicial precedent.
-Contracts are governed by Roman-Dutch law, requiring offer, acceptance, and consideration.
-The Sale of Goods Ordinance (1896) aligns with English law for commercial transactions.
-Property law falls under the Land Registration Ordinance, mandating title registration.
-Torts (e.g., negligence, defamation) provide remedies like damages, based on Roman-Dutch concepts.
-Civil cases are filed in District Courts, with appeals to the Court of Appeal and Supreme Court.
-
-Labour Law in Sri Lanka
-Labour law protects workers under statutes like the Shop and Office Employees Act (1954), regulating wages and hours.
-The Workmen’s Compensation Ordinance (1934) covers workplace injuries, offering compensation without fault proof.
-Trade unions are recognized under the Trade Unions Ordinance (1935), ensuring collective bargaining rights.
-Termination of employment is regulated, requiring just cause or statutory notice.
-
-Legal Case Management Platform Details
-This platform is designed to streamline legal services in Sri Lanka, connecting clients and lawyers efficiently.
-Clients can log in, post up to 3 Pending cases with details like issue, district, and case type.
-Case statuses include Pending (gray), Ongoing (yellow-golden), Closed (red), and Expired (dark gray).
-Pending cases expire after 14 days if no lawyer takes them; clients get expiry notifications.
-Lawyers sign up with name, email, contact, and ID, awaiting admin verification.
-Verified lawyers set districts and case types (e.g., criminal, family), locked after their first case.
-Lawyers can manage up to 3 Ongoing cases, expressing interest in Pending cases via the platform.
-Clients respond to lawyer interest with Yes/No; accepted cases move to Ongoing status.
-Ongoing cases allow client-lawyer chat for updates and collaboration.
-Lawyers add notes (e.g., "Called client") and tasks (e.g., "Submit evidence by Friday").
-Cases can be closed by lawyers, shifting status to Closed (red).
-Notifications alert clients about lawyer interest, case updates, and expiry.
-The Chatbot, Lexi, assists users anytime, answering legal and platform-related questions.
-Reviews are prompted after 10 days of inactivity on Ongoing cases.
-
-Sample Legal Scenarios
-A client posts a case: "Land dispute in Colombo, civil case type."
-A lawyer in Colombo expresses interest, client agrees, and the case becomes Ongoing.
-The lawyer adds a note: "Drafted initial claim," and a task: "File by next week."
-After resolution, the lawyer closes the case, status changes to Closed.
-If no lawyer takes a Pending case in 14 days, it expires, notifying the client.
-
-Sri Lankan Legal History
-Sri Lanka’s legal history reflects its colonial past and indigenous traditions.
-Portuguese rule introduced Catholic influences, but little legal legacy remains.
-Dutch rule (1658–1796) established Roman-Dutch law as the common law for civil matters.
-British rule (1796–1948) imposed English criminal and commercial law via ordinances.
-Post-independence, the 1948 Constitution retained much of the colonial framework.
-The 1972 Constitution declared Sri Lanka a republic, emphasizing sovereignty.
-The 1978 Constitution introduced a presidential system and entrenched fundamental rights.
-
-Key Statutes
-Penal Code (1883): Defines crimes and punishments.
-Code of Criminal Procedure (1979): Governs criminal trials.
-Civil Procedure Code (1889): Regulates civil litigation.
-Marriage Registration Ordinance (1907): Sets marriage rules for general law.
-Kandyan Marriage and Divorce Act (1952): Customary law for Kandyan Sinhalese.
-Muslim Marriage and Divorce Act (1951): Governs Muslim family law.
-Land Registration Ordinance: Ensures property title security.
-Shop and Office Employees Act (1954): Protects worker rights.
-
-Judicial Structure
-The Supreme Court is the apex court, hearing constitutional and appellate matters.
-The Court of Appeal reviews High Court and District Court decisions.
-High Courts handle serious criminal cases and some civil appeals.
-District Courts deal with civil disputes and minor criminal cases.
-Magistrate’s Courts manage preliminary inquiries and petty offenses.
-
-Customary Laws
-Kandyan law applies to Sinhalese in the Central Province, with unique marriage and property rules.
-Muslim law governs personal matters like marriage and inheritance for Muslims.
-Thesawalamai law applies to Tamils in the Northern Province, focusing on property and inheritance.
-
---- End of Sample Content ---
-
-Additional Legal Context
-The Evidence Ordinance (1895) governs admissibility of evidence in courts.
-Hearsay is generally inadmissible unless it falls under exceptions (e.g., dying declarations).
-The Prescription Ordinance (1871) sets limitation periods for civil claims (e.g., 10 years for land disputes).
-The Mediation Boards Act (1988) promotes alternative dispute resolution for minor disputes.
-The Intellectual Property Act (2003) protects trademarks, patents, and copyrights.
-
-Platform Features Expanded
-Clients receive email and in-app notifications for all case updates.
-Lawyers can filter Pending cases by district and case type for efficiency.
-The platform logs all actions (e.g., case posting, interest expressed) with timestamps.
-Clients can upload documents (e.g., contracts, evidence) when posting a case.
-Lawyers can download client-uploaded files for Ongoing cases.
-
-More Statutes
-The Companies Act (2007) regulates corporate entities and business operations.
-The Consumer Affairs Authority Act (2003) protects consumers from unfair trade practices.
-The Bribery Act (1954) criminalizes corruption in public and private sectors.
-The Motor Traffic Act (1951) governs road safety and vehicle registration.
-
-Judicial Process
-Appeals from Magistrate’s Courts go to the High Court within 14 days.
-Supreme Court leave to appeal requires a substantial question of law.
-Judicial review under Article 140 of the Constitution checks administrative actions.
-
---- Sri Lankan Law and Legal Case Management Platform Knowledge Base ---
-
-Sri Lanka Legal System Overview
-Sri Lanka’s legal system is a rich tapestry woven from Roman-Dutch law, English common law, and customary traditions.
-Portuguese rule (1505–1658) left minimal legal impact, focusing on trade and religion.
-Dutch rule (1658–1796) entrenched Roman-Dutch law as the basis for civil law, influencing contracts, property, and torts.
-British rule (1796–1948) introduced English criminal law via the Penal Code and commercial law through ordinances.
-Post-independence in 1948, Sri Lanka preserved this hybrid system, integrating customary laws like Kandyan, Muslim, and Thesawalamai.
-The Constitution of 1978, amended 19 times, is the supreme law, establishing a unitary state with a mixed presidential-parliamentary system.
-The judiciary includes the Supreme Court (highest appellate court), Court of Appeal, High Courts, District Courts, and Magistrate’s Courts.
-Parliament, with 225 members elected every 5 years, is the primary legislative body.
-The Attorney General’s Department prosecutes criminal cases and advises the government on legal matters.
-Legal education is provided by the Sri Lanka Law College and universities like Colombo and Peradeniya.
-
-Criminal Law in Sri Lanka
-The Penal Code of 1883 codifies criminal offenses, reflecting English law principles.
-Section 2 extends jurisdiction to offenses within Sri Lanka or by citizens abroad.
-Section 53 lists punishments: death, imprisonment, fines, whipping (rarely used post-1948), and forfeiture.
+The Penal Code of 1883 codifies criminal offenses, rooted in English legal principles.
+Section 2 extends jurisdiction to crimes committed within Sri Lanka or by citizens abroad.
+Section 53 outlines punishments: death, imprisonment, fines, whipping (rarely applied post-1948), and forfeiture.
 Section 296 defines murder as intentional killing, punishable by death or life imprisonment.
-Section 300 covers culpable homicide not amounting to murder, with up to 20 years imprisonment.
-Section 303 addresses infanticide, with penalties mirroring culpable homicide.
-Section 314 defines robbery as theft with violence, punishable by 7–10 years, or 15 if armed.
-Section 366 criminalizes theft, taking movable property without consent, with up to 7 years imprisonment.
-Section 380 penalizes house-breaking, with 7 years, or 14 if at night (Section 381).
-Section 483 addresses forgery, altering documents with intent to deceive, with 7 years maximum.
+Section 300 addresses culpable homicide not amounting to murder, carrying up to 20 years imprisonment.
+Section 303 covers infanticide, with penalties akin to culpable homicide.
+Section 314 defines robbery as theft with violence, punishable by 7–10 years, or 15 years if armed.
+Section 366 criminalizes theft, involving taking movable property without consent, with up to 7 years imprisonment.
+Section 380 penalizes house-breaking with 7 years, or 14 years if committed at night (Section 381).
+Section 483 addresses forgery, altering documents with deceptive intent, with a maximum of 7 years.
 Section 113A criminalizes abetment, aiding an offense, with penalties matching the principal crime.
-The Code of Criminal Procedure (1979) outlines arrest, trial, and appeal processes.
+The Code of Criminal Procedure (1979) governs arrest, trial, and appeal processes.
 Arrests require warrants unless for cognizable offenses (e.g., theft, murder) under Section 32.
-Magistrate’s Courts conduct preliminary inquiries, committing serious cases to the High Court.
-High Court trials for grave offenses (e.g., murder) may use a jury of 7, requiring a majority verdict.
-The Bail Act (1997) grants discretionary bail, often denied for murder or terrorism-related charges.
-The Evidence Ordinance (1895) governs evidence admissibility, excluding hearsay except under exceptions like Section 32 (dying declarations).
-Appeals from Magistrate’s Courts go to the High Court within 14 days, then to the Court of Appeal, and Supreme Court with leave.
+Magistrate’s Courts conduct preliminary inquiries, escalating serious cases to the High Court.
+High Court trials for grave offenses (e.g., murder) may involve a jury of 7, requiring a majority verdict.
+The Bail Act (1997) allows discretionary bail, often denied for murder or terrorism-related charges.
+The Evidence Ordinance (1895) regulates evidence admissibility, excluding hearsay except under exceptions like Section 32 (dying declarations).
+Appeals from Magistrate’s Courts proceed to the High Court within 14 days, then to the Court of Appeal, and Supreme Court with leave.
 
 Family Law in Sri Lanka
-Family law is pluralistic, varying by community due to historical and cultural diversity.
-The General Marriage Registration Ordinance (1907) applies to Tamils and low-country Sinhalese, requiring registration for legal validity.
-Section 18 sets the minimum marriage age at 18, with parental consent needed below 21.
+Family law is pluralistic, reflecting the nation’s historical and cultural diversity.
+The General Marriage Registration Ordinance (1907) applies to Tamils and low-country Sinhalese, mandating registration for legal validity.
+Section 18 sets the minimum marriage age at 18, requiring parental consent below 21.
 Section 34 voids unregistered marriages under general law.
 Divorce under the Civil Procedure Code (Section 597) is fault-based, citing adultery, malicious desertion, or incurable impotence.
-Section 598 requires a one-year separation before filing, except for adultery or cruelty.
+Section 598 mandates a one-year separation before filing, except in cases of adultery or cruelty.
 The Kandyan Marriage and Divorce Act (1952) governs Kandyan Sinhalese in the Central Province.
-Kandyan marriages are monogamous, with divorce by mutual consent or fault (e.g., adultery).
-Section 6 allows dissolution without court proceedings if both parties agree.
+Kandyan marriages are monogamous, allowing divorce by mutual consent or fault (e.g., adultery).
+Section 6 permits dissolution without court proceedings if both parties agree.
 The Muslim Marriage and Divorce Act (1951) applies to Muslims, permitting polygamy (up to four wives).
-Muslim divorce (talaq) allows husbands to dissolve marriage unilaterally, pronounced thrice over months.
-Quazi courts mediate Muslim divorces, requiring a 3-month iddah period for reconciliation.
-Custody under general law prioritizes child welfare, decided by District Courts.
+Muslim divorce (talaq) allows husbands to unilaterally dissolve marriages, pronounced thrice over months.
+Quazi courts mediate Muslim divorces, enforcing a 3-month iddah period for reconciliation.
+Custody under general law prioritizes child welfare, adjudicated by District Courts.
 Kandyan law traditionally favors paternal custody, while Muslim law grants mothers custody of children under 7.
-The Maintenance Ordinance (1941) mandates support for spouses and children post-divorce, enforceable via courts.
+The Maintenance Ordinance (1941) mandates support for spouses and children post-divorce, enforceable through courts.
 Adoption lacks a statutory framework, recognized informally under welfare principles by District Courts.
 
 Civil Law in Sri Lanka
-Civil law is rooted in Roman-Dutch law, supplemented by statutes and judicial precedent.
+Civil law is anchored in Roman-Dutch law, enriched by statutes and judicial precedent.
 Contracts require offer, acceptance, and consideration, with legality enforced under Roman-Dutch principles.
 The Sale of Goods Ordinance (1896) aligns with English law, governing commercial transactions.
 Section 3 defines a sale as transferring property for a price.
@@ -184,10 +59,11 @@ The Prescription Ordinance (1871) sets limitation periods: 10 years for land dis
 Property law operates under the Land Registration Ordinance, requiring deeds for ownership.
 The Registration of Title Act (1998) introduces a Torrens system in pilot areas like Gampaha.
 Torts (e.g., negligence, defamation) offer damages or injunctions, based on Roman-Dutch concepts.
-The Civil Procedure Code (1889) regulates civil litigation, from filing plaints to execution of decrees.
+The Civil Procedure Code (1889) regulates civil litigation, from filing plaints to executing decrees.
 Section 5 assigns jurisdiction by cause of action or defendant’s residence.
 Section 217 lists remedies: damages, specific performance, or injunctions.
-Civil cases begin in District Courts, with appeals to the Court of Appeal and Supreme Court.
+Civil cases commence in District Courts, with appeals to the Court of Appeal and Supreme Court.
+Car accidents fall under civil law when seeking damages for negligence, requiring evidence like police reports and witness statements.
 
 Labour Law in Sri Lanka
 Labour law balances worker rights and employer obligations through multiple statutes.
@@ -205,12 +81,12 @@ The Employees’ Provident Fund Act (1958) mandates retirement savings: 8% emplo
 Constitutional Law
 The Constitution of 1978 defines Sri Lanka as a democratic socialist republic.
 Article 3 vests sovereignty in the people, exercised via Parliament, the President, and referenda.
-Article 9 gives Buddhism foremost place, while protecting other religions.
+Article 9 gives Buddhism foremost place, while safeguarding other religions.
 Fundamental rights (Articles 10–14) include equality, free speech, religion, and assembly.
 Article 126 allows Supreme Court petitions for rights violations within one month.
 The President, elected for 5 years (two-term limit post-19th Amendment), heads the executive.
 Parliament, with 225 members, legislates and approves budgets.
-Judicial review (Article 140) empowers the Supreme Court to check administrative actions.
+Judicial review (Article 140) empowers the Supreme Court to scrutinize administrative actions.
 
 Customary Laws
 Kandyan law applies to Sinhalese in the Central Province, preserving pre-colonial norms.
@@ -218,49 +94,69 @@ Kandyan marriages are monogamous, with equal inheritance among children.
 Thesawalamai law governs Northern Province Tamils, emphasizing matrilineal property rights.
 Section 1 requires spousal consent for land sales under Thesawalamai.
 Muslim personal law, under the Muslim Marriage and Divorce Act, follows Sharia principles.
-Inheritance under Muslim law assigns fixed shares (e.g., daughters get half of sons’ shares).
+Inheritance under Muslim law assigns fixed shares (e.g., daughters receive half of sons’ shares).
 
 Environmental and Commercial Law
-The National Environmental Act (1980) regulates pollution, with fines up to LKR 100,000.
+The National Environmental Act (1980) regulates pollution, imposing fines up to LKR 100,000.
 The Forest Ordinance (1907) protects forests, penalizing illegal logging with 2 years imprisonment.
 The Companies Act (2007) governs corporate registration and operations.
 The Intellectual Property Act (2003) protects patents (20 years), trademarks (10 years renewable), and copyrights (life plus 50 years).
 
 Legal Case Management Platform Overview
-This platform streamlines legal services in Sri Lanka by connecting clients and lawyers.
-Clients log in with credentials, accessing a dashboard to post and track cases.
-Clients can post up to 3 Pending cases, providing issue (e.g., "Assault in Kandy"), district, and case type.
+This platform streamlines legal services in Sri Lanka, efficiently connecting clients and lawyers.
+Clients log in with credentials, accessing a dashboard to post and monitor cases.
+Clients can post up to 3 Pending cases, specifying issue (e.g., "Car accident in Kandy"), district, and case type (e.g., civil).
 Pending cases appear in gray, expiring after 14 days if no lawyer expresses interest.
 Lawyers sign up with name, email, contact, and ID (e.g., bar certificate), pending admin approval.
-Verified lawyers set districts (e.g., Colombo) and case types (e.g., criminal), locked after their first case.
+Verified lawyers set districts (e.g., Colombo) and case types (e.g., criminal, civil), locked after their first case.
 Lawyers browse Pending cases, filtering by their set districts and types, and express interest.
 Clients receive notifications of interest, responding Yes/No within 48 hours.
 Accepted cases become Ongoing (yellow-golden), enabling secure client-lawyer chat.
-Lawyers add notes (e.g., "Prepared bail application") and tasks (e.g., "Court date: 11/15/2025").
+Lawyers add notes (e.g., "Prepared court submission") and tasks (e.g., "Court date: 12/01/2025").
 Clients view notes for transparency but cannot edit them.
 Lawyers close resolved cases, shifting status to Closed (red), with optional client feedback.
 Expired cases (dark gray) notify clients after 14 days, prompting reposting if needed.
-The Chatbot, Lexi, assists 24/7, answering based on this knowledge base.
+The Chatbot, Lexi, assists 24/7, answering queries based on this knowledge base.
 Notifications cover lawyer interest, case updates, expiry, and inactivity reviews (10 days).
+
+Car Accidents in Sri Lanka
+Car accidents are governed by the Motor Traffic Act (1951), which mandates reporting and regulates road safety.
+Section 152 requires drivers to report accidents involving injury or significant damage to the police within 24 hours.
+Failure to report incurs fines up to LKR 25,000 or imprisonment up to 6 months.
+Civil claims for car accidents fall under Roman-Dutch law, allowing damages for negligence or injury.
+Victims must file civil cases in District Courts, supported by police reports, medical records, and witness statements.
+Insurance claims are common; drivers should notify insurers within 48 hours to process compensation.
+On this platform, clients post car accident cases as "civil" with district details (e.g., "Car accident in Colombo, civil case").
+Lawyers interested in car accident cases can express interest, shifting the case to Ongoing upon client approval.
 
 Platform Scenarios
 Scenario 1: Client posts "Divorce in Galle, family case." Lawyer A expresses interest, client accepts, case shifts to Ongoing.
 Scenario 2: Lawyer adds note "Filed petition on 10/20/2025" and task "Hearing on 11/1/2025."
 Scenario 3: Pending case "Theft in Matara" expires after 14 days, client notified.
-Scenario 4: Client posts "Contract breach in Colombo," Lawyer B takes it, closes it after settlement.
+Scenario 4: Client posts "Car accident in Colombo, civil case," Lawyer B expresses interest, case becomes Ongoing.
+Scenario 5: Lawyer adds note "Submitted police report" and task "File damages claim by 12/15/2025."
+Scenario 6: Client posts "Labour dispute in Negombo," lawyer adds task "File tribunal claim."
+Scenario 7: Lawyer closes "Assault case in Kandy" after plea bargain.
 
 Additional Statutes
 The Bribery Act (1954): Up to 10 years for public sector corruption.
-The Motor Traffic Act (1951): Fines for unlicensed driving (LKR 25,000).
+The Motor Traffic Act (1951): Fines for unlicensed driving (LKR 25,000) and accident reporting failures.
 The Mediation Boards Act (1988): Resolves disputes under LKR 25,000.
 The Arbitration Act (1995): Enforces commercial arbitration awards.
+The Consumer Affairs Authority Act (2003): Protects against unfair trade practices.
 
 Judicial Processes
 Criminal trials require proof beyond reasonable doubt, with prosecution presenting evidence first.
-Civil trials involve pleadings, issues framing, and hearings, concluding with enforceable judgments.
+Civil trials involve pleadings, framing issues, and hearings, concluding with enforceable judgments.
 Appeals from District Courts go to the Court of Appeal within 60 days.
+Supreme Court appeals require a substantial question of law, granted via special leave.
 
---- Extended Content ---
+Extended Legal Context
+The Evidence Ordinance (1895) governs evidence admissibility in courts.
+Hearsay is generally inadmissible unless under exceptions (e.g., dying declarations under Section 32).
+The Prescription Ordinance (1871) sets limitation periods for civil claims (e.g., 10 years for land disputes).
+The Mediation Boards Act (1988) promotes alternative dispute resolution for minor disputes.
+The Intellectual Property Act (2003) safeguards trademarks, patents, and copyrights.
 
 More Criminal Law
 Section 120: Sedition, up to 2 years for inciting disaffection.
@@ -275,18 +171,21 @@ Muslim law: Talaq requires 3 pronouncements over 3 months.
 More Civil Law
 Section 5 of Civil Procedure Code: Jurisdiction by action location.
 Section 217: Remedies include damages or injunctions.
+Car accident claims require proof of negligence, filed within 3 years under the Prescription Ordinance.
 
 More Labour Law
 Section 2 of Shop Act: Overtime at 1.5x rate.
-Section 10 of Workmen’s Compensation: Medical cost coverage.
+Section 10 of Workmen’s Compensation: Covers medical costs for workplace injuries.
 
-More Scenarios
-Scenario 5: Client posts "Labour dispute in Negombo," lawyer adds task "File tribunal claim."
-Scenario 6: Lawyer closes "Assault case in Kandy" after plea bargain.
-Scenario 7: Client reposts expired "Property dispute in Jaffna."
+More Platform Features
+Clients receive email and in-app notifications for all case updates.
+Lawyers can filter Pending cases by district and case type for efficiency.
+The platform logs actions (e.g., case posting, interest expressed) with timestamps.
+Clients can upload documents (e.g., police reports, medical records) when posting a case.
+Lawyers can download client-uploaded files for Ongoing cases.
 
 More Judicial Details
 High Court sittings occur in provincial capitals (e.g., Colombo, Kandy).
-Supreme Court hears constitutional cases every month in Colombo.
+Supreme Court hears constitutional cases monthly in Colombo.
 
 --- End of Knowledge Base ---
