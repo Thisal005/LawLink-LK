@@ -166,7 +166,8 @@ function ClientDashboard() {
           </div>
         </div>
 
-        {/* Schedule Meeting and Scheduled Meetings */}
+
+        {/* Schedule Meeting and Scheduled Meetings 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all">
             <div className="h-[350px]">
@@ -192,6 +193,7 @@ function ClientDashboard() {
             </div>
           </div>
         </div>
+        */}
 
         <ChatButton />
       </main>
