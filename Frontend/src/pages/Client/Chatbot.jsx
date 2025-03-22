@@ -3,8 +3,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { AppContext } from "../../Context/AppContext";
 import ClietnSidebar from "../../Components/dashboard/client/ClientSideBar";
 import Header from "../../Components/dashboard/client/ClientHeader"; 
-import { PaperAirplaneIcon, ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
-
+import { PaperAirplaneIcon, ArrowPathIcon, Bars3Icon, XMarkIcon, TrashIcon } from "@heroicons/react/24/outline";
 const Chatbot = () => {
   const { backendUrl, userData, lawyerData } = useContext(AppContext);
   const [messages, setMessages] = useState([]);
@@ -12,8 +11,9 @@ const Chatbot = () => {
   const [loading, setLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(Date.now());
-  const [showHistory, setShowHistory] = useState(false);
+  const [showChatSidebar, setShowChatSidebar] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const AI_NAME = "Lexi";
   const MESSAGE_LIMIT = 20;
@@ -21,28 +21,7 @@ const Chatbot = () => {
   useEffect(() => {
     const savedHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
     setChatHistory(savedHistory);
-
-    const initializeChatbot = async () => {
-      try {
-        console.log("Initializing chatbot...");
-        const response = await fetch(`${backendUrl}/api/chatbot/init`, {
-          method: "GET",
-          credentials: "include",
-        });
-        const data = await response.json();
-        console.log("Init response:", data);
-        if (data.success) {
-          setMessages([{ sender: "bot", text: data.welcome }]);
-        } else {
-          throw new Error(data.error || "Init failed");
-        }
-      } catch (error) {
-        console.error("Init Error:", error);
-        setMessages([{ sender: "bot", text: "Failed to load Lexi. Are you logged in?" }]);
-      }
-    };
-    initializeChatbot();
-  }, [backendUrl]);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,16 +36,13 @@ const Chatbot = () => {
     setLoading(true);
 
     try {
-      console.log("Sending message:", input);
       const response = await fetch(`${backendUrl}/api/chatbot/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ message: input }),
       });
-
       const data = await response.json();
-      console.log(`${AI_NAME} Response:`, data);
 
       if (!response.ok || !data.success) {
         throw new Error(data.msg || "Failed to process request");
@@ -79,17 +55,18 @@ const Chatbot = () => {
         return newMessages;
       });
     } catch (error) {
-      console.error(`${AI_NAME} Error:`, error);
       setMessages((prev) => [...prev, { sender: "bot", text: "Sorry, something went wrong." }]);
     } finally {
       setLoading(false);
+      inputRef.current?.focus();
     }
   };
 
   const saveChatHistory = (newMessages) => {
     setChatHistory((prevHistory) => {
+      const chatName = newMessages.find((msg) => msg.sender === "user")?.text.slice(0, 20) || `Chat ${new Date().toLocaleTimeString()}`;
       const updatedHistory = [
-        { id: currentChatId, messages: newMessages, timestamp: Date.now() },
+        { id: currentChatId, name: chatName, messages: newMessages, timestamp: Date.now() },
         ...prevHistory.filter((chat) => chat.id !== currentChatId),
       ].slice(0, 10);
       localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
@@ -97,15 +74,26 @@ const Chatbot = () => {
     });
   };
 
+  const deleteChat = (chatId) => {
+    setChatHistory((prevHistory) => {
+      const updatedHistory = prevHistory.filter((chat) => chat.id !== chatId);
+      localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
+      if (chatId === currentChatId) {
+        setMessages([]);
+        setCurrentChatId(Date.now());
+      }
+      return updatedHistory;
+    });
+  };
+
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !loading) {
-      sendMessage();
-    }
+    if (e.key === "Enter" && !loading) sendMessage();
   };
 
   const startNewChat = () => {
     setMessages([]);
     setCurrentChatId(Date.now());
+    setShowChatSidebar(false);
   };
 
   const loadChat = (chatId) => {
@@ -113,7 +101,7 @@ const Chatbot = () => {
     if (chat) {
       setMessages(chat.messages);
       setCurrentChatId(chatId);
-      setShowHistory(false);
+      setShowChatSidebar(false);
     }
   };
 
@@ -121,114 +109,154 @@ const Chatbot = () => {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
-      {/* Sidebar */}
-      <ClietnSidebar />
-
-      {/* Main Container */}
+      < ClietnSidebar />
       <div className="flex-1 flex flex-col lg:ml-64 xl:ml-72">
-        {/* Header */}
         <Header
           displayName={userData?.fullName || lawyerData?.fullName || "User"}
           practiceAreas={lawyerData ? "Legal Assistance" : "Client"}
         />
+        <div className="flex-1 flex items-center justify-center p-6 mt-16">
+          <div className="w-full max-w-8xl bg-gradient-to-br from-blue-50 to-blue-200 rounded-xl shadow-2xl h-[80vh] relative overflow-hidden transition-all duration-300">
+            {/* Main Chat Area */}
+            <div className="flex flex-col h-full">
+              {/* Toggle Sidebar Button - Hidden when sidebar is open */}
+              {!showChatSidebar && (
+                <button
+                  onClick={() => setShowChatSidebar(true)}
+                  className="absolute top-4 left-4 p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-md z-10"
+                  title="Show Chat History"
+                >
+                  <Bars3Icon className="h-5 w-5" />
+                </button>
+              )}
 
-        {/* Chatbot Area */}
-        <div className="flex-1 flex flex-col mt-16">
-          {/* Chat Header as Rounded Box */}
-          <div className="p-4 bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-md">
-            <div className="flex items-center justify-between max-w-md mx-auto bg-white/10 rounded-full p-3 shadow-inner">
-              <div className="flex flex-col items-center flex-1">
-                <span className="text-lg font-semibold">Chat with Lexi</span>
-                <span className="text-xs text-blue-200">Your Legal Assistant</span>
-              </div>
-              <button
-                onClick={startNewChat}
-                className="p-2 hover:bg-blue-600 rounded-full transition-colors"
-                title="Start a new chat"
-              >
-                <ArrowPathIcon className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-
-          {/* Message Area with Scrollbar */}
-          <div className="flex-1 overflow-y-auto p-6 bg-white/95 max-h-[calc(100vh-16rem)]">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} mb-4`}
-              >
-                <div
-                  className={`max-w-lg p-4 rounded-lg shadow-md ${
-                    msg.sender === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-blue-50 text-gray-900 border-l-4 border-blue-500"
-                  }`}
-                  style={{ whiteSpace: "pre-wrap" }}
-                  dangerouslySetInnerHTML={{ __html: msg.text }}
-                />
-              </div>
-            ))}
-            {loading && (
-              <div className="flex justify-start mb-4">
-                <div className="p-4 rounded-lg bg-blue-100 text-gray-700 flex items-center gap-2 shadow-sm">
-                  <span className="animate-pulse text-lg">...</span>
-                </div>
-              </div>
-            )}
-            {isChatLimitReached && (
-              <div className="text-center text-blue-600 text-sm mb-4 font-medium">
-                Chat limit reached! Start a new chat above.
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input Area */}
-          <div className="p-4 bg-white border-t border-blue-200 shadow-lg">
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Ask Lexi anything..."
-                className="flex-1 p-3 bg-blue-50 border border-blue-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 placeholder-gray-500 disabled:bg-gray-200 transition-all"
-                disabled={loading || isChatLimitReached}
-              />
-              <button
-                onClick={sendMessage}
-                disabled={loading || isChatLimitReached}
-                className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-              >
-                <PaperAirplaneIcon className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setShowHistory(!showHistory)}
-                className="p-3 bg-blue-200 text-blue-800 rounded-full hover:bg-blue-300 transition-colors"
-                title="Chat History"
-              >
-                <ClockIcon className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* History Dropdown */}
-            {showHistory && (
-              <div className="absolute bottom-20 right-6 w-72 bg-white border border-blue-200 rounded-xl shadow-xl p-4 max-h-72 overflow-y-auto z-10">
-                <h3 className="text-sm font-bold text-blue-700 mb-3">Chat History</h3>
-                {chatHistory.length === 0 ? (
-                  <p className="text-gray-500 text-sm">No chats yet</p>
-                ) : (
-                  chatHistory.map((chat) => (
+              {messages.length === 0 ? (
+                // Empty State: Rounded Input Centered
+                <div className="flex flex-col items-center justify-center h-full p-6">
+                  <p className="text-blue-700 text-lg font-medium mb-6 animate-[fadeIn_0.5s_ease-in-out]">
+                    Ask Lexi anything about Sri Lankan law!
+                  </p>
+                  <div className="flex items-center gap-4 w-full max-w-md">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Type your question..."
+                      ref={inputRef}
+                      className="flex-1 p-3 bg-white border border-blue-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400 disabled:bg-gray-200 transition-all duration-200 shadow-sm"
+                      disabled={loading || isChatLimitReached}
+                    />
                     <button
-                      key={chat.id}
-                      onClick={() => loadChat(chat.id)}
-                      className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 rounded-md text-sm transition-colors"
+                      onClick={sendMessage}
+                      disabled={loading || isChatLimitReached}
+                      className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full hover:from-blue-600 hover:to-indigo-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
                     >
-                      {new Date(chat.timestamp).toLocaleString()} ({chat.messages.length} messages)
+                      <PaperAirplaneIcon className="h-5 w-5" />
                     </button>
-                  ))
-                )}
+                  </div>
+                </div>
+              ) : (
+                // Chat State: Messages Above, Input Below
+                <>
+                  <div className="flex-1 overflow-y-auto p-6 pt-16 bg-gradient-to-b from-blue-50 to-blue-100">
+                    {messages.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} mb-4 animate-[slideUp_0.3s_ease-out]`}
+                      >
+                        <div
+                          className={`max-w-md p-4 rounded-xl shadow-md ${
+                            msg.sender === "user"
+                              ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                              : "bg-white text-gray-900 border-l-4 border-blue-500"
+                          }`}
+                          style={{ whiteSpace: "pre-wrap" }}
+                          dangerouslySetInnerHTML={{ __html: msg.text }}
+                        />
+                      </div>
+                    ))}
+                    {loading && (
+                      <div className="flex justify-start mb-4">
+                        <div className="p-4 rounded-xl bg-white text-blue-700 flex items-center gap-2 shadow-sm">
+                          <span className="animate-pulse text-lg">...</span>
+                        </div>
+                      </div>
+                    )}
+                    {isChatLimitReached && (
+                      <div className="text-center text-blue-600 text-sm mb-4 font-medium animate-[fadeIn_0.5s_ease-in-out]">
+                        Chat limit reached. Start a new chat!
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                  <div className="p-6 bg-blue-100 border-t border-blue-200">
+                    <div className="flex items-center gap-4 w-full max-w-md mx-auto">
+                      <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Type your question..."
+                        ref={inputRef}
+                        className="flex-1 p-3 bg-white border border-blue-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400 disabled:bg-gray-200 transition-all duration-200 shadow-sm"
+                        disabled={loading || isChatLimitReached}
+                      />
+                      <button
+                        onClick={sendMessage}
+                        disabled={loading || isChatLimitReached}
+                        className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full hover:from-blue-600 hover:to-indigo-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
+                      >
+                        <PaperAirplaneIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Chatbot Sidebar - Overlay with Delete Button */}
+            {showChatSidebar && (
+              <div className="absolute inset-y-0 left-0 w-72 bg-gradient-to-b from-blue-50 to-blue-100 border-r border-teal-200 p-4 flex flex-col shadow-lg z-20 animate-[slideIn_0.3s_ease-out]">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-blue-800">Chat History</h3>
+                  <button
+                    onClick={() => setShowChatSidebar(false)}
+                    className="p-1 bg-blue-200 hover:bg-blue-300 rounded-full transition-all duration-200"
+                    title="Hide Sidebar"
+                  >
+                    <XMarkIcon className="h-5 w-5 text-blue-600" />
+                  </button>
+                </div>
+                <button
+                  onClick={startNewChat}
+                  className="w-full p-2 mb-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-md"
+                >
+                  New Chat
+                </button>
+                <div className="flex-1 overflow-y-auto">
+                  {chatHistory.length === 0 ? (
+                    <p className="text-blue-500 text-sm">No chats yet</p>
+                  ) : (
+                    chatHistory.map((chat) => (
+                      <div key={chat.id} className="flex items-center justify-between p-3 text-blue-700 hover:bg-blue-200 rounded-md text-sm transition-all duration-150">
+                        <button
+                          onClick={() => loadChat(chat.id)}
+                          className="flex-1 text-left truncate"
+                        >
+                          {chat.name}
+                        </button>
+                        <button
+                          onClick={() => deleteChat(chat.id)}
+                          className="p-1 bg-red-200 hover:bg-red-300 rounded-full transition-all duration-200"
+                          title="Delete Chat"
+                        >
+                          <TrashIcon className="h-4 w-4 text-red-600" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             )}
           </div>
