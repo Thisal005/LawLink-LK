@@ -91,13 +91,10 @@ const Header = ({ displayName: propDisplayName, practiceAreas = "Client" }) => {
 
   const handleLogout = async () => {
     try {
-      const endpoint = lawyerData
-        ? `${backendUrl}/api/lawyer/logout`
-        : `${backendUrl}/api/auth/logout`;
-      await axios.post(endpoint, {}, { withCredentials: true });
+      await axios.post(`${backendUrl}/api/auth/logout`, {}, { withCredentials: true });
       setIsLoggedIn(false);
       setUserData(null);
-      navigate(lawyerData ? "/lawyer-login" : "/login");
+      navigate("/login");
       toast.success("Logged out successfully");
     } catch (error) {
       console.error("Logout error:", error);

@@ -57,7 +57,7 @@ function Clientlogin() {
         await getUserData();
         
         // Redirect to home
-        navigate("/", { replace: true });
+        navigate("/client-dashboard", { replace: true });
   
         // Show success message
         toast.success("Logged in successfully!");

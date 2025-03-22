@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./Context/ProtectRoute";
 import ClientCreateAcc from "./pages/Client/Login&Signup/ClientCreateAcc";
+import Home from "./pages/home/Home";
 import Clientlogin from "./pages/Client/Login&Signup/Clientlogin";
 import ClientDashboard from "./pages/Client/ClientDashboard";
 import VerifyEmail from "./pages/Client/Login&Signup/Verify-email";
@@ -19,6 +20,7 @@ import LawyerChat from "./pages/Lawyer/LawyerChat";
 import ClientChat from "./pages/Client/ClientChat";
 import Meeting from "./pages/Meeting";
 import NotFound from "./pages/NotFound";
+import CaseDetails from "./pages/Client/CaseDetails";
 import Case from "./pages/Lawyer/CaseDashboard";
 import LawyerAccountSettings from "./pages/Lawyer/LawyerAccountSettings";
 import ViewCases from "./pages/ViewCases";
@@ -35,6 +37,7 @@ import CaseHistory from "./pages/Client/CaseHistory";
 
 function App() {
   return (
+    
 
     <AuthContextProvider>
       <AppContentProvider>
@@ -42,6 +45,7 @@ function App() {
         <div>
           <ToastContainer />
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/client-dashboard" element={<ProtectedRoute><ClientDashboard/></ProtectedRoute>} />
             <Route path="/lawyer-dashboard" element={<ProtectedRoute><LawyerDasgboard/></ProtectedRoute>} />
             <Route path="/create-account" element={<ClientCreateAcc />} />
@@ -61,6 +65,7 @@ function App() {
             <Route path="/client-chat" element={<ProtectedRoute><ClientChat/></ProtectedRoute>} />
             <Route path="/case" element={<ProtectedRoute><Case/></ProtectedRoute>} />
             <Route path="/chatbot" element={<ProtectedRoute><Chatbot/></ProtectedRoute>} />
+            <Route path="/case/:id" element={<ProtectedRoute><CaseDetails/></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />
             <Route path="/view-cases" element={<ProtectedRoute><ViewCases/></ProtectedRoute>} />
             <Route path="/lawyer-account-settings" element={<ProtectedRoute><LawyerAccountSettings/></ProtectedRoute>} />
