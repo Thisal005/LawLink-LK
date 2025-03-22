@@ -15,7 +15,8 @@ import LawyerNewpassword from "./pages/Lawyer/Login&Signup/LawyerNewpassword";
 import LawyerRestPasswordOtp from "./pages/Lawyer/Login&Signup/LawyerPassword-Rest ";
 import LawyerDasgboard from "./pages/Lawyer/LawyerDashboard";
 import Chatbot from "./pages/Client/Chatbot";
-import Chat from "./pages/Chat";
+import LawyerChat from "./pages/Lawyer/LawyerChat";
+import ClientChat from "./pages/Client/ClientChat";
 import Meeting from "./pages/Meeting";
 import NotFound from "./pages/NotFound";
 import Case from "./pages/Lawyer/CaseDashboard";
@@ -55,8 +56,9 @@ function App() {
             <Route path="/lawyer-email-for-password-reset" element={<LawyerEmailForResetPass />} />
             <Route path="/lawyer-create-new-password" element={<LawyerNewpassword />} />
             <Route path="/lawyer-password-rest" element={<LawyerRestPasswordOtp />} />
-            <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>} />
             <Route path="/meeting/:meetingId" element={<Meeting />} />
+            <Route path="/lawyer-chat" element={<ProtectedRoute><LawyerChat/></ProtectedRoute>} />
+            <Route path="/client-chat" element={<ProtectedRoute><ClientChat/></ProtectedRoute>} />
             <Route path="/case" element={<ProtectedRoute><Case/></ProtectedRoute>} />
             <Route path="/chatbot" element={<ProtectedRoute><Chatbot/></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>} />

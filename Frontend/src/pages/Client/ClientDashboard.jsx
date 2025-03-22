@@ -11,7 +11,7 @@ import TaskList from "../../Components/TaskList"; // From first code
 import NoteList from "../../Components/NoteList"; // From first code
 import ScheduledMeetings from "../../Components/scheduledMeetings"; // From first code
 import ScheduleMeeting from "../../Components/ScheduleMeeting"; // From first code
-import ChatButton from "../../Components/ChatButton"; // From first code
+import ChatButton from "../../Components/dashboard/client/ClientChatButton"; // From first code
 
 function ClientDashboard() {
   const { userData, backendUrl } = useContext(AppContext);

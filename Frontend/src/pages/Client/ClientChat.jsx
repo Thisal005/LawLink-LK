@@ -1,10 +1,10 @@
 import React from "react";
-import Sidebar from "../Components/Sidebar";
-import Header from "../Components/dashboard/lawyer/LawyerHeader";
-import MessageContainer from "../Components/messages/MessageContainer";
-import ScheduledMeetings from "../Components/scheduledMeetings";
+import ClietnSidebar from "../../Components/dashboard/client/ClientSideBar";
+import Header from "../../Components/dashboard/client/ClientHeader"; // From first code (assuming it's compatible for clients)
+import MessageContainer from "../../Components/messages/MessageContainer";
+import ScheduledMeetings from "../../Components/scheduledMeetings";
 
-function Chat() {
+function ClientChat() {
   return (
     <div className="flex flex-col h-155 overflow-hidden">
       {/* Header - fixed at top */}
@@ -15,7 +15,7 @@ function Chat() {
       {/* Main content area */}
       <div className="flex h-[calc(100vh-100px)] pt-[60px] mt-10"> {/* Adjust padding to match header height */}
         {/* Sidebar */}
-        <Sidebar />
+        <ClietnSidebar />
 
         {/* Message container */}
         <div className="flex-1 flex justify-center items-center lg:ml-70 mt-10">
@@ -26,4 +26,4 @@ function Chat() {
   );
 }
 
-export default Chat;
+export default ClientChat;
