@@ -418,6 +418,7 @@ function PostCaseForm() {
                 />
                 <div className="mt-2 flex items-center gap-2">
                   <input
+                  class="box"
                     type="checkbox"
                     id="noCourtDate"
                     checked={noCourtDate}
