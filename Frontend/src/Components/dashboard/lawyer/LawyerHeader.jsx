@@ -68,21 +68,15 @@ const Header = ({ displayName: propDisplayName, practiceAreas = "Corporate Law" 
 
   const handleLogout = async () => {
     try {
-      if (lawyerData) {
-        await axios.post(`${backendUrl}/api/lawyer/logout`, {}, { withCredentials: true });
-        setIsLoggedIn(false);
-        setUserData(null);
-        navigate("/lawyer-login");
-      } else {
-        await axios.post(`${backendUrl}/api/auth/logout`, {}, { withCredentials: true });
-        setIsLoggedIn(false);
-        setUserData(null);
-        navigate("/login");
-      }
+      await axios.post(`${backendUrl}/api/lawyer/logout`, {}, { withCredentials: true });
+      setIsLoggedIn(false);
+      setUserData(null);
+      setLawyerData(null); // Clear lawyerData as well
+      navigate("/lawyer-login");
       toast.success("Logged out successfully");
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Error during logout");
+      toast.error("Error logging out");
     }
   };
 
@@ -192,10 +186,7 @@ const Header = ({ displayName: propDisplayName, practiceAreas = "Corporate Law" 
                 </div>
               </div>
               <div className="py-1">
-                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                  <User className="w-4 h-4 text-gray-500" />
-                  <span>My Profile</span>
-                </button>
+                
                 <button
                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                   onClick={() => navigate("/lawyer-account-settings")}

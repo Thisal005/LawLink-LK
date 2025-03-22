@@ -13,7 +13,7 @@ import NoteForm from "../../Components/dashboard/lawyer/CreateNote"; // From fir
 import TodoList from "../../Components/ToDoList"; // From first code
 import AssignedTasks from "../../Components/dashboard/lawyer/AssignedTasks"; // From first code
 import LawyerAvailability from "../../Components/dashboard/lawyer/AvailabilityForMeetings"; // From first code
-import ChatButton from "../../Components/ChatButton"; // From first code
+import ChatButton from "../../Components/dashboard/lawyer/LawyerChatButton"; // From first code
 import PDFSummerizer from "../../Components/dashboard/lawyer/PdfSummerizer"; // From first code
 import ScheduledMeetings from "../../Components/scheduledMeetings"; // From first code
 
